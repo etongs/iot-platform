@@ -1,0 +1,24 @@
+server:
+  port: 8071
+
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+    #lease-renewal-interval-in-seconds: 60
+    #lease-expiration-duration-in-seconds: 180
+    instance-id: ${spring.application.name}:${server.port}
+  client:
+      serviceUrl:
+        defaultZone: http://localhost:7100/eureka/
+
+logging:
+  level:
+    com.stanley: debug
+    org.springframework: info
+    com.netflix: info
+  file: E:\\workspace_idea\\iot-platform\\logs\\client-ribbon.log
+
+spring:
+  application:
+    name: customer-ribbon

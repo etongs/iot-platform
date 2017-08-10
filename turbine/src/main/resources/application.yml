@@ -1,0 +1,25 @@
+server:
+  port: 7101
+
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:7100/eureka/
+
+turbine:
+  app-config: srvc-uams,customer-ribbon
+  cluster-name-expression: new String("default")
+
+logging:
+  level:
+    org.springframework: info
+    com.netflix: info
+  file: E:\\workspace_idea\\iot-platform\\logs\\turbine.log
+
+spring:
+  application:
+    name: turbine

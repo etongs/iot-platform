@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/api-utils/api-utils.iml" filepath="$PROJECT_DIR$/api-utils/api-utils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common-service/common-service.iml" filepath="$PROJECT_DIR$/common-service/common-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/config/config.iml" filepath="$PROJECT_DIR$/config/config.iml" />
+      <module fileurl="file://$PROJECT_DIR$/config-client/config-client.iml" filepath="$PROJECT_DIR$/config-client/config-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/customer-ribbon/customer-ribbon.iml" filepath="$PROJECT_DIR$/customer-ribbon/customer-ribbon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eureka-server/eureka-server.iml" filepath="$PROJECT_DIR$/eureka-server/eureka-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/iot-platform.iml" filepath="$PROJECT_DIR$/iot-platform.iml" />
+      <module fileurl="file://$PROJECT_DIR$/srvc-uams/srvc-uams.iml" filepath="$PROJECT_DIR$/srvc-uams/srvc-uams.iml" />
+      <module fileurl="file://$PROJECT_DIR$/srvc-uams/api/srvc-uams-api.iml" filepath="$PROJECT_DIR$/srvc-uams/api/srvc-uams-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/srvc-uams/core/srvc-uams-core.iml" filepath="$PROJECT_DIR$/srvc-uams/core/srvc-uams-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/turbine/turbine.iml" filepath="$PROJECT_DIR$/turbine/turbine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/zuul/zuul.iml" filepath="$PROJECT_DIR$/zuul/zuul.iml" />
+    </modules>
+  </component>
+</project>

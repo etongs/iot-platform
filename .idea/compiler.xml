@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="api-utils" />
+        <module name="apiutils" />
+        <module name="common-service" />
+        <module name="config" />
+        <module name="config-client" />
+        <module name="customer-ribbon" />
+        <module name="eureka-server" />
+        <module name="service-utils" />
+        <module name="srvc-uams-api" />
+        <module name="srvc-uams-core" />
+        <module name="turbine" />
+        <module name="zuul" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="api" target="1.5" />
+      <module name="api-utils" target="1.8" />
+      <module name="apiutils" target="1.8" />
+      <module name="common" target="1.8" />
+      <module name="common-service" target="1.8" />
+      <module name="config" target="1.8" />
+      <module name="config-client" target="1.8" />
+      <module name="core" target="1.8" />
+      <module name="customer-ribbon" target="1.8" />
+      <module name="demo" target="1.8" />
+      <module name="eureka" target="1.8" />
+      <module name="eureka-client-demo" target="1.8" />
+      <module name="eureka-client-demo (1)" target="1.5" />
+      <module name="eureka-server" target="1.8" />
+      <module name="eurekaclient" target="1.8" />
+      <module name="feign-demo" target="1.8" />
+      <module name="iot-platform" target="1.8" />
+      <module name="iotplatform" target="1.8" />
+      <module name="service-common" target="1.5" />
+      <module name="service-utils" target="1.8" />
+      <module name="servicecommon" target="1.5" />
+      <module name="srvc-uams" target="1.8" />
+      <module name="srvc-uams-api" target="1.8" />
+      <module name="srvc-uams-core" target="1.8" />
+      <module name="test" target="1.5" />
+      <module name="test2" target="1.5" />
+      <module name="turbine" target="1.8" />
+      <module name="uams" target="1.5" />
+      <module name="uams-service" target="1.8" />
+      <module name="uams-service-api" target="1.8" />
+      <module name="uams-service-core" target="1.8" />
+      <module name="zuul" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

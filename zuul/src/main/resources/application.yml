@@ -1,0 +1,30 @@
+server:
+  port: 7102
+
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:7100/eureka/
+
+zuul:
+  routes:
+    uams:
+      path: /uams/**
+      serviceId: srvc-uams
+    customer-ribbon:
+      path: /customer-ribbon/**
+      serviceId: customer-ribbon
+
+logging:
+  level:
+    org.springframework: info
+    com.netflix: info
+  file: E:\\workspace_idea\\iot-platform\\logs\\zuul.log
+
+spring:
+  application:
+    name: zuul

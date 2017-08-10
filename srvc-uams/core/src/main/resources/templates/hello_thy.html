@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thymeleaf测试页面</title>
+</head>
+<body>
+    <h1>你好，thymeleaf</h1>
+<br>1
+    <h2>欢迎 name: <span th:text="${name}"></span></h2>
+<br>
+    <h5>日志信息：
+        <span th:text="${logsin.idKey}"></span><br>
+        <span th:text="${logsin.funcMenuNm}"></span><br>
+        <span th:text="${logsin.funcOperNm}"></span><br>
+        <span th:text="${logsin.operId}"></span><br>
+        <span th:text="${logsin.operNm}"></span><br>
+        <span th:text="${logsin.operRemark}"></span><br>
+        <span th:text="${logsin.operDt}"></span><br>
+    </h5>
+<br>
+<br>
+</body>
+</html>

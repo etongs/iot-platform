@@ -1,0 +1,24 @@
+server:
+  port: 7100
+
+eureka:
+  server:
+    enable-self-preservation: false
+    #eviction-interval-timer-in-ms: 240000
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+logging:
+  level:
+    org.springframework: info
+    com.netflix: info
+  file: E:\\workspace_idea\\iot-platform\\logs\\eureka-server.log
+
+spring:
+  application:
+    name: EurekaServer
