@@ -28,6 +28,7 @@
       <module name="common-service" target="1.8" />
       <module name="config" target="1.8" />
       <module name="config-client" target="1.8" />
+      <module name="config-server" target="1.8" />
       <module name="core" target="1.8" />
       <module name="customer-ribbon" target="1.8" />
       <module name="demo" target="1.8" />

@@ -5,5 +5,13 @@ spring:
     config:
       uri: http://localhost:7103
 
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:7100/eureka/
+
 server:
   port: 8060

@@ -13,9 +13,11 @@
         <module>api-utils</module>
         <module>common-service</module>
         <module>eureka-server</module>
+        <module>config</module>
         <module>turbine</module>
         <module>customer-ribbon</module>
         <module>srvc-uams</module>
+        <module>config-client</module>
     </modules>
 
     <properties>

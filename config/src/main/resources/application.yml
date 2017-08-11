@@ -1,15 +1,6 @@
 server:
   port: 7103
 
-eureka:
-  instance:
-    hostname: localhost
-    prefer-ip-address: true
-    instance-id: ${spring.application.name}:${server.port}
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:7100/eureka/
-
 spring:
   application:
     name: config
