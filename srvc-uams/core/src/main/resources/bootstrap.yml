@@ -3,10 +3,21 @@ spring:
     name: srvc-uams
   cloud:
       config:
-        uri: http://config:7103
+        discovery:
+          enabled: true
+          service-id: config-server
         fail-fast: true
         retry:
           initial-interval: 2000
           max-interval: 10000
           multiplier: 2
           max-attempts: 10
+        profile: dev
+
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:7100/eureka/

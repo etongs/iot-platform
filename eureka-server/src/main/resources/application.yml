@@ -21,4 +21,4 @@ logging:
 
 spring:
   application:
-    name: EurekaServer
+    name: eureka-server

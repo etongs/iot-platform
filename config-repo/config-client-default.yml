@@ -1,7 +1,0 @@
-test:
-  c-ribbon:
-    my-value: heha
-
-mybatis:
-  aliase-package: com.stanley.uams.domain
-

@@ -3,13 +3,21 @@ server:
 
 spring:
   application:
-    name: config
+    name: config-server
   cloud:
     config:
       server:
         git:
           uri: file:///E:/workspace_idea/iot-platform
           search-paths: config-repo
+
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:7100/eureka/
 
 logging:
   level:

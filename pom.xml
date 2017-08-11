@@ -17,7 +17,6 @@
         <module>turbine</module>
         <module>customer-ribbon</module>
         <module>srvc-uams</module>
-        <module>config-client</module>
     </modules>
 
     <properties>
