@@ -1,14 +1,14 @@
 server:
-  port: 8181
+  port: 8381
   context-path: /
 
 spring:
   datasource:
     master:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/eacha_cloud?useUnicode=true&characterEncoding=utf-8&useSSL=false
-      username: root
-      password: root$1234
+      url: jdbc:mysql://192.168.20.102:3306/iot_uams?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      username: stanley
+      password: Stanley$1234
       type: com.alibaba.druid.pool.DruidDataSource
       max-active: 10
       max-idle: 10
@@ -28,5 +28,5 @@ logging:
   level:
     com.stanley: debug
     org.springframework.web: info
-  file: E:\\workspace_idea\\iot-platform\\logs\\srvc-uams.log
+  file: /usr/local/logs/srvc-uams.log
 

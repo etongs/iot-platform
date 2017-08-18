@@ -1,3 +1,14 @@
 spring:
   thymeleaf:
     cache: false
+
+endpoints:
+  refresh:
+    enabled: true
+    sensitive: false
+  restart:
+    enabled: true
+    sensitive: false
+  shutdown:
+    enabled: true
+    sensitive: false
