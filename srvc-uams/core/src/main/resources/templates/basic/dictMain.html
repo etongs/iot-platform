@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+	<head th:include="common/headers::listGroup(#{systemName})"></head>
+	<script type="text/javascript">
+	var listGroupHeight = -1;
+	var $lastRoleObj ;
+	var showData = function(obj){
+		var $o = $(obj);
+		$("#rightFrame").attr("src", "dictContent_html?dictTypeNm="+$o.text()+"&dictTypeId="+$o.prop("rel"));
+		if(null != $lastRoleObj)
+			$lastRoleObj.removeClass("list-group-item-info");
+		$o.addClass("list-group-item-info");
+		$lastRoleObj = $o;
+	};
+	$(function(){
+		ajaxGet({
+			url: parent.CONTEXT_PATH+"/system/dict/listDictType",
+			successJSFunc: function(result) {
+				$.each(result, function (n, value) {
+					$(".list-group").append("<a href=\"javascript:void(0)\" class=\"list-group-item\" rel=\""
+						+value.dict_type_id+"\" onClick=\"showData(this);\">"+value.dict_type_nm+"</a>");
+				});
+				listGroupHeight = $(".list-group").height();
+				resizeTreePanel();
+			}
+		});
+		//调整树形外框的高宽
+		var resizeTreePanel = function () {
+			$(".list-group").height(Math.min($(parent.window).height() - 133, listGroupHeight));
+			$("div.right").height($(parent.window).height() - 158);
+			$("#rightFrame").width($(window).width() - 450);
+		};
+		$(window).resize(function() {  resizeTreePanel(); });
+	});
+	</script>
+	<body>
+		<div class="content_wrap">
+			<div class="list-group">
+				<a class="list-group-item active">字典类别</a>
+			</div>
+			<div class="right">
+		 		<iframe id="rightFrame" frameborder="0" scrolling="auto" noresize="noresize" width="100%" height="100%"></iframe>
+			</div>
+		</div>
+	</body>
+</html>

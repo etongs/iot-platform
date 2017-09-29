@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+	<head th:include="common/headers::singleTable(#{systemName})"></head>
+	<script type="text/javascript">
+	$(function(){
+		var tableObj = new TableInit();
+		tableObj.init({
+			url: parent.CONTEXT_PATH+"/system/user/listPage",
+			columns: [
+				{checkbox: true},
+				{field:'orgName', title:'组织机构', halign: 'center', sortable: true},
+				{field:'account', title:'登录帐号', halign: 'center', sortable: true},
+				{field:'nameCn', title:'姓名', halign: 'center', sortable: true},
+				{field:'nickname', title:'昵称', halign: 'center', sortable: true},
+				{field:'isLocked', title:'帐号锁定', halign: 'center', align: 'center', sortable: true, 
+						formatter: function(value, row, index) { return value?'是':'否';} },
+				{field:'isModify', title:'初始密码', halign: 'center', align: 'center', sortable: true, 
+						formatter: function(value, row, index) { return value?'是':'否';} },
+				{field:'gender', title:'性别', halign: 'center', sortable: true},
+				{field:'email', title:'邮箱', halign: 'center', sortable: true},
+				{field:'birthday', title:'生日', halign: 'center', sortable: true},
+				{field:'mobile', title:'手机号', halign: 'center', sortable: true},
+				{field:'createName', title:'创建人', halign: 'center', sortable: true},
+				{field:'createDt', title:'创建时间', halign: 'center', align: 'center', sortable: true}
+			]
+		});
+		var tableButtonObj = new TableButtonInit();
+		var parmsObj = tableButtonObj.init({
+				tableId: tableObj.tableId,
+				searchFormId: tableObj.searchFormId,
+				basePath: parent.CONTEXT_PATH,
+				exportUrl: parent.CONTEXT_PATH+"/system/user/toExcel",
+				insertUrl: parent.CONTEXT_PATH+"/system/user/insert",
+				updateUrl: parent.CONTEXT_PATH+"/system/user/update",
+				removeUrl: parent.CONTEXT_PATH+"/system/user/deleteBatch",
+				initAddValue: { gender: "男", isLocked: false, isModify: true },  //新增时赋值
+				preSaveFunc: function() { return true;}  //保存前的动作
+			}, {
+				roleIds:{
+					validators: {
+						notEmpty: { message: '所属角色不能为空'}
+					}
+				},
+				account:{
+					validators: {
+						notEmpty: { message: '登录帐号不能为空'},
+						stringLength: { min: 1, max: 30, message: '登录帐号长度必须在1到30之间'},
+						remote: {url: parent.CONTEXT_PATH+"/system/user/validate", message: '帐号已存在', delay: 600, type: "GET",
+	                        	data: function(validator) {
+	                                return { idKey: $("#idKey").val()};
+	                            }
+                        }
+					}
+				},
+				nameCn:{
+					validators: {
+						stringLength: { min: 0, max: 16, message: '用户姓名长度不能超过16'}
+					}
+				},
+				nickname:{
+					validators: {
+						stringLength: { min: 0, max: 16, message: '昵称长度不能超过16'}
+					}
+				},
+				email:{
+					validators: {
+						stringLength: { min: 0, max: 50, message: '邮箱长度不能超过50个字符'},
+						emailAddress: { message: '请输入正确的邮件地址如：123@qq.com'}
+					}
+				},
+				birthday:{
+					validators: {
+						date: {
+	                        format: 'YYYY-MM-DD',
+	                        message: '请输入正确的生日格式'
+	                    }
+					}
+				},
+				mobile:{
+					validators: {
+	                    stringLength: {
+	                        min: 11,
+	                        max: 11,
+	                        message: '请输入11位手机号码'
+	                    },
+	                    regexp: {
+	                        regexp: /^1[3|5|7|8]{1}[0-9]{9}$/,
+	                        message: '请输入正确的手机号码'
+	                    }
+                    }
+				}
+			}, [
+				{itemId: "orgId", itemType: "singleSelector"},
+				{itemId: "roleIds", itemType: "multipleSelector"},
+				{itemId: "isLocked", itemType: "radio"},
+				{itemId: "gender", itemType: "radio"},
+				{itemId: "isModify", itemType: "checkbox"}
+			]
+		);
+		$("#initPwdButton").click(function(){
+			operateSingleTableData({
+				nodataPrompt: "没有勾选要初始化密码的用户,请勾选！",
+				confirmPrompt: "确定要初始化所选的",
+				ifShowMask: true,
+				operateUrl: parent.CONTEXT_PATH+"/system/user/initializePwd",
+				basePath: parent.CONTEXT_PATH,
+				tableId: parmsObj.tableId,
+				toolbarId: parmsObj.toolbarId,
+				checkedIdsName: parmsObj.checkedIdsName,
+				searchFormId: parmsObj.searchFormId,
+				idFieldName: parmsObj.idFieldName
+			});
+		});
+	});
+	</script>
+	<body>
+		<div class="panel-body" style="padding-bottom:0px;">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion" href="#searchPanel">
+							查询条件 (点击折叠)
+						</a>
+					</h4>
+				</div>
+				<div id="searchPanel" class="panel-collapse collapse in">
+					<div class="panel-body">
+						<form id="searchForm" class="form-inline" role="form">
+							<input name="checkedIds" id="checkedIds" type="hidden"/>
+							<div class="form-group" style="margin:0px 5px;">
+								<label for="searchName">用户姓名</label>
+								<input type="text" class="form-control" name="searchName" id="searchName">
+							</div>
+							<button type="button" id="queryButton" class="btn btn-primary" style="margin-left: 20px;">查 询</button>
+							<button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 40px;">导出Excel</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div th:include="common/toolbarTop::singleTableInit('system:SysUser:delete',
+					'system:SysUser:insert','system:SysUser:update','system:SysUser:initializePwd')"></div>
+			<table id="dataTable" class="table-no-bordered"></table>
+			<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title"></h4>
+						</div>
+						<div class="modal-body">
+						<form id="inputForm" class="form-horizontal" role="form">
+							<!-- form内input对象的type属性不能为hidden，否则修改时无法赋值 -->
+							<input id="idKey" name="idKey" type="text" class="hidden">
+							<div class="form-group">
+								<label for="orgId" class="col-sm-2 control-label">组织机构</label>
+								<div class="col-sm-10">
+									<span th:include="common/selector::formSelector0('orgId',
+										  '/system/organization/listAll','idKey','cdNm','','','','','','','','','')"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="roleIds" class="col-sm-2 control-label">所属角色(可多选)</label>
+								<div class="col-sm-10">
+									<span th:include="common/selector::formSelector1('roleIds',
+										  '/system/role/listAll','idKey','roleName','','','','','','','','true','')"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="account" class="col-sm-2 control-label">登录帐号</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="account" id="account">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="nameCn" class="col-sm-2 control-label">姓名</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="nameCn" id="nameCn">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="nickname" class="col-sm-2 control-label">昵称</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="nickname" id="nickname">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="email" class="col-sm-2 control-label">邮箱</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="email" id="email">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="birthday" class="col-sm-2 control-label">生日</label>
+								<div class="col-sm-10">
+									<input type="text" class="form_datetime form-control" style="width:140px" name="birthday" id="birthday">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="mobile" class="col-sm-2 control-label">手机号</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="mobile" id="mobile">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="gender" class="col-sm-2 control-label">性别</label>
+								<div class="col-sm-10">
+									<div class="btn-group" data-toggle="buttons">
+										<label class="btn btn-default">
+											<input type="radio" name="gender" value="男"> 男
+										</label>
+										<label class="btn btn-default">
+											<input type="radio" name="gender" value="女"> 女
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="isLocked" class="col-sm-2 control-label">帐号锁定</label>
+								<div class="col-sm-10">
+									<div class="btn-group" data-toggle="buttons">
+										<label class="btn btn-default">
+											<input type="radio" name="isLocked" value="true"> 是
+										</label>
+										<label class="btn btn-default">
+											<input type="radio" name="isLocked" value="false"> 否
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="isModify" class="col-sm-2 control-label">初始密码</label>
+								<div class="col-sm-10">
+									<label class="checkbox-inline">
+										<input type="checkbox" name="isModify" value="true"> 是
+									</label>
+								</div>
+							</div>
+						</form>
+						</div>
+						<div th:include="common/toolbarBottom::singleTable('system:SysUser:insert','system:SysUser:update')"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

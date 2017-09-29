@@ -1,0 +1,109 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<!------------------  通用的头文件  ---------------->
+<head th:fragment="common(title)">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title th:text="${title}"></title>
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/confirm/jquery-confirm.min.css}">
+    <script type="text/javascript" th:src="@{/javascripts/jquery-3.2.0.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/confirm/jquery-confirm.min.js}"></script>
+    <script type="text/javascript" th:src="@{/javascripts/system-utils.js}"></script>
+</head>
+<!-------------------  单表增删改查的头文件 -------------->
+<head th:fragment="singleTable(title)">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title th:text="${title}"></title>
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/table/bootstrap-table.min.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/table/bootstrap-table-sticky-header.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/validator/bootstrapValidator.min.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/confirm/jquery-confirm.min.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/datetimepicker/bootstrap-datetimepicker.min.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/selector/bootstrap-select.min.css}">
+    <script type="text/javascript" th:src="@{/javascripts/jquery-3.2.0.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/table/bootstrap-table.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/table/bootstrap-table-zh-CN.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/table/bootstrap-table-sticky-header.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/table/tableExport.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/validator/bootstrapValidator.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/validator/zh_CN.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/confirm/jquery-confirm.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/datetimepicker/bootstrap-datetimepicker.zh-CN.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/selector/bootstrap-select.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/selector/defaults-zh_CN.js}"></script>
+    <script type="text/javascript" th:src="@{/javascripts/jquery-ui-11.4.min.js}"></script>
+    <script type="text/javascript" th:src="@{/javascripts/system-utils.js}"></script>
+    <script type="text/javascript" th:src="@{/javascripts/system-common.js}"></script>
+    <style type="text/css">
+    /* 模态窗拖拽时显示图标 */
+    .select{
+        -moz-user-select:none;/*火狐*/
+        -webkit-user-select:none;/*webkit浏览器*/
+        -ms-user-select:none;/*IE10*/
+        -khtml-user-select:none;/*早期浏览器*/
+        user-select:none;
+    }
+    .modal-header{ cursor:move;}
+    </style>
+</head>
+<!-----------------------  树形结构的头文件  ----------------->
+<head th:fragment="tree(title)">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title th:text="${title}"></title>
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/validator/bootstrapValidator.min.css}">
+    <link rel="stylesheet" th:href="@{/javascripts/zTree-3.5.28/css/metroStyle/metroStyle.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/confirm/jquery-confirm.min.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/selector/bootstrap-select.min.css}">
+    <script type="text/javascript" th:src="@{/javascripts/jquery-3.2.0.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/validator/bootstrapValidator.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/validator/zh_CN.js}"></script>
+    <script type="text/javascript" th:src="@{/javascripts/zTree-3.5.28/js/jquery.ztree.all.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/confirm/jquery-confirm.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/selector/bootstrap-select.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/selector/defaults-zh_CN.js}"></script>
+    <script type="text/javascript" th:src="@{/javascripts/system-tree-async.js}"></script>
+    <script type="text/javascript" th:src="@{/javascripts/system-utils.js}"></script>
+    <style type="text/css">
+        div.content_wrap div.left{float: left;width: 270px;}
+        div.content_wrap div.right{float: left;margin-left: 36px; padding-top: 10px;}
+        div.content_wrap div.right div.body{margin-top: 22px;}
+        ul.ztree {margin-top: 10px; margin-left:6px; border: 1px solid #617775;background: #f5f5f5;height:100%;overflow:auto;}
+    </style>
+</head>
+<!-----------------------  列表结构的头文件 --------------------->
+<head th:fragment="listGroup(title)">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title th:text="${title}"></title>
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/confirm/jquery-confirm.min.css}">
+    <script type="text/javascript" th:src="@{/javascripts/jquery-3.2.0.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap-3.3.7/confirm/jquery-confirm.min.js}"></script>
+    <script type="text/javascript" th:src="@{/javascripts/system-utils.js}"></script>
+    <style type="text/css">
+        body {overflow: hidden;}
+        div.content_wrap {overflow: hidden;}
+        div.content_wrap div.list-group{
+            float: left;
+            width: 270px;
+            margin-top: 10px;
+            margin-left:6px;
+            overflow:auto;
+        }
+        div.content_wrap div.right{float: left;margin-left: 40px; padding-top: 10px;}
+        div.content_wrap div.right div.main{margin-top: 10px;}
+    </style>
+</head>

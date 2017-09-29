@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+	<head th:include="common/headers::singleTable(#{systemName})"></head>
+	<script type="text/javascript">
+	$(function(){
+		var tableObj = new TableInit();
+		tableObj.init({
+			url: parent.CONTEXT_PATH+"/system/interface/listPage",
+			columns: [
+				{checkbox: true},
+				{field:'infName', title:'接口名称', halign: 'center', sortable: true},
+				{field:'infUrl', title:'接口地址', halign: 'center', sortable: true},
+				{field:'infParms', title:'接口参数', halign: 'center', sortable: true},
+				{field:'encryptExpression', title:'加密公式', halign: 'center', sortable: true},
+				{field:'encryptCharset', title:'加密算法字符集', halign: 'center', sortable: true},
+				{field:'passwdKey', title:'密码的key值', halign: 'center', sortable: true},
+				{field:'httpMethod', title:'请求方式', halign: 'center', sortable: true},
+				{field:'receivedDataFormat', title:'数据格式', halign: 'center', sortable: true},
+				{field:'implBeanName', title:'实现类bean名称', halign: 'center', sortable: true},
+				{field:'scheduledStatus', title:'计划任务状态', halign: 'center', align: 'center', sortable: true, 
+						formatter: function(value, row, index) { return value?'启动':'停止';} },
+				{field:'lastExeTime', title:'上次执行时间', halign: 'center', align: 'center', sortable: true},
+				{field:'createId', title:'创建用户id', halign: 'center', sortable: true},
+				{field:'createDt', title:'创建日期', halign: 'center', align: 'center', sortable: true},
+				{field:'orderCd', title:'排序码', halign: 'center', sortable: true}
+			]
+		});
+		var tableButtonObj = new TableButtonInit();
+		var parmsObj = tableButtonObj.init({
+				tableId: tableObj.tableId,
+				searchFormId: tableObj.searchFormId,
+				basePath: parent.CONTEXT_PATH,
+				exportUrl: parent.CONTEXT_PATH+"/system/interface/toExcel",
+				insertUrl: parent.CONTEXT_PATH+"/system/interface/insert",
+				updateUrl: parent.CONTEXT_PATH+"/system/interface/update",
+				removeUrl: parent.CONTEXT_PATH+"/system/interface/deleteBatch",
+				initAddValue: {encryptCharset: "UTF-8",scheduledStatus: false},
+				preSaveFunc: function() { return true;}
+			}, {
+				infName:{
+					validators: {
+						notEmpty: { message: '接口名称不能为空'},
+						stringLength: { min: 1, max: 33, message: '接口名称长度必须在1到33之间'}
+					}
+				},
+				infUrl:{
+					validators: {
+						notEmpty: { message: '接口地址不能为空'},
+						stringLength: { min: 1, max: 200, message: '接口地址长度必须在1到200之间'},
+						regexp: {
+	                        regexp: /^(https?):\/\/[\w\-]+(\.[\w\-]+)+([\w\-\.,@?^=%&:\/~\+#]*[\w\-\@?^=%&\/~\+#])?$/,
+	                        message: '请输入正确的url地址'
+	                    }
+					}
+				},
+				infParms:{
+					validators: {
+						stringLength: { min: 0, max: 500, message: '接口参数长度不能超过500'},
+						regexp: {
+							regexp: /^\{(\n*.+:.+,?\n*)+\}$/,
+							message: "请输入json格式的参数"
+						}
+					}
+				},
+				encryptExpression:{
+					validators: {
+						stringLength: { min: 0, max: 200, message: '加密公式长度不能超过200'},
+						regexp: {
+							regexp: /^\"(MD5|SHA1|SHA256)\(.+\)\"$/,
+							message: "请输入MD5或SHA1或SHA256的函数，并加双引号"
+						}
+					}
+				},
+				encryptCharset:{
+					validators: {
+						stringLength: { min: 0, max: 16, message: '加密算法字符集长度不能超过16'}
+					}
+				},
+				passwdKey:{
+					validators: {
+						notEmpty: { message: '密码的key值不能为空'},
+						stringLength: { min: 1, max: 50, message: '密码的key值长度必须在1到50之间'}
+					}
+				},
+				implBeanName:{
+					validators: {
+						notEmpty: { message: '实现类bean名称不能为空'},
+						stringLength: { min: 1, max: 100, message: '实现类bean名称长度必须在1到100之间'}
+					}
+				},
+				orderCd:{
+					validators: {
+						stringLength: { min: 0, max: 6, message: '排序码长度不能超过6'}
+					}
+				}
+			}, [
+				{itemId: "httpMethod", itemType: "singleSelector"},
+				{itemId: "receivedDataFormat", itemType: "singleSelector"},
+				{itemId: "scheduledStatus", itemType: "radio"}
+			]
+		);
+		
+		$("#runButton").click(function(){
+			operateSingleTableData({
+				nodataPrompt: "没有勾选要运行的记录,请勾选！",
+				confirmPrompt: "确定要运行所选的",
+				ifShowMask: true,
+				operateUrl: parent.CONTEXT_PATH+"/system/interface/runInterface",
+				basePath: parent.CONTEXT_PATH,
+				tableId: parmsObj.tableId,
+				toolbarId: parmsObj.toolbarId,
+				checkedIdsName: parmsObj.checkedIdsName,
+				searchFormId: parmsObj.searchFormId,
+				idFieldName: parmsObj.idFieldName
+			});
+		});
+		$("#startButton").click(function(){
+			operateSingleTableData({
+				nodataPrompt: "没有勾选已停用的记录,请勾选！",
+				confirmPrompt: "确定要启动已停用的",
+				operateUrl: parent.CONTEXT_PATH+"/system/interface/isStartInterfaceStatus?enabled=true",
+				basePath: parent.CONTEXT_PATH,
+				judgeColumn: "scheduledStatus",
+				judgeValue: 0,
+				tableId: parmsObj.tableId,
+				toolbarId: parmsObj.toolbarId,
+				checkedIdsName: parmsObj.checkedIdsName,
+				searchFormId: parmsObj.searchFormId,
+				idFieldName: parmsObj.idFieldName
+			});
+		});
+		$("#stopButton").click(function(){
+			operateSingleTableData({
+				nodataPrompt: "没有勾选已启用的记录,请勾选！",
+				confirmPrompt: "确定要停止已启用的",
+				operateUrl: parent.CONTEXT_PATH+"/system/interface/isStartInterfaceStatus?enabled=false",
+				basePath: parent.CONTEXT_PATH,
+				judgeColumn: "scheduledStatus",
+				judgeValue: 1,
+				tableId: parmsObj.tableId,
+				toolbarId: parmsObj.toolbarId,
+				checkedIdsName: parmsObj.checkedIdsName,
+				searchFormId: parmsObj.searchFormId,
+				idFieldName: parmsObj.idFieldName
+			});
+		});
+	});
+	</script>
+	<body>
+		<div class="panel-body" style="padding-bottom:0px;">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion" href="#searchPanel">
+							查询条件 (点击折叠)
+						</a>
+					</h4>
+				</div>
+				<div id="searchPanel" class="panel-collapse collapse in">
+					<div class="panel-body">
+						<form id="searchForm" class="form-inline" role="form">
+							<input name="checkedIds" id="checkedIds" type="hidden"/>
+							<div class="form-group" style="margin:0px 5px;">
+								<label for="searchName">名称</label>
+								<input type="text" class="form-control" name="searchName" id="searchName">
+							</div>
+							<button type="button" id="queryButton" class="btn btn-primary" style="margin-left: 20px;">查 询</button>
+							<button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 40px;">导出Excel</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div th:include="common/toolbarTop::singleTableRun('system:SysInterface:delete',
+					'system:SysInterface:insert','system:SysInterface:update','system:SysInterface:implement',
+					'system:SysInterface:implement','system:SysInterface:implement')"></div>
+			<table id="dataTable" class="table-no-bordered"></table>
+			<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title"></h4>
+						</div>
+						<div class="modal-body">
+						<form id="inputForm" class="form-horizontal" role="form">
+							<!-- form内input对象的type属性不能为hidden，否则修改时无法赋值 -->
+							<input id="idKey" name="idKey" type="text" class="hidden">
+							<div class="form-group">
+								<label for="infName" class="col-sm-2 control-label">接口名称</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="infName" id="infName">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="infUrl" class="col-sm-2 control-label">接口地址</label>
+								<div class="col-sm-10">
+									<textarea class="form-control" name="infUrl" id="infUrl" rows="2"></textarea>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="infParms" class="col-sm-2 control-label">接口参数</label>
+								<div class="col-sm-10">
+									<textarea class="form-control" name="infParms" id="infParms" rows="3"></textarea>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="encryptExpression" class="col-sm-2 control-label">加密公式</label>
+								<div class="col-sm-10">
+									<textarea class="form-control" name="encryptExpression" id="encryptExpression" rows="2"></textarea>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="encryptCharset" class="col-sm-2 control-label">加密算法字符集</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="encryptCharset" id="encryptCharset">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="passwdKey" class="col-sm-2 control-label">密码key值</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="passwdKey" id="passwdKey">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="httpMethod" class="col-sm-2 control-label">请求方式</label>
+								<div class="col-sm-10">
+									<span th:include="common/selector::formSelector0('httpMethod',
+										  '/getConstantCollection/HTTP_METHOR','idKeyString','textValue','','','','','','','','','')"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="receivedDataFormat" class="col-sm-2 control-label">数据格式</label>
+								<div class="col-sm-10">
+									<span th:include="common/selector::formSelector1('receivedDataFormat',
+										  '/getConstantCollection/RECEIVED_DATA_FORMAT','idKeyString','textValue','','','','','','','','','')"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="implBeanName" class="col-sm-2 control-label">实现类bean名称</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="implBeanName" id="implBeanName">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="scheduledStatus" class="col-sm-2 control-label">计划任务状态</label>
+								<div class="col-sm-10">
+									<div class="btn-group" data-toggle="buttons">
+										<label class="btn btn-default">
+											<input type="radio" name="scheduledStatus" value="true"> 启动 
+										</label>
+										<label class="btn btn-default">
+											<input type="radio" name="scheduledStatus" value="false"> 停止  
+										</label>
+									</div>
+								</div>
+							</div>
+							<!--<div class="form-group">
+								<label for="lastExeTime" class="col-sm-2 control-label">上次执行时间</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" style="width:160px" 
+										name="lastExeTime" id="lastExeTime" readonly="readonly">
+								</div>
+							</div>-->
+							<div class="form-group">
+								<label for="orderCd" class="col-sm-2 control-label">排序码</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="orderCd" id="orderCd">
+								</div>
+							</div>
+						</form>
+						</div>
+						<div th:include="common/toolbarBottom::singleTable('system:SysInterface:insert','system:SysInterface:update')"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

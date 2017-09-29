@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stanley.uams.mapper.master.auth.SysUserRoleMapper">
+  <!-- 所有字段-->
+  <sql id="Base_Column_List">user_id, role_id
+  </sql>
+
+  <sql id="Base_Column_List_VO">t.user_id,  t.role_id
+  </sql>
+
+  <!-- 通用where条件-->
+  <sql id="selectiveWhere">
+    <where>
+      <if test='roleId != null'>
+        and role_id=#{roleId,jdbcType=INTEGER}
+      </if>
+    </where>
+  </sql>
+  <!-- 根据主键删除记录-->
+  <delete id="deleteByUserid"  parameterType="int">
+    delete  from sys_user_role where user_id=#{userId,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 批量删除记录-->
+  <delete id="deleteBatch" parameterType="map">
+    delete from sys_user_role
+    where user_id in <foreach item="item" index="index" collection="dataListID" open="(" separator="," close=")">${item}</foreach>
+  </delete>
+
+  <!-- 增加记录-->
+  <insert id="insert" parameterType="SysUserRole" useGeneratedKeys="true" keyProperty="userId">
+    insert into sys_user_role(
+      user_id,role_id)
+    values(
+      #{userId,jdbcType=INTEGER},#{roleId,jdbcType=INTEGER})
+  </insert>
+
+  <!-- 根据主键查找记录-->
+  <select id="selectByPrimaryKey" resultType="SysUserRole" parameterType="int">
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_user_role
+    where user_id= #{userId,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据bean的属性查找多条记录-->
+  <select id="selectAllBySelective" resultType="SysUserRole" parameterType="SysUserRole">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_user_role
+    <include refid="selectiveWhere"/>
+  </select>
+ 
+  <!-- 根据bean的唯一属性查找一条记录-->
+  <select id="selectOneBySelective" resultType="SysUserRole" parameterType="SysUserRole">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_user_role
+    <include refid="selectiveWhere"/>
+    LIMIT 1
+  </select>
+ 
+</mapper>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stanley.uams.mapper.master.auth.SysResourceMapper">
+  <!-- 所有字段-->
+  <sql id="Base_Column_List">id_key,cd_nm,last_mark,parent_id,order_cd,isuse,expression,
+      tree_level,create_id,create_dt,url,res_type,remarks
+  </sql>
+
+  <!-- 通用where条件-->
+  <sql id="selectiveWhere">
+    <where>
+      <if test='cdNm != null and cdNm !=""'>
+        and cd_nm=#{cdNm,jdbcType=VARCHAR}
+      </if>
+      <if test='lastMark != null'>
+        and last_mark=#{lastMark,jdbcType=BIT}
+      </if>
+      <if test='parentId != null'>
+        and parent_id=#{parentId,jdbcType=INTEGER}
+      </if>
+      <if test='orderCd != null'>
+        and order_cd=#{orderCd,jdbcType=INTEGER}
+      </if>
+      <if test='isuse != null'>
+        and isuse=#{isuse,jdbcType=BIT}
+      </if>
+      <if test='expression != null and expression !=""'>
+        and expression=#{expression,jdbcType=VARCHAR}
+      </if>
+      <if test='treeLevel != null'>
+        and tree_level=#{treeLevel,jdbcType=INTEGER}
+      </if>
+      <if test='createId != null'>
+        and create_id=#{createId,jdbcType=INTEGER}
+      </if>
+      <if test='createDt != null'>
+        and create_dt=#{createDt,jdbcType=TIMESTAMP}
+      </if>
+      <if test='url != null and url !=""'>
+        and url=#{url,jdbcType=VARCHAR}
+      </if>
+      <if test='resType != null'>
+        and res_type=#{resType,jdbcType=INTEGER}
+      </if>
+      <if test='remarks != null and remarks !=""'>
+        and remarks=#{remarks,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </sql>
+  <!-- 根据主键删除记录-->
+  <delete id="deleteByPrimaryKey"  parameterType="int">
+    delete  from sys_resource where id_key=#{idKey,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 增加记录-->
+  <insert id="insert" parameterType="SysResource" useGeneratedKeys="true" keyProperty="idKey">
+    insert into sys_resource(
+      cd_nm,last_mark,parent_id,order_cd,isuse,expression,tree_level,create_id,create_dt,url,res_type,remarks)
+    values(
+      #{cdNm,jdbcType=VARCHAR},
+		#{lastMark,jdbcType=BIT},#{parentId,jdbcType=INTEGER},
+		#{orderCd,jdbcType=INTEGER},#{isuse,jdbcType=BIT},
+		#{expression,jdbcType=VARCHAR},#{treeLevel,jdbcType=INTEGER},
+		#{createId,jdbcType=INTEGER},#{createDt,jdbcType=TIMESTAMP},
+		#{url,jdbcType=VARCHAR},#{resType,jdbcType=INTEGER},
+		#{remarks,jdbcType=VARCHAR})
+  </insert>
+
+  <!-- 根据主键修改记录-->
+  <update id="updateByPrimaryKeySelective" parameterType="SysResource">
+    update sys_resource
+    <set>
+      <if test='cdNm != null'>
+        cd_nm=#{cdNm,jdbcType=VARCHAR},
+      </if>
+      <if test='lastMark != null'>
+        last_mark=#{lastMark,jdbcType=BIT},
+      </if>
+      <if test='parentId != null'>
+        parent_id=#{parentId,jdbcType=INTEGER},
+      </if>
+      <if test='orderCd != null'>
+        order_cd=#{orderCd,jdbcType=INTEGER},
+      </if>
+      <if test='isuse != null'>
+        isuse=#{isuse,jdbcType=BIT},
+      </if>
+      <if test='expression != null'>
+        expression=#{expression,jdbcType=VARCHAR},
+      </if>
+      <if test='treeLevel != null'>
+        tree_level=#{treeLevel,jdbcType=INTEGER},
+      </if>
+      <if test='createId != null'>
+        create_id=#{createId,jdbcType=INTEGER},
+      </if>
+      <if test='createDt != null'>
+        create_dt=#{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test='url != null'>
+        url=#{url,jdbcType=VARCHAR},
+      </if>
+      <if test='resType != null'>
+        res_type=#{resType,jdbcType=INTEGER},
+      </if>
+      <if test='remarks != null'>
+        remarks=#{remarks,jdbcType=VARCHAR},
+      </if>
+    </set>
+      where id_key= #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 根据主键查找记录-->
+  <select id="selectByPrimaryKey" resultType="SysResource" parameterType="int">
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_resource
+    where id_key= #{idKey,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据父节点查询下一级子节点-->
+  <select id="selectChildrenByParentId" parameterType="int" resultType="SysResource">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_resource
+    where parent_id = #{parentId,jdbcType=INTEGER}
+    order by order_cd
+  </select>
+
+  <!-- 更新指定idKey的parentId值-->
+  <update id="updateParentIdByIdKey" parameterType="map">
+    update sys_resource SET parent_id = #{parentId,jdbcType=INTEGER} ,tree_level=#{treeLevel,jdbcType=INTEGER}
+    WHERE id_key = #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 更新本节点的last_mark、tree_level-->
+  <update id="updateLastMarkAndLevel" parameterType="map">
+    update sys_resource
+    <set>
+      <if test='lastMark != null'>
+        last_mark=#{lastMark,jdbcType=BIT},
+      </if>
+      <if test='treeLevel != null'>
+        tree_level=#{treeLevel,jdbcType=INTEGER},
+      </if>
+    </set>
+    WHERE id_key = #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 查询所有节点-->
+  <select id="selectAll"  resultType="SysResource">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_resource order by order_cd
+  </select>
+  
+  <!-- 查询除按钮外的子节点-->
+  <select id="selectAllExceptButton" parameterType="int" resultType="SysResource">
+    SELECT id_key,cd_nm,parent_id,tree_level
+    FROM sys_resource
+    WHERE last_mark = 0 AND parent_id = #{parentId,jdbcType=INTEGER}
+    ORDER BY order_cd 
+  </select>
+
+</mapper>

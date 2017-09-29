@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stanley.uams.mapper.master.auth.SysMenuMapper">
+  <!--<cache type="com.stanley.common.dao.MybatisRedisCache" />-->
+  <sql id="Base_Column_List">id_key,cd_nm,last_mark,parent_id,order_cd,isuse,icon_address,link_address,menu_marker,resource_id,tree_level,create_id,create_dt, remarks
+  </sql>
+
+  <!-- 根据主键删除记录-->
+  <delete id="deleteByPrimaryKey"  parameterType="int">
+    delete  from sys_menu where id_key=#{idKey,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 增加记录-->
+  <insert id="insert" parameterType="SysMenu" useGeneratedKeys="true" keyProperty="idKey">
+    insert into sys_menu(
+      cd_nm,last_mark,parent_id,order_cd,isuse,icon_address,link_address,menu_marker,resource_id,tree_level,create_id,create_dt,remarks)
+    values(
+      #{cdNm,jdbcType=VARCHAR},
+		#{lastMark,jdbcType=BIT},#{parentId,jdbcType=INTEGER},
+		#{orderCd,jdbcType=INTEGER},#{isuse,jdbcType=BIT},
+		#{iconAddress,jdbcType=VARCHAR},#{linkAddress,jdbcType=VARCHAR},
+		#{menuMarker,jdbcType=VARCHAR},#{resourceId,jdbcType=INTEGER},
+		#{treeLevel,jdbcType=INTEGER},#{createId,jdbcType=INTEGER},
+		#{createDt,jdbcType=TIMESTAMP},#{remarks,jdbcType=VARCHAR})
+  </insert>
+
+  <!-- 根据主键修改记录-->
+  <update id="updateByPrimaryKeySelective" parameterType="SysMenu">
+    update sys_menu
+    <set>
+      <if test='cdNm != null'>
+        cd_nm=#{cdNm,jdbcType=VARCHAR},
+      </if>
+      <if test='lastMark != null'>
+        last_mark=#{lastMark,jdbcType=BIT},
+      </if>
+      <if test='parentId != null'>
+        parent_id=#{parentId,jdbcType=INTEGER},
+      </if>
+      <if test='orderCd != null'>
+        order_cd=#{orderCd,jdbcType=INTEGER},
+      </if>
+      <if test='isuse != null'>
+        isuse=#{isuse,jdbcType=BIT},
+      </if>
+      <if test='iconAddress != null'>
+        icon_address=#{iconAddress,jdbcType=VARCHAR},
+      </if>
+      <if test='linkAddress != null'>
+        link_address=#{linkAddress,jdbcType=VARCHAR},
+      </if>
+      <if test='menuMarker != null'>
+        menu_marker=#{menuMarker,jdbcType=VARCHAR},
+      </if>
+      <if test='resourceId != null'>
+        resource_id=#{resourceId,jdbcType=INTEGER},
+      </if>
+      <if test='treeLevel != null'>
+        tree_level=#{treeLevel,jdbcType=INTEGER},
+      </if>
+      <if test='createId != null'>
+        create_id=#{createId,jdbcType=INTEGER},
+      </if>
+      <if test='createDt != null'>
+        create_dt=#{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test='remarks != null'>
+        remarks=#{remarks,jdbcType=VARCHAR},
+      </if>
+    </set>
+      where id_key= #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 根据主键查找记录-->
+  <select id="selectByPrimaryKey" resultType="SysMenu" parameterType="int">
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_menu
+    where id_key= #{idKey,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据父节点查询下一级子节点-->
+  <select id="selectChildrenByParentId" parameterType="int" resultType="SysMenu">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_menu
+    where parent_id = #{parentId,jdbcType=INTEGER}
+    order by order_cd
+  </select>
+
+  <!-- 更新指定idKey的parentId值-->
+  <update id="updateParentIdByIdKey" parameterType="map">
+    update sys_menu SET parent_id = #{parentId,jdbcType=INTEGER} ,tree_level=#{treeLevel,jdbcType=INTEGER}
+    WHERE id_key = #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 更新本节点的last_mark、tree_level-->
+  <update id="updateLastMarkAndLevel" parameterType="map">
+    update sys_menu
+    <set>
+      <if test='lastMark != null'>
+        last_mark=#{lastMark,jdbcType=BIT},
+      </if>
+      <if test='treeLevel != null'>
+        tree_level=#{treeLevel,jdbcType=INTEGER},
+      </if>
+    </set>
+    WHERE id_key = #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 查询所有节点-->
+  <select id="selectAll"  resultType="SysMenu">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_menu order by order_cd
+  </select>
+  
+  <!-- 根据bean的唯一属性查找一条记录-->
+  <select id="selectOneBySelective" resultType="SysMenu" parameterType="SysMenu">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_menu
+    where menu_marker=#{menuMarker,jdbcType=VARCHAR} 
+    LIMIT 1
+  </select>
+
+  <!-- 校验帐号是否存在 -->
+  <select id="checkExistMarker" resultType="SysMenu" parameterType="SysMenu">
+    select id_key from sys_menu where id_key != #{idKey,jdbcType=INTEGER} and menu_marker=#{menuMarker,jdbcType=VARCHAR}  
+    LIMIT 1
+  </select>
+
+  <!-- 查询指定角色有权限的下级菜单列表  -->
+  <select id="getPermissionTreeMenus" resultType="SysMenu">
+    select m.id_key,m.cd_nm,m.icon_address,m.link_address,m.last_mark
+    from sys_menu m inner join sys_resource a on m.resource_id=a.id_key
+    inner join sys_permission b on a.id_key=b.resource_id
+    where m.isuse=1
+    and m.parent_id=#{parentId}
+    and b.role_id=#{roleId}
+    order by m.order_cd
+  </select>
+
+</mapper>

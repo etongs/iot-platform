@@ -18,6 +18,10 @@ eureka:
   instance:
     hostname: localhost
     prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+    lease-renewal-interval-in-seconds: 10
+    status-page-url-path: /info
+    health-check-url-path: /health
   client:
     serviceUrl:
-      defaultZone: http://localhost:7100/eureka/
+      defaultZone: http://admin:admin123@192.168.20.108:7100/eureka/

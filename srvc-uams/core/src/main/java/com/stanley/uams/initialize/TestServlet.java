@@ -13,8 +13,9 @@ import java.io.IOException;
  * @author 13346450@qq.com 童晟
  * @version 1.0
  * @create 2017/8/7
- **/
+
 @WebServlet(name = "testServlet",urlPatterns = "/helloServlet")
+ **/
 public class TestServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

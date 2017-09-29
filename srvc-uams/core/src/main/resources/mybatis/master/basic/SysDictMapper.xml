@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stanley.uams.mapper.master.basic.SysDictMapper">
+  <!--<cache type="com.stanley.common.dao.MybatisRedisCache" />-->
+  <!-- 所有字段-->
+  <sql id="Base_Column_List">id_key,dict_type_id,dict_type_nm,dict_value,remark,create_id, create_dt
+  </sql>
+
+  <!-- 通用where条件-->
+  <sql id="selectiveWhere">
+    <where>
+      <if test='dictTypeId != null and dictTypeId !=""'>
+        and dict_type_id=#{dictTypeId,jdbcType=VARCHAR}
+      </if>
+      <if test='dictTypeNm != null and dictTypeNm !=""'>
+        and dict_type_nm=#{dictTypeNm,jdbcType=VARCHAR}
+      </if>
+      <if test='dictValue != null and dictValue !=""'>
+        and dict_value=#{dictValue,jdbcType=VARCHAR}
+      </if>
+      <if test='remark != null and remark !=""'>
+        and remark=#{remark,jdbcType=VARCHAR}
+      </if>
+      <if test='createId != null'>
+        and create_id=#{createId,jdbcType=INTEGER}
+      </if>
+      <if test='createDt != null'>
+        and create_dt=#{createDt,jdbcType=TIMESTAMP}
+      </if>
+    </where>
+  </sql>
+  <!-- 根据主键删除记录-->
+  <delete id="deleteByPrimaryKey"  parameterType="int">
+    delete  from sys_dict where id_key=#{idKey,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 批量删除记录-->
+  <delete id="deleteBatch" parameterType="map">
+    delete from sys_dict
+    where id_key in <foreach item="item" index="index" collection="dataListID" open="(" separator="," close=")">${item}</foreach>
+  </delete>
+
+  <!-- 增加记录-->
+  <insert id="insert" parameterType="SysDict" useGeneratedKeys="true" keyProperty="idKey">
+    insert into sys_dict(
+      dict_type_id,dict_type_nm,dict_value,remark,create_id,create_dt)
+    values(
+        #{dictTypeId,jdbcType=VARCHAR},
+		#{dictTypeNm,jdbcType=VARCHAR},#{dictValue,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},#{createId,jdbcType=INTEGER},
+		#{createDt,jdbcType=TIMESTAMP})
+  </insert>
+
+  <!-- 根据主键修改记录-->
+  <update id="updateByPrimaryKeySelective" parameterType="SysDict">
+    update sys_dict
+    <set>
+      <if test='dictTypeId != null'>
+        dict_type_id=#{dictTypeId,jdbcType=VARCHAR},
+      </if>
+      <if test='dictTypeNm != null'>
+        dict_type_nm=#{dictTypeNm,jdbcType=VARCHAR},
+      </if>
+      <if test='dictValue != null'>
+        dict_value=#{dictValue,jdbcType=VARCHAR},
+      </if>
+      <if test='remark != null'>
+        remark=#{remark,jdbcType=VARCHAR},
+      </if>
+      <if test='createId != null'>
+        create_id=#{createId,jdbcType=INTEGER},
+      </if>
+      <if test='createDt != null'>
+        create_dt=#{createDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+      where id_key= #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 分页查询-->
+  <select id="selectPage" resultType="SysDict" parameterType="Page" useCache="false">
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_dict t 
+    <where>
+      <if test='params.dictTypeId != null and params.dictTypeId !=""'>
+        and t.dict_type_id=#{params.dictTypeId,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
+  <!-- 导出excel-->
+  <select id="toExcel" resultType="SysDict" parameterType="map" useCache="false">
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_dict t 
+    <where>
+      <if test='dictTypeId != null and dictTypeId !=""'>
+        and t.dict_type_id like concat('%',#{dictTypeId,jdbcType=VARCHAR},'%')
+      </if>
+    </where>
+  </select>
+
+  <!-- 根据主键查找记录-->
+  <select id="selectByPrimaryKey" resultType="SysDict" parameterType="int">
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_dict
+    where id_key= #{idKey,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据bean的属性查找多条记录-->
+  <select id="selectAllBySelective" resultType="SysDict" parameterType="SysDict">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_dict
+    <include refid="selectiveWhere"/>
+  </select>
+  
+  <!-- 根据bean的属性查找多条记录-->
+  <select id="selectAllBySelectiveAno" resultType="SysDictVO" parameterType="SysDict">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_dict
+    <include refid="selectiveWhere"/>
+    order by remark asc
+  </select>
+ 
+  <!-- 根据bean的唯一属性查找一条记录-->
+  <select id="selectOneBySelective" resultType="SysDict" parameterType="SysDict">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_dict
+    <include refid="selectiveWhere"/>
+    LIMIT 1
+  </select>
+ 
+   <!-- 查找某一列所有不同的值-->
+  <select id="selectAllByDistinct" resultType="map" >
+    select distinct dict_type_nm,dict_type_id
+    from sys_dict
+  </select>
+  
+</mapper>

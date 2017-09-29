@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/headers::tree(#{systemName})"></head>
+	<script type="text/javascript">
+	$(function(){
+		$('#tree').systemTree({
+			loadUrl: parent.CONTEXT_PATH+"/system/district/loadChildrenNodes",
+			insertUrl: parent.CONTEXT_PATH+"/system/district/insert",
+			editUrl: parent.CONTEXT_PATH+"/system/district/loadOne/",
+			updateUrl: parent.CONTEXT_PATH+"/system/district/update",
+			removeUrl: parent.CONTEXT_PATH+"/system/district/delete/",
+			dragAnddropUrl: parent.CONTEXT_PATH+"/system/district/saveDragAndDrop",
+			initAddValue: {isuse: true, ishot: false},
+			validateFieldsJson: {
+				code:{
+					validators: {
+						notEmpty: { message: '地区编码不能为空'},
+						stringLength: { min: 1, max: 16, message: '地区编码长度必须在1到16之间'}
+					}
+				},
+				cdNm:{
+					validators: {
+						notEmpty: { message: '地区名称不能为空'},
+						stringLength: { min: 1, max: 33, message: '地区名称长度必须在1到33之间'}
+					}
+				},
+				orderCd:{
+					validators: {
+	                    regexp: {
+	                        regexp: /^[1-9][0-9]{0,7}$/,
+	                        message: '请输入不超过8位长度的正整数'
+	                    }
+                    }
+				},
+				longitudeBaidu:{
+					validators: {
+						regexp: {
+	                        regexp: /^\d{0,3}\.\d{0,11}$/,
+	                        message: '请输入正确的经度浮点数'
+	                    }
+					}
+				},
+				latitudeBaidu:{
+					validators: {
+						regexp: {
+	                        regexp: /^\d{0,3}\.\d{0,11}$/,
+	                        message: '请输入正确的纬度浮点数'
+	                    }
+					}
+				},
+				py:{
+					validators: {
+						stringLength: { min: 0, max: 33, message: '地区拼音缩写长度不能超过33'}
+					}
+				},
+				pinyin:{
+					validators: {
+						stringLength: { min: 0, max: 66, message: '地区拼音长度不能超过66'}
+					}
+				},
+				remarks:{
+					validators: {
+						stringLength: { min: 0, max: 66, message: '备注长度不能超过66'}
+					}
+				}
+			},
+			specialItemsJson: [
+				{itemId: "isuse", itemType: "radio"},
+				{itemId: "ishot", itemType: "radio"}
+			]
+		});
+	});
+	</script>
+	<body>
+		<div class="content_wrap">
+			<div class="left">
+				<ul id="tree" class="ztree"></ul>
+			</div>
+			<div class="right">
+				<div th:include="common/toolbarTop::tree('system:SysDistrict:delete','system:SysDistrict:insert')"></div>
+				<div class="body" style="display: none;">
+					<form id="inputForm" class="form-horizontal" role="form">
+						<!-- form内input对象的type属性不能为hidden，否则修改时无法赋值 -->
+						<input id="idKey" name="idKey" type="text" class="hidden">
+						<input id="parentId" name="parentId" type="text" class="hidden">
+						<div class="form-group">
+							<label for="code" class="col-sm-2 control-label">地区编码</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="code" id="code">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="cdNm" class="col-sm-2 control-label">地区名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="cdNm" id="cdNm">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="orderCd" class="col-sm-2 control-label">排序码</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="orderCd" id="orderCd">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="isuse" class="col-sm-2 control-label">是否使用</label>
+							<div class="col-sm-10">
+								<div class="btn-group" data-toggle="buttons">
+									<label class="btn btn-default">
+										<input type="radio" name="isuse" value="true"> 是 
+									</label>
+									<label class="btn btn-default">
+										<input type="radio" name="isuse" value="false"> 否 
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="longitudeBaidu" class="col-sm-2 control-label">经度-百度地图</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="longitudeBaidu" id="longitudeBaidu">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="latitudeBaidu" class="col-sm-2 control-label">纬度-百度地图</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="latitudeBaidu" id="latitudeBaidu">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="py" class="col-sm-2 control-label">地区拼音缩写</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="py" id="py">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="pinyin" class="col-sm-2 control-label">地区拼音</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="pinyin" id="pinyin">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="ishot" class="col-sm-2 control-label">是否是热门城市</label>
+							<div class="col-sm-10">
+								<div class="btn-group" data-toggle="buttons">
+									<label class="btn btn-default">
+										<input type="radio" name="ishot" value="true"> 是 
+									</label>
+									<label class="btn btn-default">
+										<input type="radio" name="ishot" value="false"> 否 
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="treeLevel" class="col-sm-2 control-label">节点级数</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="treeLevel" id="treeLevel" readonly>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="remarks" class="col-sm-2 control-label">备注</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" name="remarks" id="remarks">
+							</div>
+						</div>
+					</form>
+					<div style="text-align: center;">
+						<div th:include="common/toolbarBottom::tree('system:SysDistrict:insert','system:SysDistrict:update')"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

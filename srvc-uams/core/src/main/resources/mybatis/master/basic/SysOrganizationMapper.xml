@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stanley.uams.mapper.master.basic.SysOrganizationMapper">
+  <!--<cache type="com.stanley.common.dao.MybatisRedisCache" />-->
+  
+  <sql id="Base_Column_List">id_key,cd_nm,category,parent_org_id,short_name,code,py,pinyin,link_fax,link_man,link_tel,link_mobile,email,
+  url,address,gps_x,gps_y,baidu_x,baidu_y,post_code,bank_name,bank_account,bank_account_name,bank_reserved_mobile,create_id,create_dt,
+  province_id,province_name,city_id,city_name,district_id,district_name,image_min_url,image_url,description
+  </sql>
+  
+  <sql id="Base_Column_List_VO">t.id_key,t.cd_nm,t.category,parent_org_id,t.short_name,t.code,t.py,t.pinyin,t.link_fax,
+  t.link_man,t.link_tel,t.link_mobile,t.email,t.url,t.address,t.gps_x,t.gps_y,t.baidu_x,t.baidu_y,
+  t.post_code,t.bank_name,t.bank_account,t.bank_account_name,t.bank_reserved_mobile,t.create_id,t.create_dt,t.province_id,
+  t.province_name,t.city_id,t.city_name,t.district_id,t.district_name,t.image_min_url,t.image_url,t.description,
+  a.name_cn as create_name,b.dict_value as category_name
+  </sql>
+  
+  <sql id="selectiveWhere">
+    <where>
+      <if test='cdNm != null and cdNm !=""'>
+        and cd_nm=#{cdNm,jdbcType=VARCHAR}
+      </if>
+      <if test='category != null'>
+        and category=#{category,jdbcType=INTEGER}
+      </if>
+      <if test='parentOrgId != null'>
+        and parent_org_id=#{parentOrgId,jdbcType=INTEGER}
+      </if>
+      <if test='shortName != null and shortName !=""'>
+        and short_name=#{shortName,jdbcType=VARCHAR}
+      </if>
+      <if test='code != null and code !=""'>
+        and code=#{code,jdbcType=VARCHAR}
+      </if>
+      <if test='py != null and py !=""'>
+        and py=#{py,jdbcType=VARCHAR}
+      </if>
+      <if test='pinyin != null and pinyin !=""'>
+        and pinyin=#{pinyin,jdbcType=VARCHAR}
+      </if>
+      <if test='linkFax != null and linkFax !=""'>
+        and link_fax=#{linkFax,jdbcType=VARCHAR}
+      </if>
+      <if test='linkMan != null and linkMan !=""'>
+        and link_man=#{linkMan,jdbcType=VARCHAR}
+      </if>
+      <if test='linkTel != null and linkTel !=""'>
+        and link_tel=#{linkTel,jdbcType=VARCHAR}
+      </if>
+      <if test='linkMobile != null and linkMobile !=""'>
+        and link_mobile=#{linkMobile,jdbcType=VARCHAR}
+      </if>
+      <if test='email != null and email !=""'>
+        and email=#{email,jdbcType=VARCHAR}
+      </if>
+      <if test='url != null and url !=""'>
+        and url=#{url,jdbcType=VARCHAR}
+      </if>
+      <if test='address != null and address !=""'>
+        and address=#{address,jdbcType=VARCHAR}
+      </if>
+      <if test='gpsX != null'>
+        and gps_x=#{gpsX,jdbcType=DOUBLE}
+      </if>
+      <if test='gpsY != null'>
+        and gps_y=#{gpsY,jdbcType=DOUBLE}
+      </if>
+      <if test='baiduX != null'>
+        and baidu_x=#{baiduX,jdbcType=DOUBLE}
+      </if>
+      <if test='baiduY != null'>
+        and baidu_y=#{baiduY,jdbcType=DOUBLE}
+      </if>
+      <if test='postCode != null and postCode !=""'>
+        and post_code=#{postCode,jdbcType=VARCHAR}
+      </if>
+      <if test='bankName != null and bankName !=""'>
+        and bank_name=#{bankName,jdbcType=VARCHAR}
+      </if>
+      <if test='bankAccount != null and bankAccount !=""'>
+        and bank_account=#{bankAccount,jdbcType=VARCHAR}
+      </if>
+      <if test='bankAccountName != null and bankAccountName !=""'>
+        and bank_account_name=#{bankAccountName,jdbcType=VARCHAR}
+      </if>
+      <if test='bankReservedMobile != null and bankReservedMobile !=""'>
+        and bank_reserved_mobile=#{bankReservedMobile,jdbcType=VARCHAR}
+      </if>
+      <if test='createId != null'>
+        and create_id=#{createId,jdbcType=INTEGER}
+      </if>
+      <if test='createDt != null'>
+        and create_dt=#{createDt,jdbcType=TIMESTAMP}
+      </if>
+      <if test='provinceId != null'>
+        and province_id=#{provinceId,jdbcType=INTEGER}
+      </if>
+      <if test='provinceName != null and provinceName !=""'>
+        and province_name=#{provinceName,jdbcType=VARCHAR}
+      </if>
+      <if test='cityId != null'>
+        and city_id=#{cityId,jdbcType=INTEGER}
+      </if>
+      <if test='cityName != null and cityName !=""'>
+        and city_name=#{cityName,jdbcType=VARCHAR}
+      </if>
+      <if test='districtId != null'>
+        and district_id=#{districtId,jdbcType=INTEGER}
+      </if>
+      <if test='districtName != null and districtName !=""'>
+        and district_name=#{districtName,jdbcType=VARCHAR}
+      </if>
+      <if test='imageMinUrl != null and imageMinUrl !=""'>
+        and image_min_url=#{imageMinUrl,jdbcType=VARCHAR}
+      </if>
+      <if test='imageUrl != null and imageUrl !=""'>
+        and image_url=#{imageUrl,jdbcType=VARCHAR}
+      </if>
+      <if test='description != null and description !=""'>
+        and description=#{description,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </sql>
+
+  <!-- 根据主键删除记录-->
+  <delete id="deleteByPrimaryKey"  parameterType="int">
+    delete  from sys_organization where id_key=#{idKey,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 批量删除记录-->
+  <delete id="deleteBatch" parameterType="map">
+    delete from sys_organization
+    where id_key in <foreach item="item" index="index" collection="dataListID" open="(" separator="," close=")">${item}</foreach>
+  </delete>
+
+  <!-- 增加记录-->
+  <insert id="insert" parameterType="SysOrganization" useGeneratedKeys="true" keyProperty="idKey">
+    insert into sys_organization(
+      cd_nm,category,parent_org_id,short_name,code,py,pinyin,link_fax,link_man,link_tel,link_mobile,email,url,address,gps_x,gps_y,baidu_x,baidu_y,post_code,bank_name,bank_account,bank_account_name,bank_reserved_mobile,create_id,create_dt,province_id,province_name,city_id,city_name,district_id,district_name,image_min_url,image_url,description)
+    values(
+        #{cdNm,jdbcType=VARCHAR},
+		#{category,jdbcType=INTEGER},#{parentOrgId,jdbcType=INTEGER},
+		#{shortName,jdbcType=VARCHAR},#{code,jdbcType=VARCHAR},
+		#{py,jdbcType=VARCHAR},#{pinyin,jdbcType=VARCHAR},
+		#{linkFax,jdbcType=VARCHAR},#{linkMan,jdbcType=VARCHAR},
+		#{linkTel,jdbcType=VARCHAR},#{linkMobile,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},#{url,jdbcType=VARCHAR},
+		#{address,jdbcType=VARCHAR},#{gpsX,jdbcType=DOUBLE},
+		#{gpsY,jdbcType=DOUBLE},#{baiduX,jdbcType=DOUBLE},
+		#{baiduY,jdbcType=DOUBLE},#{postCode,jdbcType=VARCHAR},
+		#{bankName,jdbcType=VARCHAR},#{bankAccount,jdbcType=VARCHAR},
+		#{bankAccountName,jdbcType=VARCHAR},#{bankReservedMobile,jdbcType=VARCHAR},
+		#{createId,jdbcType=INTEGER},#{createDt,jdbcType=TIMESTAMP},
+		#{provinceId,jdbcType=INTEGER},#{provinceName,jdbcType=VARCHAR},
+		#{cityId,jdbcType=INTEGER},#{cityName,jdbcType=VARCHAR},
+		#{districtId,jdbcType=INTEGER},#{districtName,jdbcType=VARCHAR},
+		#{imageMinUrl,jdbcType=VARCHAR},#{imageUrl,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR})
+  </insert>
+
+  <!-- 根据主键修改记录-->
+  <update id="updateByPrimaryKeySelective" parameterType="SysOrganization">
+    update sys_organization
+    <set>
+      <if test='cdNm != null'>
+        cd_nm=#{cdNm,jdbcType=VARCHAR},
+      </if>
+      <if test='category != null'>
+        category=#{category,jdbcType=INTEGER},
+      </if>
+      <if test='parentOrgId != null'>
+        parent_org_id=#{parentOrgId,jdbcType=INTEGER},
+      </if>
+      <if test='shortName != null'>
+        short_name=#{shortName,jdbcType=VARCHAR},
+      </if>
+      <if test='code != null'>
+        code=#{code,jdbcType=VARCHAR},
+      </if>
+      <if test='py != null'>
+        py=#{py,jdbcType=VARCHAR},
+      </if>
+      <if test='pinyin != null'>
+        pinyin=#{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test='linkFax != null'>
+        link_fax=#{linkFax,jdbcType=VARCHAR},
+      </if>
+      <if test='linkMan != null'>
+        link_man=#{linkMan,jdbcType=VARCHAR},
+      </if>
+      <if test='linkTel != null'>
+        link_tel=#{linkTel,jdbcType=VARCHAR},
+      </if>
+      <if test='linkMobile != null'>
+        link_mobile=#{linkMobile,jdbcType=VARCHAR},
+      </if>
+      <if test='email != null'>
+        email=#{email,jdbcType=VARCHAR},
+      </if>
+      <if test='url != null'>
+        url=#{url,jdbcType=VARCHAR},
+      </if>
+      <if test='address != null'>
+        address=#{address,jdbcType=VARCHAR},
+      </if>
+      <if test='gpsX != null'>
+        gps_x=#{gpsX,jdbcType=DOUBLE},
+      </if>
+      <if test='gpsY != null'>
+        gps_y=#{gpsY,jdbcType=DOUBLE},
+      </if>
+      <if test='baiduX != null'>
+        baidu_x=#{baiduX,jdbcType=DOUBLE},
+      </if>
+      <if test='baiduY != null'>
+        baidu_y=#{baiduY,jdbcType=DOUBLE},
+      </if>
+      <if test='postCode != null'>
+        post_code=#{postCode,jdbcType=VARCHAR},
+      </if>
+      <if test='bankName != null'>
+        bank_name=#{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test='bankAccount != null'>
+        bank_account=#{bankAccount,jdbcType=VARCHAR},
+      </if>
+      <if test='bankAccountName != null'>
+        bank_account_name=#{bankAccountName,jdbcType=VARCHAR},
+      </if>
+      <if test='bankReservedMobile != null'>
+        bank_reserved_mobile=#{bankReservedMobile,jdbcType=VARCHAR},
+      </if>
+      <if test='createId != null'>
+        create_id=#{createId,jdbcType=INTEGER},
+      </if>
+      <if test='createDt != null'>
+        create_dt=#{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test='provinceId != null'>
+        province_id=#{provinceId,jdbcType=INTEGER},
+      </if>
+      <if test='provinceName != null'>
+        province_name=#{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test='cityId != null'>
+        city_id=#{cityId,jdbcType=INTEGER},
+      </if>
+      <if test='cityName != null'>
+        city_name=#{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test='districtId != null'>
+        district_id=#{districtId,jdbcType=INTEGER},
+      </if>
+      <if test='districtName != null'>
+        district_name=#{districtName,jdbcType=VARCHAR},
+      </if>
+      <if test='imageMinUrl != null'>
+        image_min_url=#{imageMinUrl,jdbcType=VARCHAR},
+      </if>
+      <if test='imageUrl != null'>
+        image_url=#{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test='description != null'>
+        description=#{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+      where id_key= #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 分页查询-->
+  <select id="selectPage" resultType="SysOrganizationVO" parameterType="Page" useCache="false">
+    select 
+    <include refid="Base_Column_List_VO"/>
+    from sys_organization t left join sys_user a on t.create_id = a.id_key
+    left join sys_dict b on t.category = b.id_key
+    <where>
+      <if test='params.provinceId != null and params.provinceId != 0'>
+        and t.province_id=#{params.provinceId,jdbcType=INTEGER}
+      </if>
+      <if test='params.cityId != null and params.cityId != 0'>
+        and t.city_id=#{params.cityId,jdbcType=INTEGER}
+      </if>
+      <if test='params.districtId != null and params.districtId != 0'>
+        and t.district_id=#{params.districtId,jdbcType=INTEGER}
+      </if>
+      <if test='params.cdNm != null and params.cdNm !=""'>
+        and t.cd_nm like concat('%',#{params.cdNm,jdbcType=VARCHAR},'%')
+      </if>
+    </where>
+  </select>
+
+  <!-- 导出excel -->
+  <select id="toExcel" resultType="SysOrganizationVO" parameterType="map" useCache="false">
+    select 
+    <include refid="Base_Column_List_VO"/>
+       from sys_organization t left join sys_user a on t.create_id = a.id_key
+       left join sys_dict b on t.category = b.id_key
+    <where>
+       <if test='provinceId != null and provinceId != 0'>
+        and t.province_id=#{provinceId,jdbcType=INTEGER}
+      </if>
+      <if test='cityId != null and cityId != 0'>
+        and t.city_id=#{cityId,jdbcType=INTEGER}
+      </if>
+      <if test='districtId != null and districtId != 0'>
+        and t.district_id=#{districtId,jdbcType=INTEGER}
+      </if>
+      <if test='cdNm != null and cdNm !=""'>
+        and t.cd_nm like concat('%',#{cdNm,jdbcType=VARCHAR},'%')
+      </if>
+    </where>
+  </select>
+
+  <!-- 根据主键查找记录-->
+  <select id="selectByPrimaryKey" resultType="SysOrganization" parameterType="int">
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_organization
+    where id_key=#{idKey,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据bean的属性查找多条记录-->
+  <select id="selectAllBySelective" resultType="SysOrganization" parameterType="SysOrganization">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_organization
+    <include refid="selectiveWhere"/>
+  </select>
+  
+  <!-- 根据bean的唯一属性查找一条记录-->
+  <select id="selectOneBySelective" resultType="SysOrganization" parameterType="SysOrganization">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_organization
+    <include refid="selectiveWhere"/>
+    LIMIT 1
+  </select>
+  
+</mapper>

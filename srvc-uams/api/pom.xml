@@ -7,7 +7,7 @@
 	<artifactId>srvc-uams-api</artifactId>
 	<packaging>jar</packaging>
 
-	<name>srvc-uams-api</name>
+	<name>${project.artifactId}</name>
 	<description>权限服务API</description>
 
 	<parent>
@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>com.stanley</groupId>
 			<artifactId>api-utils</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
 

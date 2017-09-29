@@ -6,6 +6,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * 权限管理服务
@@ -13,12 +14,13 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
  * @author 13346450@qq.com 童晟
  * @version 1.0
  * @create 2017/8/4
+ * @ServletComponentScan
  **/
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableHystrix
-@ServletComponentScan
+@ComponentScan(basePackages = {"com.stanley.common.configuration","com.stanley.common.dao","com.stanley.uams"})
 public class UamsApplication {
 
     public static void main(String[] args) {

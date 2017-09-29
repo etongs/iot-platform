@@ -6,6 +6,9 @@
     <artifactId>api-utils</artifactId>
     <packaging>jar</packaging>
 
+    <name>${project.artifactId}</name>
+    <description>api接口服务的基础包</description>
+
     <parent>
         <artifactId>iot-platform</artifactId>
         <groupId>com.stanley</groupId>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stanley.uams.mapper.master.basic.SysInterfaceMapper">
+  <!--<cache type="com.stanley.common.dao.MybatisRedisCache" />-->
+  <!-- 所有字段-->
+  <sql id="Base_Column_List">id_key,inf_name,inf_url,inf_parms,encrypt_expression,encrypt_charset,passwd_key,http_method,
+  	received_data_format,impl_bean_name,scheduled_status,last_exe_time,create_id, create_dt,order_cd
+  </sql>
+
+  <!-- 所有字段+显示值-->
+  <sql id="Base_Column_List_VO">t.id_key,t.inf_name,t.inf_url,t.inf_parms,t.encrypt_expression,t.encrypt_charset,t.passwd_key,t.http_method,
+  		t.received_data_format,t.impl_bean_name,t.scheduled_status,t.last_exe_time,t.create_id,t.create_dt,t.order_cd
+  </sql>
+
+  <!-- 通用where条件-->
+  <sql id="selectiveWhere">
+    <where>
+      <if test='infName != null and infName !=""'>
+        and inf_name=#{infName,jdbcType=VARCHAR}
+      </if>
+      <if test='infUrl != null and infUrl !=""'>
+        and inf_url=#{infUrl,jdbcType=VARCHAR}
+      </if>
+      <if test='infParms != null and infParms !=""'>
+        and inf_parms=#{infParms,jdbcType=VARCHAR}
+      </if>
+      <if test='encryptExpression != null and encryptExpression !=""'>
+        and encrypt_expression=#{encryptExpression,jdbcType=VARCHAR}
+      </if>
+      <if test='encryptCharset != null and encryptCharset !=""'>
+        and encrypt_charset=#{encryptCharset,jdbcType=VARCHAR}
+      </if>
+      <if test='passwdKey != null and passwdKey !=""'>
+        and passwd_key=#{passwdKey,jdbcType=VARCHAR}
+      </if>
+      <if test='httpMethod != null and httpMethod !=""'>
+        and http_method=#{httpMethod,jdbcType=VARCHAR}
+      </if>
+      <if test='receivedDataFormat != null and receivedDataFormat !=""'>
+        and received_data_format=#{receivedDataFormat,jdbcType=VARCHAR}
+      </if>
+      <if test='implBeanName != null and implBeanName !=""'>
+        and impl_bean_name=#{implBeanName,jdbcType=VARCHAR}
+      </if>
+      <if test='scheduledStatus != null'>
+        and scheduled_status=#{scheduledStatus,jdbcType=BIT}
+      </if>
+      <if test='lastExeTime != null'>
+        and last_exe_time=#{lastExeTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test='createId != null'>
+        and create_id=#{createId,jdbcType=INTEGER}
+      </if>
+      <if test='createDt != null'>
+        and create_dt=#{createDt,jdbcType=TIMESTAMP}
+      </if>
+       <if test='orderCd != null'>
+        and order_cd=#{orderCd,jdbcType=INTEGER}
+      </if>
+    </where>
+  </sql>
+  <!-- 根据主键删除记录-->
+  <delete id="deleteByPrimaryKey"  parameterType="int">
+    delete  from sys_interface where id_key=#{idKey,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 批量删除记录-->
+  <delete id="deleteBatch" parameterType="map">
+    delete from sys_interface
+    where id_key in <foreach item="item" index="index" collection="dataListID" open="(" separator="," close=")">${item}</foreach>
+  </delete>
+
+  <!-- 增加记录-->
+  <insert id="insert" parameterType="SysInterface" useGeneratedKeys="true" keyProperty="idKey">
+    insert into sys_interface(
+      inf_name,inf_url,inf_parms,encrypt_expression,encrypt_charset,passwd_key,http_method,received_data_format,impl_bean_name,
+      scheduled_status,last_exe_time,create_id,create_dt,order_cd)
+    values(
+        #{infName,jdbcType=VARCHAR},
+		#{infUrl,jdbcType=VARCHAR},#{infParms,jdbcType=VARCHAR},
+		#{encryptExpression,jdbcType=VARCHAR},#{encryptCharset,jdbcType=VARCHAR},
+		#{passwdKey,jdbcType=VARCHAR},#{httpMethod,jdbcType=VARCHAR},
+		#{receivedDataFormat,jdbcType=VARCHAR},#{implBeanName,jdbcType=VARCHAR},
+		#{scheduledStatus,jdbcType=BIT},#{lastExeTime,jdbcType=TIMESTAMP},
+		#{createId,jdbcType=INTEGER},#{createDt,jdbcType=TIMESTAMP},#{orderCd,jdbcType=INTEGER})
+  </insert>
+
+  <!-- 根据主键修改记录-->
+  <update id="updateByPrimaryKeySelective" parameterType="SysInterface">
+    update sys_interface
+    <set>
+      <if test='infName != null'>
+        inf_name=#{infName,jdbcType=VARCHAR},
+      </if>
+      <if test='infUrl != null'>
+        inf_url=#{infUrl,jdbcType=VARCHAR},
+      </if>
+      <if test='infParms != null'>
+        inf_parms=#{infParms,jdbcType=VARCHAR},
+      </if>
+      <if test='encryptExpression != null'>
+        encrypt_expression=#{encryptExpression,jdbcType=VARCHAR},
+      </if>
+      <if test='encryptCharset != null'>
+        encrypt_charset=#{encryptCharset,jdbcType=VARCHAR},
+      </if>
+      <if test='passwdKey != null'>
+        passwd_key=#{passwdKey,jdbcType=VARCHAR},
+      </if>
+      <if test='httpMethod != null'>
+        http_method=#{httpMethod,jdbcType=VARCHAR},
+      </if>
+      <if test='receivedDataFormat != null'>
+        received_data_format=#{receivedDataFormat,jdbcType=VARCHAR},
+      </if>
+      <if test='implBeanName != null'>
+        impl_bean_name=#{implBeanName,jdbcType=VARCHAR},
+      </if>
+      <if test='scheduledStatus != null'>
+        scheduled_status=#{scheduledStatus,jdbcType=BIT},
+      </if>
+      <if test='lastExeTime != null'>
+        last_exe_time=#{lastExeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test='createId != null'>
+        create_id=#{createId,jdbcType=INTEGER},
+      </if>
+      <if test='createDt != null'>
+        create_dt=#{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test='orderCd != null'>
+        order_cd=#{orderCd,jdbcType=INTEGER},
+      </if>
+    </set>
+      where id_key= #{idKey,jdbcType=INTEGER}
+  </update>
+  
+  
+   <!-- 批量删除记录-->
+  <update id="updateStatusBatch" parameterType="map">
+  	update sys_interface
+  	 <set>
+  		scheduled_status=#{scheduledStatus,jdbcType=BIT}
+  	</set>
+    where id_key in <foreach item="item" index="index" collection="dataListID" open="(" separator="," close=")">${item}</foreach>
+  </update>
+
+  <!-- 分页查询-->
+  <select id="selectPage" resultType="SysInterfaceVO" parameterType="Page" useCache="false">
+    select 
+    <include refid="Base_Column_List_VO"/>
+    from sys_interface t
+    <where>
+      <if test='params.infName  != null and params.infName  !=""'>
+        and t.inf_name  like concat('%',#{params.infName ,jdbcType=VARCHAR},'%')
+      </if>
+    </where> 
+  </select>
+
+  <!-- 导出excel-->
+  <select id="toExcel" resultType="SysInterfaceVO" parameterType="map" useCache="false">
+    select 
+    <include refid="Base_Column_List_VO"/>
+    from sys_interface t 
+    <where>
+      <if test='infName != null and infName !=""'>
+        and t.inf_name like concat('%',#{infName ,jdbcType=VARCHAR},'%')
+      </if>
+    </where> 
+  </select>
+
+  <!-- 根据主键查找记录-->
+  <select id="selectByPrimaryKey" resultType="SysInterface" parameterType="int">
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_interface
+    where id_key= #{idKey,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据bean的属性查找多条记录-->
+  <select id="selectAllBySelective" resultType="SysInterface" parameterType="SysInterface">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_interface
+    <include refid="selectiveWhere"/>
+    order by order_cd
+  </select>
+ 
+  <!-- 根据bean的唯一属性查找一条记录-->
+  <select id="selectOneBySelective" resultType="SysInterface" parameterType="SysInterface">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_interface
+    <include refid="selectiveWhere"/>
+    LIMIT 1
+  </select>
+ 
+</mapper>

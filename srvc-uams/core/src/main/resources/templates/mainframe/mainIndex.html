@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" th:content="#{systemName}">
+    <meta name="description" th:content="#{systemName}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title th:text="#{systemName}"></title>
+</head>
+<body>
+
+    <h3>主页面</h3>
+    <div>
+        <!--<span th:text="${session.curName}"></span>,
+        <p> [[${session.curName}]]</p>
+        <br>
+        <span th:text="${session.curTime}"></span>,
+        <span>[[${session.curTime}]]</span>
+        <br>
+        <p th:text="${#httpServletRequest.getParameter('id')}"
+           th:unless="${#httpServletRequest.getParameter('id') == null}">333</p>
+        <br>-->
+        上下文路径1：<p th:text="${#httpServletRequest.getContextPath()}"></p><br>
+        上下文路径2：[[${#httpServletRequest.getContextPath()}]]<br>
+        上下文路径3：<p id="fff"></p>
+    </div>
+
+
+
+
+
+</body>
+</html>

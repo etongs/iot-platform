@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+	<head th:include="common/headers::singleTable(#{systemName})"></head>
+	<script type="text/javascript">
+	$(function(){
+		var tableObj = new TableInit();
+		tableObj.init({
+			url: parent.CONTEXT_PATH+"/system/role/listPage",
+			columns: [
+				{checkbox: true},
+				{field: 'roleName', title: '角色名', halign: 'center', sortable: true},
+				{field: 'roleMarker', title: '角色标识', halign: 'center'},
+				{field: 'roleRemark', title: '备注', halign: 'center'},
+				{field: 'createDt', title: '创建时间', halign: 'center', align: 'center', sortable: true},
+				{field: 'createName', title: '创建人', halign: 'center'}
+	 		]
+		});
+		var tableButtonObj = new TableButtonInit();
+		tableButtonObj.init({
+			tableId: tableObj.tableId,
+			searchFormId: tableObj.searchFormId,
+			basePath: parent.CONTEXT_PATH,
+			exportUrl: parent.CONTEXT_PATH+"/system/role/toExcel",
+			insertUrl: parent.CONTEXT_PATH+"/system/role/insert",
+			updateUrl: parent.CONTEXT_PATH+"/system/role/update",
+			removeUrl: parent.CONTEXT_PATH+"/system/role/deleteBatch",
+			initAddValue: {	}
+		}, {	roleName: {
+	                validators: {
+                        notEmpty: { message: '角色名不能为空'},
+                        stringLength: { min: 2, max: 30, message: '角色名长度必须在2到30之间'},
+                        remote: {url: parent.CONTEXT_PATH+"/system/role/validate", message: '角色名已存在', delay: 600, type: "GET",
+                        		data: function(validator) {
+	                                return { idKey: $("#idKey").val()};
+	                            }
+                        }
+                    }
+                },
+	            roleMarker: {
+                	validators: {
+                        notEmpty: { message: '角色标识不能为空'},
+                        stringLength: { min: 2, max: 30, message: '角色标识长度必须在2到30之间'}
+                    }
+              	},
+              	roleRemark: {
+              		validators: { stringLength: { min: 0, max: 100, message: '备注长度不能超过100'} }
+              	}
+        	}
+		);
+	});
+	</script>
+	<body>
+		<div class="panel-body" style="padding-bottom:0px;">
+			<!-- 查询条件面板 -->
+			<div class="panel panel-default hidden">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion" href="#searchPanel">
+							查询条件 (点击折叠)
+						</a>
+					</h4>
+				</div>
+				<div id="searchPanel" class="panel-collapse collapse">
+					<div class="panel-body">
+						<form id="searchForm" class="form-inline" role="form">
+							<input name="checkedIds" id="checkedIds" type="hidden"/>
+							<div class="form-group" style="margin:0px 5px;">
+								<label for="searchName">角色名</label>
+								<input type="text" class="form-control" name="searchName" id="searchName">
+							</div>
+							<div class="form-group" style="margin:0px 15px;">
+								<label for="searchName2">角色标识</label>
+								<input type="text" class="form-control" name="searchName2" id="searchName2">
+							</div>
+							<button type="button" id="queryButton" class="btn btn-primary" style="margin-left: 20px;">查 询</button>
+							<button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 40px;">导出Excel</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<!-- 数据展示面板 -->
+			<div th:include="common/toolbarTop::singleTable('system:SysRole:delete','system:SysRole:insert','system:SysRole:update')"></div>
+			<table id="dataTable" class="table-no-bordered"></table>
+			<!-- 编辑面板 -->
+			<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			    <div class="modal-dialog">
+			        <div class="modal-content">
+			            <div class="modal-header">
+			            	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		                    <h4 class="modal-title"></h4>
+			            </div>
+			            <div class="modal-body">
+		            	<form id="inputForm" class="form-horizontal" role="form">
+		            		<input id="idKey" name="idKey" type="text" class="hidden">
+		            		<div class="form-group">
+							    <label for="roleName" class="col-sm-2 control-label">角色名称</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="roleName" id="roleName">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="roleMarker" class="col-sm-2 control-label">角色标识</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="roleMarker" id="roleMarker">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="roleRemark" class="col-sm-2 control-label">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="roleRemark" id="roleRemark">
+								</div>
+							</div>
+						</form>
+			            </div>
+						<div th:include="common/toolbarBottom::singleTable('system:SysRole:insert','system:SysRole:update')"></div>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</body>
+</html>

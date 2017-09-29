@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stanley.uams.mapper.master.basic.SysOpenApiMapper">
+  <!--<cache type="com.stanley.common.dao.MybatisRedisCache" />-->
+  <!-- 所有字段-->
+  <sql id="Base_Column_List">id_key,user_name,user_code,private_key,timestamp_val,oper_id,oper_nm,oper_remark, oper_dt
+  </sql>
+
+  <!-- 所有字段+显示值-->
+  <sql id="Base_Column_List_VO">t.id_key,t.user_name,t.user_code,t.private_key,t.timestamp_val,t.oper_id,t.oper_nm,t.oper_remark,  t.oper_dt
+  </sql>
+
+  <!-- 通用where条件-->
+  <sql id="selectiveWhere">
+    <where>
+      <if test='userName != null and userName !=""'>
+        and user_name=#{userName,jdbcType=VARCHAR}
+      </if>
+      <if test='userCode != null and userCode !=""'>
+        and user_code=#{userCode,jdbcType=VARCHAR}
+      </if>
+      <if test='privateKey != null and privateKey !=""'>
+        and private_key=#{privateKey,jdbcType=VARCHAR}
+      </if>
+      <if test='timestampVal != null'>
+        and timestamp_val=#{timestampVal,jdbcType=BIGINT}
+      </if>
+      <if test='operId != null'>
+        and oper_id=#{operId,jdbcType=INTEGER}
+      </if>
+      <if test='operNm != null and operNm !=""'>
+        and oper_nm=#{operNm,jdbcType=VARCHAR}
+      </if>
+      <if test='operRemark != null and operRemark !=""'>
+        and oper_remark=#{operRemark,jdbcType=VARCHAR}
+      </if>
+      <if test='operDt != null'>
+        and oper_dt=#{operDt,jdbcType=TIMESTAMP}
+      </if>
+    </where>
+  </sql>
+  <!-- 根据主键删除记录-->
+  <delete id="deleteByPrimaryKey"  parameterType="int">
+    delete  from sys_open_api where id_key=#{idKey,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 批量删除记录-->
+  <delete id="deleteBatch" parameterType="map">
+    delete from sys_open_api
+    where id_key in <foreach item="item" index="index" collection="dataListID" open="(" separator="," close=")">${item}</foreach>
+  </delete>
+
+  <!-- 增加记录-->
+  <insert id="insert" parameterType="SysOpenApi" useGeneratedKeys="true" keyProperty="idKey">
+    insert into sys_open_api(
+      user_name,user_code,private_key,timestamp_val,oper_id,oper_nm,oper_remark,oper_dt)
+    values(
+        #{userName,jdbcType=VARCHAR},
+		#{userCode,jdbcType=VARCHAR},#{privateKey,jdbcType=VARCHAR},
+		#{timestampVal,jdbcType=BIGINT},#{operId,jdbcType=INTEGER},
+		#{operNm,jdbcType=VARCHAR},#{operRemark,jdbcType=VARCHAR},
+		#{operDt,jdbcType=TIMESTAMP})
+  </insert>
+
+  <!-- 根据主键修改记录-->
+  <update id="updateByPrimaryKeySelective" parameterType="SysOpenApi">
+    update sys_open_api
+    <set>
+      <if test='userName != null'>
+        user_name=#{userName,jdbcType=VARCHAR},
+      </if>
+      <if test='userCode != null'>
+        user_code=#{userCode,jdbcType=VARCHAR},
+      </if>
+      <if test='privateKey != null'>
+        private_key=#{privateKey,jdbcType=VARCHAR},
+      </if>
+      <if test='timestampVal != null'>
+        timestamp_val=#{timestampVal,jdbcType=BIGINT},
+      </if>
+      <if test='operId != null'>
+        oper_id=#{operId,jdbcType=INTEGER},
+      </if>
+      <if test='operNm != null'>
+        oper_nm=#{operNm,jdbcType=VARCHAR},
+      </if>
+      <if test='operRemark != null'>
+        oper_remark=#{operRemark,jdbcType=VARCHAR},
+      </if>
+      <if test='operDt != null'>
+        oper_dt=#{operDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+      where id_key= #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 分页查询-->
+  <select id="selectPage" resultType="SysOpenApiVO" parameterType="Page" useCache="false">
+    select 
+    <include refid="Base_Column_List_VO"/>
+    from sys_open_api t
+    <where>
+      <if test='params.userName  != null and params.userName !=""'>
+        and t.user_name like concat('%',#{params.userName ,jdbcType=VARCHAR},'%')
+      </if>
+    </where>
+  </select>
+
+  <!-- 导出excel-->
+  <select id="toExcel" resultType="SysOpenApiVO" parameterType="map" useCache="false">
+    select 
+    <include refid="Base_Column_List_VO"/>
+    from sys_open_api t
+    <where>
+      <if test='userName  != null and userName  !=""'>
+        and t.user_name  like concat('%',#{userName,jdbcType=VARCHAR},'%')
+      </if>
+    </where>
+  </select>
+
+  <!-- 根据主键查找记录-->
+  <select id="selectByPrimaryKey" resultType="SysOpenApi" parameterType="int">
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_open_api
+    where id_key= #{idKey,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据bean的属性查找多条记录-->
+  <select id="selectAllBySelective" resultType="SysOpenApi" parameterType="SysOpenApi">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_open_api
+    <include refid="selectiveWhere"/>
+  </select>
+ 
+  <!-- 根据bean的唯一属性查找一条记录-->
+  <select id="selectOneBySelective" resultType="SysOpenApi" parameterType="SysOpenApi">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_open_api
+    <include refid="selectiveWhere"/>
+    LIMIT 1
+  </select>
+
+  <!-- 校验标识是否存在 -->
+  <select id="checkExistCode" resultType="SysOpenApi" parameterType="SysOpenApi">
+    select id_key from sys_open_api where id_key != #{idKey,jdbcType=INTEGER} and user_code = #{userCode,jdbcType=VARCHAR}
+    LIMIT 1
+  </select>
+ 
+</mapper>

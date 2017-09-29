@@ -1,0 +1,187 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<!------------------  单表的头部按钮组(标准)  ---------------->
+<div th:fragment="singleTable(remove,add,edit)">
+<div class="btn-toolbar" role="toolbar" id="toolbar">
+    <div class="btn-group">
+        <shiro:hasPermission name="${add}">
+        <button id="addButton" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;新增
+        </button>
+        </shiro:hasPermission>
+        <shiro:lacksPermission name="${add}">
+        <button id="addButton" type="button" class="btn btn-default" disabled="disabled">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;新增
+        </button>
+        </shiro:lacksPermission>
+        <shiro:hasPermission name="${edit}">
+        <button id="editButton" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;修改
+        </button>
+        </shiro:hasPermission>
+        <shiro:lacksPermission name="${edit}">
+        <button id="editButton" type="button" class="btn btn-default" disabled="disabled">
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;修改
+        </button>
+        </shiro:lacksPermission>
+        <shiro:hasPermission name="${remove}">
+        <button id="removeButton" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;删除
+        </button>
+        </shiro:hasPermission>
+        <shiro:lacksPermission name="${remove}">
+        <button id="removeButton" type="button" class="btn btn-default" disabled="disabled">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;删除
+        </button>
+        </shiro:lacksPermission>
+    </div>
+</div>
+</div>
+<!---------------------  单表的头部按钮组（带执行等） ------------------->
+<div th:fragment="singleTableRun(remove,add,edit,run,start,stop)">
+    <div class="btn-toolbar" role="toolbar" id="toolbar">
+        <div class="btn-group">
+            <shiro:hasPermission name="${add}">
+                <button id="addButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;新增
+                </button>
+            </shiro:hasPermission>
+            <shiro:lacksPermission name="${add}">
+                <button id="addButton" type="button" class="btn btn-default" disabled="disabled">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;新增
+                </button>
+            </shiro:lacksPermission>
+            <shiro:hasPermission name="${edit}">
+                <button id="editButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;修改
+                </button>
+            </shiro:hasPermission>
+            <shiro:lacksPermission name="${edit}">
+                <button id="editButton" type="button" class="btn btn-default" disabled="disabled">
+                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;修改
+                </button>
+            </shiro:lacksPermission>
+            <shiro:hasPermission name="${remove}">
+                <button id="removeButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;删除
+                </button>
+            </shiro:hasPermission>
+            <shiro:lacksPermission name="${remove}">
+                <button id="removeButton" type="button" class="btn btn-default" disabled="disabled">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;删除
+                </button>
+            </shiro:lacksPermission>
+        </div>
+        <div class="btn-group" th:if="${run}!=''">
+            <shiro:hasPermission name="${run}">
+                <button id="runButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>&nbsp;运行
+                </button>
+            </shiro:hasPermission>
+            <shiro:lacksPermission name="${run}">
+                <button id="runButton" type="button" class="btn btn-default" disabled="disabled">
+                    <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>&nbsp;运行
+                </button>
+            </shiro:lacksPermission>
+            <shiro:hasPermission name="${start}">
+                <button id="startButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-play" aria-hidden="true"></span>&nbsp;启动
+                </button>
+            </shiro:hasPermission>
+            <shiro:lacksPermission name="${start}">
+                <button id="startButton" type="button" class="btn btn-default" disabled="disabled">
+                    <span class="glyphicon glyphicon-play" aria-hidden="true"></span>&nbsp;启动
+                </button>
+            </shiro:lacksPermission>
+            <shiro:hasPermission name="${stop}">
+                <button id="stopButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>&nbsp;停止
+                </button>
+            </shiro:hasPermission>
+            <shiro:lacksPermission name="${stop}">
+                <button id="stopButton" type="button" class="btn btn-default" disabled="disabled">
+                    <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>&nbsp;停止
+                </button>
+            </shiro:lacksPermission>
+        </div>
+    </div>
+</div>
+<!---------------------  单表的头部按钮组（带初始化） ---------------------->
+<div th:fragment="singleTableInit(remove,add,edit,init)">
+    <div class="btn-toolbar" role="toolbar" id="toolbar">
+        <div class="btn-group">
+            <shiro:hasPermission name="${add}">
+                <button id="addButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;新增
+                </button>
+            </shiro:hasPermission>
+            <shiro:lacksPermission name="${add}">
+                <button id="addButton" type="button" class="btn btn-default" disabled="disabled">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;新增
+                </button>
+            </shiro:lacksPermission>
+            <shiro:hasPermission name="${edit}">
+                <button id="editButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;修改
+                </button>
+            </shiro:hasPermission>
+            <shiro:lacksPermission name="${edit}">
+                <button id="editButton" type="button" class="btn btn-default" disabled="disabled">
+                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;修改
+                </button>
+            </shiro:lacksPermission>
+            <shiro:hasPermission name="${remove}">
+                <button id="removeButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;删除
+                </button>
+            </shiro:hasPermission>
+            <shiro:lacksPermission name="${remove}">
+                <button id="removeButton" type="button" class="btn btn-default" disabled="disabled">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;删除
+                </button>
+            </shiro:lacksPermission>
+        </div>
+        <div class="btn-group">
+            <shiro:hasPermission name="${init}">
+                <button id="initPwdButton" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>&nbsp;初始化密码
+                </button>
+            </shiro:hasPermission>
+            <shiro:lacksPermission name="${init}">
+                <button id="initPwdButton" type="button" class="btn btn-default" disabled="disabled">
+                    <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>&nbsp;初始化密码
+                </button>
+            </shiro:lacksPermission>
+        </div>
+    </div>
+</div>
+<!---------------------  树形结构的头部按钮组  ---------------->
+<div th:fragment="tree(remove,add)">
+<div class="btn-toolbar" role="toolbar" id="toolbar">
+    <div class="btn-group">
+    <shiro:hasPermission name="${add}">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        新增 <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="javascript:void(0)" id="addSameButton">同级</a></li>
+            <li><a href="javascript:void(0)" id="addChildButton">下级</a></li>
+        </ul>
+    </shiro:hasPermission>
+    <shiro:lacksPermission name="${add}">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" disabled="disabled">
+            新增 <span class="caret"></span>
+        </button>
+    </shiro:lacksPermission>
+    <shiro:hasPermission name="${remove}">
+        <button id="removeButton" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;删除
+        </button>
+    </shiro:hasPermission>
+    <shiro:lacksPermission name="${remove}">
+        <button id="removeButton" type="button" class="btn btn-default" disabled="disabled">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;删除
+        </button>
+    </shiro:lacksPermission>
+    </div>
+</div>
+</div>

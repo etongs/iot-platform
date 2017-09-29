@@ -40,103 +40,40 @@ final public class Constants {
 	 * 系统使用的字符集 UTF-8
 	 */
 	public final static String CHARSET = "UTF-8";
-	
+	/**
+	 * shiro的散列算法
+	 */
+	public final static String SHIRO_ENCRYPT_ALGORITHM = "SHA-256";
+	/**
+	 * shiro的散列次数
+	 */
+	public final static int SHIRO_ENCRYPT_TIMES = 2;
 	/**
 	 * http请求超时毫秒数
 	 */
 	public final static int HTTP_CONNECTION_TIMEOUT = 8 * 1000;
-	
 	/**
-	 * 页面上记录的条数，默认无限制 ROW_COUNT = 99
+	 * 登录次数redis的前缀
 	 */
-	public final static Integer ROW_COUNT = 99;
-
+	public final static String SHIRO_LOGIN_COUNT = "shiro_login_count_";
+	/**
+	 * 登录锁定redis的前缀
+	 */
+	public final static String SHIRO_IS_LOCK = "shiro_is_lock_";
+	/**
+	 * 登录失败最大次数
+	 */
+	public final static int LOGIN_FAILED_MAXTIMES = 5;
 	/***
 	 * 数形结构的根节点id   TREE_ROOT_ID = 1
 	 */
 	public final static Integer TREE_ROOT_ID = 1;
 
-	/**
-	 * 保持登录状态的天数
-	 */
-	public final static int REMEMBER_LOGIN_DAYS = 7;
 
-	/**
-	 * 登录失败最大次数
-	 */
-	public final static int LOGIN_FAILED_MAXTIMES = 6;
 
-	/**
-	 * 图片目录
-	 */
-	public final static String UPLOAD_IMAGE_DIR = "images";
-	/**
-	 * 文件目录
-	 */
-	public final static String UPLOAD_FILE_DIR = "files";
-	/**
-	 * 文件临时目录
-	 */
-	public final static String UPLOAD_TEMP_DIR = "temporarys";
-	
-	/**
-	 * 数据字典：组织机构类别
-	 */
-	public final static String ORGANIZATION_TYPE = "organization_type";
-	/**
-	 * 数据字典：培训课程类别
-	 */
-	public final static String TRAINING_COURSE_TYPE = "training_course_type";
-	/**
-	 * 数据字典：培训课程状态
-	 */
-	public final static String TRAINING_COURSE_STATUS = "training_course_status";
-	/**
-	 * 数据字典：培训课程时间
-	 */
-	public final static String TRAINING_COURSE_PERIOD = "training_course_period";
-	/**
-	 * 数据字典：培训课程标签
-	 */
-	public final static String CONTENT_TRAINING_TAG = "content_training_tag";
-	/**
-	 * 数据字典：服务商品状态
-	 */
-	public final static String SERVICE_GOODS_STATUS = "service_goods_status";
-	/**
-	 * 数据字典：内容文章标签
-	 */
-	public final static String CONTENT_ARTICLE_TAG = "content_article_tag";
-	/**
-	 * 数据字典：活动标签
-	 */
-	public final static String FORM_EVENT_TAG = "form_event_tag";
-	
-	/**
-	 * 角色：系统管理员
-	 */
-	public final static String ROLE_SYS_MANAGER = "1001";
-	/**
-	 * 角色：省级管理员
-	 */
-	public final static String ROLE_PROVINCE_MANAGER = "1026";
-	/**
-	 * 角色：市级管理员
-	 */
-	public final static String ROLE_CITY_MANAGER = "1027";
-	/**
-	 * 角色：区级管理员
-	 */
-	public final static String ROLE_DISTRICT_MANAGER = "1028";
-	/**
-	 * 角色：平台管理员
-	 */
-	public final static String ROLE_PLATFORM_MANAGER = "1029";
-	
 	/**
 	 * 日志动作下拉
 	 */
-	@SuppressWarnings("serial")
 	public final static List<GeneralConstant> SYSLOG_CODE_OPERITION = new ArrayList<GeneralConstant>(){
 		{
 			add(new GeneralConstant(1,"1", Constants.FUNC_OPER_NM_CREATE));
@@ -156,11 +93,9 @@ final public class Constants {
 			add(new GeneralConstant(15,"15", Constants.FUNC_OPER_NM_OTHERS));
 		}
 	};
-	
 	/**
 	 * 日志数据表名下拉
 	 */
-	@SuppressWarnings("serial")
 	public final static List<GeneralConstant> SYSLOG_CODE_TABLE = new ArrayList<GeneralConstant>(){
 		{
 			add(new GeneralConstant(1,"1","菜单表"));
@@ -191,22 +126,18 @@ final public class Constants {
 			add(new GeneralConstant(26,"26","精英风采表"));
 		}
 	};
-	
 	/**
 	 * 请求类型
 	 */
-	@SuppressWarnings("serial")
 	public final static List<GeneralConstant> HTTP_METHOR = new ArrayList<GeneralConstant>(){
 		{
 			add(new GeneralConstant(0,"GET","GET"));
 			add(new GeneralConstant(1,"POST","POST"));	
 		}
 	};
-	
 	/**
 	 * 接收的数据类型
 	 */
-	@SuppressWarnings("serial")
 	public final static List<GeneralConstant> RECEIVED_DATA_FORMAT = new ArrayList<GeneralConstant>(){
 		{
 			add(new GeneralConstant(0,"JSON","JSON"));

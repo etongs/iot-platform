@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+	<head th:include="common/headers::singleTable(#{systemName})"></head>
+	<script th:inline="javascript">
+        var tid = [[${param.dictTypeId}]];
+		var tname = [[${param.dictTypeNm}]];
+	</script>
+	<script type="text/javascript">
+	$(function(){
+		var tableObj = new TableInit();
+		tableObj.init({
+			url: parent.parent.CONTEXT_PATH+"/system/dict/listPage/"+tid,
+			columns: [
+				{checkbox: true},
+				{field:'dictTypeId', title:'字典id', halign: 'center', sortable: true},
+				{field:'dictTypeNm', title:'字典名称', halign: 'center', sortable: true},
+				{field:'dictValue', title:'字典值', halign: 'center', sortable: true},
+				{field:'remark', title:'备注', halign: 'center', sortable: true},
+				{field:'createId', title:'创建人', halign: 'center', sortable: true},
+				{field:'createDt', title:'创建时间', halign: 'center', align: 'center', sortable: true}
+			]
+		});
+		var tableButtonObj = new TableButtonInit();
+		tableButtonObj.init({
+				tableId: tableObj.tableId,
+				searchFormId: tableObj.searchFormId,
+				basePath: parent.parent.CONTEXT_PATH,
+				exportUrl: parent.parent.CONTEXT_PATH+"/system/dict/toExcel",
+				insertUrl: parent.parent.CONTEXT_PATH+"/system/dict/insert",
+				updateUrl: parent.parent.CONTEXT_PATH+"/system/dict/update",
+				removeUrl: parent.parent.CONTEXT_PATH+"/system/dict/deleteBatch",
+				initAddValue: {dictTypeId: tid, dictTypeNm: tname},
+				preSaveFunc: function() { return true;}
+			}, {
+				dictTypeId:{
+					validators: {
+						notEmpty: { message: '字典id不能为空'},
+						stringLength: { min: 1, max: 50, message: '字典id长度必须在1到50之间'}
+					}
+				},
+				dictTypeNm:{
+					validators: {
+						notEmpty: { message: '字典名称不能为空'},
+						stringLength: { min: 1, max: 16, message: '字典名称长度必须在1到16之间'}
+					}
+				},
+				dictValue:{
+					validators: {
+						stringLength: { min: 0, max: 66, message: '字典值长度不能超过66'}
+					}
+				},
+				remark:{
+					validators: {
+						stringLength: { min: 0, max: 66, message: '备注长度不能超过66'}
+					}
+				}
+			}
+		);
+	});
+	</script>
+	<body>
+		<div class="panel-body" style="padding-bottom:0px;">
+			<div class="panel panel-default hidden">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion" href="#searchPanel">
+							查询条件 (点击折叠)
+						</a>
+					</h4>
+				</div>
+				<div id="searchPanel" class="panel-collapse collapse in">
+					<div class="panel-body">
+						<form id="searchForm" class="form-inline" role="form">
+							<input name="checkedIds" id="checkedIds" type="hidden"/>
+							<div class="form-group" style="margin:0px 5px;">
+								<label for="searchName">名称</label>
+								<input type="text" class="form-control" name="searchName" id="searchName">
+							</div>
+							<button type="button" id="queryButton" class="btn btn-primary" style="margin-left: 20px;">查 询</button>
+							<button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 40px;">导出Excel</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div th:include="common/toolbarTop::singleTable('system:SysDict:delete',
+					'system:SysDict:insert','system:SysDict:update')"></div>
+			<table id="dataTable" class="table-no-bordered"></table>
+			<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title"></h4>
+						</div>
+						<div class="modal-body">
+						<form id="inputForm" class="form-horizontal" role="form">
+							<!-- form内input对象的type属性不能为hidden，否则修改时无法赋值 -->
+							<input id="idKey" name="idKey" type="text" class="hidden">
+							<div class="form-group">
+								<label for="dictTypeId" class="col-sm-2 control-label">字典id</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="dictTypeId" id="dictTypeId">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="dictTypeNm" class="col-sm-2 control-label">字典名称</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="dictTypeNm" id="dictTypeNm">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="dictValue" class="col-sm-2 control-label">字典值</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="dictValue" id="dictValue">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="remark" class="col-sm-2 control-label">备注</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="remark" id="remark">
+								</div>
+							</div>
+						</form>
+						</div>
+						<div th:include="common/toolbarBottom::singleTable('system:SysDict:insert','system:SysDict:update')"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

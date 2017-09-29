@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+	<head th:include="common/headers::singleTable(#{systemName})"></head>
+	<script type="text/javascript">
+	$(function(){
+		var tableObj = new TableInit();
+		tableObj.init({
+			url: parent.CONTEXT_PATH+"/system/openApi/listPage",
+			columns: [
+				{checkbox: true},
+				{field:'userName', title:'接入的用户名称', halign: 'center', sortable: true},
+				{field:'userCode', title:'接入的用户唯一标识', halign: 'center', sortable: true},
+				{field:'privateKey', title:'接入的用户私钥', halign: 'center', sortable: true},
+				{field:'timestampVal', title:'时间戳', halign: 'center', sortable: true},
+				{field:'operId', title:'操作的用户id', halign: 'center', sortable: true},
+				{field:'operNm', title:'操作的用户名', halign: 'center', sortable: true},
+				{field:'operRemark', title:'操作的备注', halign: 'center', sortable: true},
+				{field:'operDt', title:'操作的日期', halign: 'center', align: 'center', sortable: true}
+			]
+		});
+		var tableButtonObj = new TableButtonInit();
+		tableButtonObj.init({
+				tableId: tableObj.tableId,
+				searchFormId: tableObj.searchFormId,
+				basePath: parent.CONTEXT_PATH,
+				exportUrl: parent.CONTEXT_PATH+"/system/openApi/toExcel",
+				insertUrl: parent.CONTEXT_PATH+"/system/openApi/insert",
+				updateUrl: parent.CONTEXT_PATH+"/system/openApi/update",
+				removeUrl: parent.CONTEXT_PATH+"/system/openApi/deleteBatch",
+				initAddValue: {},
+				preSaveFunc: function() { return true;}
+			}, {
+				userName:{
+					validators: {
+						notEmpty: { message: '接入的用户名称不能为空'},
+						stringLength: { min: 1, max: 33, message: '接入的用户名称长度必须在1到33之间'}
+					}
+				},
+				userCode:{
+					validators: {
+						notEmpty: { message: '接入的用户唯一标识不能为空'},
+						stringLength: { min: 1, max: 16, message: '接入的用户唯一标识长度必须在1到16之间'},
+                        remote: {url: parent.CONTEXT_PATH+"/system/openApi/validate", message: '用户标识已存在', delay: 600, type: "GET",
+                            data: function(validator) {
+                                return { idKey: $("#idKey").val()};
+                            }
+                        }
+					}
+				},
+				operRemark:{
+					validators: {
+						stringLength: { min: 0, max: 333, message: '操作的备注长度不能超过333'}
+					}
+				}
+			}
+		);
+	});
+	</script>
+	<body>
+		<div class="panel-body" style="padding-bottom:0px;">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion" href="#searchPanel">
+							查询条件 (点击折叠)
+						</a>
+					</h4>
+				</div>
+				<div id="searchPanel" class="panel-collapse collapse in">
+					<div class="panel-body">
+						<form id="searchForm" class="form-inline" role="form">
+							<input name="checkedIds" id="checkedIds" type="hidden"/>
+							<div class="form-group" style="margin:0px 5px;">
+								<label for="searchName">名称</label>
+								<input type="text" class="form-control" name="searchName" id="searchName">
+							</div>
+							<button type="button" id="queryButton" class="btn btn-primary" style="margin-left: 20px;">查 询</button>
+							<button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 40px;">导出Excel</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div th:include="common/toolbarTop::singleTable('system:SysOpenApi:delete',
+					'system:SysOpenApi:insert','system:SysOpenApi:update')"></div>
+			<table id="dataTable" class="table-no-bordered"></table>
+			<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title"></h4>
+						</div>
+						<div class="modal-body">
+						<form id="inputForm" class="form-horizontal" role="form">
+							<!-- form内input对象的type属性不能为hidden，否则修改时无法赋值 -->
+							<input id="idKey" name="idKey" type="text" class="hidden">
+							<div class="form-group">
+								<label for="userName" class="col-sm-2 control-label">接入的用户名称</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="userName" id="userName">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="userCode" class="col-sm-2 control-label">接入的用户唯一标识</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="userCode" id="userCode">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="privateKey" class="col-sm-2 control-label">接入的用户私钥</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="privateKey" id="privateKey" readonly="readonly">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="timestampVal" class="col-sm-2 control-label">时间戳</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="timestampVal" id="timestampVal" readonly="readonly">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="operRemark" class="col-sm-2 control-label">备注</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="operRemark" id="operRemark">
+								</div>
+							</div>
+						</form>
+						</div>
+						<div th:include="common/toolbarBottom::singleTable('system:SysOpenApi:insert','system:SysOpenApi:update')"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

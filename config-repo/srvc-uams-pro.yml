@@ -1,12 +1,12 @@
 server:
   port: 8381
-  context-path: /
+  context-path: /iot
 
 spring:
   datasource:
     master:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.20.102:3306/iot_uams?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      url: jdbc:mysql://192.168.20.108:3306/iot_uams?useUnicode=true&characterEncoding=utf-8&useSSL=false
       username: stanley
       password: Stanley$1234
       type: com.alibaba.druid.pool.DruidDataSource
@@ -20,9 +20,24 @@ spring:
       testOnReturn: false
       poolPreparedStatements: true
       maxOpenPreparedStatements: 20
+  redis:
+    database: 0
+    host: 192.168.20.108
+    port: 6379
+    password: root$1234
+    timeout: 2000
+    minIdle: 0
+    maxIdle: 6
+    maxActive: 6
+    maxWait: 3000
+    testOnBorrow: true
 
 mybatis:
   aliase-package: com.stanley.uams.domain
+
+shiro:
+  filterChainDefinition:
+    anon: "/,/test/**,/javascripts/**,/bootstrap-3.3.7/**,/css/**,/images/**,/ace-1.2/**,/ace-1.4.0/**"
 
 logging:
   level:

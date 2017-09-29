@@ -1,0 +1,77 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<!-----------------  表单底部保存等按钮组  ----------------->
+<div th:fragment="singleTable(add,edit)">
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+    <button type="button" class="btn btn-primary submit" id="saveButton" data-loading-text="进行中...">提 交</button>
+    <shiro:hasPermission name="${add}">
+        <input type="hidden" id="addPerm" value="true">
+    </shiro:hasPermission>
+    <shiro:lacksPermission name="${add}">
+        <input type="hidden" id="addPerm" value="false">
+    </shiro:lacksPermission>
+    <shiro:hasPermission name="${edit}">
+        <input type="hidden" id="editPerm" value="true">
+    </shiro:hasPermission>
+    <shiro:lacksPermission name="${edit}">
+        <input type="hidden" id="editPerm" value="false">
+    </shiro:lacksPermission>
+    <script type="text/javascript">
+        function setToolbarPermission(isAdd){
+            if(isAdd){
+                if('false' === document.getElementById("addPerm").value)
+                    $("#saveButton").prop('disabled', true);
+            }else{
+                if('false' === document.getElementById("editPerm").value)
+                    $("#saveButton").prop('disabled', true);
+            }
+        }
+    </script>
+</div>
+</div>
+<!--------------------------  树形结构的底部按钮组 -------------------->
+<div th:fragment="tree(add,edit)">
+<button type="button" class="btn btn-default" id="cancelTree">返  回</button>
+<button type="button" class="btn btn-primary submit" id="saveButton" data-loading-text="进行中...">提 交</button>
+<shiro:hasPermission name="${add}">
+    <input type="hidden" id="addPerm" value="true">
+</shiro:hasPermission>
+<shiro:lacksPermission name="${add}">
+    <input type="hidden" id="addPerm" value="false">
+</shiro:lacksPermission>
+<shiro:hasPermission name="${edit}">
+    <input type="hidden" id="editPerm" value="true">
+</shiro:hasPermission>
+<shiro:lacksPermission name="${edit}">
+    <input type="hidden" id="editPerm" value="false">
+</shiro:lacksPermission>
+<script type="text/javascript">
+    function setToolbarPermission(isAdd){
+        if(isAdd){
+            if('false' === document.getElementById("addPerm").value)
+                $("#saveButton").prop('disabled', true);
+        }else{
+            if('false' === document.getElementById("editPerm").value)
+                $("#saveButton").prop('disabled', true);
+        }
+    }
+</script>
+</div>
+<!----------------  权限树的保存按钮  ------------------>
+<div th:fragment="authTree(edit)">
+<div class="btn-toolbar" role="toolbar" id="toolbar" style="margin-left: 2px;">
+    <button type="button" class="btn btn-primary submit" id="saveButton" data-loading-text="进行中...">保 存</button>
+    <shiro:hasPermission name="${edit}">
+        <input type="hidden" id="editPerm" value="true">
+    </shiro:hasPermission>
+    <shiro:lacksPermission name="${edit}">
+        <input type="hidden" id="editPerm" value="false">
+    </shiro:lacksPermission>
+</div>
+<script type="text/javascript">
+    function setToolbarPermission(isAdd){
+        if('false' === document.getElementById("editPerm").value)
+            $("#saveButton").prop('disabled', true);
+    }
+</script>
+</div>

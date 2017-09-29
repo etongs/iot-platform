@@ -1,0 +1,244 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<!---------------- 通用单个下拉菜单(同页面第一个) ------------->
+<span th:fragment="formSelector0(ddlId,ddlUrl,ddlItemId,ddlItemName,ddlName,ddlOnChanged,
+    ddlDisabled,ddlHeadLabel,ddlHeadValue,ddlWidth,ddlLiveSearch,ddlIsMultiple,ddlHeightCount)">
+<select class="selectpicker show-menu-arrow show-tick form-control" th:id="${ddlId}"
+  th:name="${ddlName}==''?${ddlId}:${ddlName}" th:attr="multiple=(${ddlIsMultiple}=='true'?multiple)">
+    <option th:if="${ddlHeadLabel}!=''" th:value="${ddlHeadValue}" th:text="${ddlHeadLabel}"></option>
+</select>
+<script th:inline="javascript">
+var ddlId0 = [[${ddlId}]];
+var ddlUrl0 = [[${ddlUrl}]];
+ddlUrl0 = parent.CONTEXT_PATH+ddlUrl0;
+var ddlLiveSearch0 = [[${ddlLiveSearch}]];
+var ddlWidth0 = [[${ddlWidth}]];
+var ddlHeightCount0 = [[${ddlHeightCount}]];
+var ddlItemId0 = [[${ddlItemId}]];
+var ddlItemName0 = [[${ddlItemName}]];
+var ddlOnChanged0 = [[${ddlOnChanged}]];
+var ddlDisabled0 = [[${ddlDisabled}]];
+</script>
+<script type="text/javascript">
+$("#"+ddlId0).selectpicker({
+    liveSearch: "true"===ddlLiveSearch0,
+    width: ""==ddlWidth0?"auto":ddlWidth0,
+    size: ""==ddlHeightCount0?"auto":ddlHeightCount0
+});
+ajaxGet({url: ddlUrl0, successJSFunc: function(result) {
+    $.each(result, function (n, value) {
+        $("#"+ddlId0).append("<option value='"+value[ddlItemId0]+"'>"+value[ddlItemName0]+"</option>");
+    });
+    $("#"+ddlId0).selectpicker("refresh");
+}
+});
+if("" != ddlOnChanged0){
+    $("#"+ddlId0).on("changed.bs.select", function (e) {
+        eval(ddlOnChanged0($("#"+ddlId0).selectpicker("val")));
+    });
+}
+if("" != ddlDisabled0) $("#"+ddlId0).prop("disabled", ddlDisabled0);
+</script>
+</span>
+<!---------------- 通用单个下拉菜单(同页面第二个) ------------->
+<span th:fragment="formSelector1(ddlId,ddlUrl,ddlItemId,ddlItemName,ddlName,ddlOnChanged,
+    ddlDisabled,ddlHeadLabel,ddlHeadValue,ddlWidth,ddlLiveSearch,ddlIsMultiple,ddlHeightCount)">
+    <select class="selectpicker show-menu-arrow show-tick form-control" th:id="${ddlId}"
+            th:name="${ddlName}==''?${ddlId}:${ddlName}" th:attr="multiple=(${ddlIsMultiple}=='true'?multiple)">
+        <option th:if="${ddlHeadLabel}!=''" th:value="${ddlHeadValue}" th:text="${ddlHeadLabel}"></option>
+    </select>
+    <script th:inline="javascript">
+        var ddlId1 = [[${ddlId}]];
+        var ddlUrl1 = [[${ddlUrl}]];
+        ddlUrl1 = parent.CONTEXT_PATH+ddlUrl1;
+        var ddlLiveSearch1 = [[${ddlLiveSearch}]];
+        var ddlWidth1 = [[${ddlWidth}]];
+        var ddlHeightCount1 = [[${ddlHeightCount}]];
+        var ddlItemId1 = [[${ddlItemId}]];
+        var ddlItemName1 = [[${ddlItemName}]];
+        var ddlOnChanged1 = [[${ddlOnChanged}]];
+        var ddlDisabled1 = [[${ddlDisabled}]];
+    </script>
+    <script type="text/javascript">
+        $("#"+ddlId1).selectpicker({
+            liveSearch: "true"===ddlLiveSearch1,
+            width: ""==ddlWidth1?"auto":ddlWidth1,
+            size: ""==ddlHeightCount1?"auto":ddlHeightCount1
+        });
+        ajaxGet({url: ddlUrl1, successJSFunc: function(result) {
+            $.each(result, function (n, value) {
+                $("#"+ddlId1).append("<option value='"+value[ddlItemId1]+"'>"+value[ddlItemName1]+"</option>");
+            });
+            $("#"+ddlId1).selectpicker("refresh");
+        }
+        });
+        if("" != ddlOnChanged1){
+            $("#"+ddlId1).on("changed.bs.select", function (e) {
+                eval(ddlOnChanged1($("#"+ddlId1).selectpicker("val")));
+            });
+        }
+        if("" != ddlDisabled1) $("#"+ddlId1).prop("disabled", ddlDisabled1);
+    </script>
+</span>
+<!------------------------ 选择省市区的下拉菜单(查询条件用) -------------------------->
+<div th:fragment="districtQuerySelector(pid,cid,disid,districtUrl,districtItemId,districtItemName,pname,cname,disname,
+    chidden,dishidden,districtHeadLabel,districtHeadValue,districtWidth,districtLiveSearch,districtIsMultiple,districtHeightCount)">
+    <label th:for="${pid}">所属地区</label>
+    <select class="selectpicker show-menu-arrow form-control" th:id="${pid}"
+            th:name="${pname}==''?${pid}:${pname}" th:attr="multiple=(${districtIsMultiple}=='true'?multiple)">
+        <option th:if="${districtHeadLabel}!=''" th:value="${districtHeadValue}" th:text="${districtHeadLabel}"></option>
+    </select>
+    <select class="selectpicker show-menu-arrow form-control" th:id="${cid}"
+            th:name="${cname}==''?${cid}:${cname}" th:attr="multiple=(${districtIsMultiple}=='true'?multiple),hidden=(${chidden}=='true'?hidden)">
+        <option th:if="${districtHeadLabel}!=''" th:value="${districtHeadValue}" th:text="${districtHeadLabel}"></option>
+    </select>
+    <select class="selectpicker show-menu-arrow form-control" th:id="${disid}"
+            th:name="${disname}==''?${disid}:${disname}" th:attr="multiple=(${districtIsMultiple}=='true'?multiple),hidden=(${dishidden}=='true'?hidden)">
+        <option th:if="${districtHeadLabel}!=''" th:value="${districtHeadValue}" th:text="${districtHeadLabel}"></option>
+    </select>
+    <script th:inline="javascript">
+    var pid0 = [[${pid}]];
+    var cid0 = [[${cid}]];
+    var disid0 = [[${disid}]];
+    var districtUrl0 = [[${districtUrl}]];
+    districtUrl0 = parent.CONTEXT_PATH+districtUrl0;
+    var districtItemId0 = [[${districtItemId}]];
+    var districtItemName0 = [[${districtItemName}]];
+    var districtLiveSearch0 = [[${districtLiveSearch}]];
+    var districtHeadValue0 = [[${districtHeadValue}]];
+    var districtWidth0 = [[${districtWidth}]];
+    var districtHeightCount0 = [[${districtHeightCount}]];
+    </script>
+    <script type="text/javascript">
+    $("#"+pid0).selectpicker({
+        liveSearch: "true"===districtLiveSearch0,
+        width: ""==districtWidth0?"auto":districtWidth0,
+        size: ""==districtHeightCount0?"auto":districtHeightCount0
+    });
+    $("#"+cid0).selectpicker({
+        liveSearch: "true"===districtLiveSearch0,
+        width: ""==districtWidth0?"auto":districtWidth0,
+        size: ""==districtHeightCount0?"auto":districtHeightCount0
+    });
+    $("#"+disid0).selectpicker({
+        liveSearch: "true"===districtLiveSearch0,
+        width: ""==districtWidth0?"auto":districtWidth0,
+        size: ""==districtHeightCount0?"auto":districtHeightCount0
+    });
+    ajaxGet({url: districtUrl0+"1", successJSFunc: function(result) {
+        $.each(result, function (n, value) {
+            $("#"+pid0).append("<option value='"+value[districtItemId0]+"'>"+value[districtItemName0]+"</option>");
+        });
+        $("#"+pid0).selectpicker("refresh");
+    }
+    });
+    $("#"+pid0).on("changed.bs.select", function (e) {
+        $("#"+cid0).find("option[value!="+districtHeadValue0+"]").remove();
+        $("#"+disid0).find("option[value!="+districtHeadValue0+"]").remove();
+        $("#"+cid0).selectpicker("refresh");
+        $("#"+disid0).selectpicker("refresh");
+        if("0" != $("#"+pid0).selectpicker("val")) {
+            ajaxGet({url: districtUrl0+$("#"+pid0).selectpicker("val"), successJSFunc: function(result) {
+                $.each(result, function (n, value) {
+                    $("#"+cid0).append("<option value='"+value[districtItemId0]+"'>"+value[districtItemName0]+"</option>");
+                });
+                $("#"+cid0).selectpicker("refresh");
+            }
+            });
+        }
+    });
+    $("#"+cid0).on("changed.bs.select", function (e) {
+        $("#"+disid0).find("option[value!="+districtHeadValue0+"]").remove();
+        $("#"+disid0).selectpicker("refresh");
+        if("0" != $("#"+cid0).selectpicker("val")) {
+            ajaxGet({url: districtUrl0+$("#"+cid0).selectpicker("val"), successJSFunc: function(result) {
+                $.each(result, function (n, value) {
+                    $("#"+disid0).append("<option value='"+value[districtItemId0]+"'>"+value[districtItemName0]+"</option>");
+                });
+                $("#"+disid0).selectpicker("refresh");
+            }
+            });
+        }
+    });
+    </script>
+</div>
+<!--------------------- 选择省市区的下拉菜单(录入表单用) ------------------->
+<div th:fragment="districtInputSelector(pid,cid,disid,districtUrl,districtItemId,districtItemName,pname,cname,disname,
+    chidden,dishidden,districtHeadLabel,districtHeadValue,districtWidth,districtLiveSearch,districtIsMultiple,districtHeightCount)">
+    <select class="selectpicker show-menu-arrow form-control" th:id="${pid}"
+            th:name="${pname}==''?${pid}:${pname}" th:attr="multiple=(${districtIsMultiple}=='true'?multiple)">
+        <option th:if="${districtHeadLabel}!=''" th:value="${districtHeadValue}" th:text="${districtHeadLabel}"></option>
+    </select>
+    <select class="selectpicker show-menu-arrow form-control" th:id="${cid}"
+            th:name="${cname}==''?${cid}:${cname}" th:attr="multiple=(${districtIsMultiple}=='true'?multiple),hidden=(${chidden}=='true'?hidden)">
+        <option th:if="${districtHeadLabel}!=''" th:value="${districtHeadValue}" th:text="${districtHeadLabel}"></option>
+    </select>
+    <select class="selectpicker show-menu-arrow form-control" th:id="${disid}"
+            th:name="${disname}==''?${disid}:${disname}" th:attr="multiple=(${districtIsMultiple}=='true'?multiple),hidden=(${dishidden}=='true'?hidden)">
+        <option th:if="${districtHeadLabel}!=''" th:value="${districtHeadValue}" th:text="${districtHeadLabel}"></option>
+    </select>
+    <script th:inline="javascript">
+        var pid1 = [[${pid}]];
+        var cid1 = [[${cid}]];
+        var disid1 = [[${disid}]];
+        var districtUrl1 = [[${districtUrl}]];
+        districtUrl1 = parent.CONTEXT_PATH+districtUrl1;
+        var districtItemId1 = [[${districtItemId}]];
+        var districtItemName1 = [[${districtItemName}]];
+        var districtLiveSearch1 = [[${districtLiveSearch}]];
+        var districtHeadValue1 = [[${districtHeadValue}]];
+        var districtWidth1 = [[${districtWidth}]];
+        var districtHeightCount1 = [[${districtHeightCount}]];
+    </script>
+    <script type="text/javascript">
+        $("#"+pid1).selectpicker({
+            liveSearch: "true"===districtLiveSearch1,
+            width: ""==districtWidth1?"auto":districtWidth1,
+            size: ""==districtHeightCount1?"auto":districtHeightCount1
+        });
+        $("#"+cid1).selectpicker({
+            liveSearch: "true"===districtLiveSearch1,
+            width: ""==districtWidth1?"auto":districtWidth1,
+            size: ""==districtHeightCount1?"auto":districtHeightCount1
+        });
+        $("#"+disid1).selectpicker({
+            liveSearch: "true"===districtLiveSearch1,
+            width: ""==districtWidth1?"auto":districtWidth1,
+            size: ""==districtHeightCount1?"auto":districtHeightCount1
+        });
+        ajaxGet({url: districtUrl1+"1", successJSFunc: function(result) {
+            $.each(result, function (n, value) {
+                $("#"+pid1).append("<option value='"+value[districtItemId1]+"'>"+value[districtItemName1]+"</option>");
+            });
+            $("#"+pid1).selectpicker("refresh");
+        }
+        });
+        $("#"+pid1).on("changed.bs.select", function (e) {
+            $("#"+cid1).find("option[value!="+districtHeadValue1+"]").remove();
+            $("#"+disid1).find("option[value!="+districtHeadValue1+"]").remove();
+            $("#"+cid1).selectpicker("refresh");
+            $("#"+disid1).selectpicker("refresh");
+            if("0" != $("#"+pid1).selectpicker("val")) {
+                ajaxGet({url: districtUrl1+$("#"+pid1).selectpicker("val"), successJSFunc: function(result) {
+                    $.each(result, function (n, value) {
+                        $("#"+cid1).append("<option value='"+value[districtItemId1]+"'>"+value[districtItemName1]+"</option>");
+                    });
+                    $("#"+cid1).selectpicker("refresh");
+                }
+                });
+            }
+        });
+        $("#"+cid1).on("changed.bs.select", function (e) {
+            $("#"+disid1).find("option[value!="+districtHeadValue1+"]").remove();
+            $("#"+disid1).selectpicker("refresh");
+            if("0" != $("#"+cid1).selectpicker("val")) {
+                ajaxGet({url: districtUrl1+$("#"+cid1).selectpicker("val"), successJSFunc: function(result) {
+                    $.each(result, function (n, value) {
+                        $("#"+disid1).append("<option value='"+value[districtItemId1]+"'>"+value[districtItemName1]+"</option>");
+                    });
+                    $("#"+disid1).selectpicker("refresh");
+                }
+                });
+            }
+        });
+    </script>
+</div>

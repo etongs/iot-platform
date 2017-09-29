@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+	<head th:include="common/headers::singleTable(#{systemName})"></head>
+	<script type="text/javascript">
+	$(function(){
+		var tableObj = new TableInit();
+		tableObj.init({  //sortName: "createDt", sortOrder: "desc",
+			url: parent.CONTEXT_PATH+"/system/logs/listPage",
+			columns: [
+				{checkbox: true},
+				{field:'funcOperNm', title:'动作', halign:'center'},
+				{field:'funcMenuNm', title:'功能菜单', halign:'center'},
+				{field:'operId', title:'用户id', halign:'center'},
+				{field:'operNm', title:'用户名', halign:'center'},
+				{field:'operRemark', title:'备注', halign:'center'},
+				{field:'operDt', title:'日期', halign:'center', sortable:true} ],
+	 		startDateId: "startDate",
+			endDateId: "endDate"
+		});
+		var tableButtonObj = new TableButtonInit();
+		tableButtonObj.init({
+			tableId: tableObj.tableId,
+			searchFormId: tableObj.searchFormId,
+			basePath: parent.CONTEXT_PATH,
+			exportUrl: parent.CONTEXT_PATH+"/system/logs/toExcel",
+			insertUrl: parent.CONTEXT_PATH+"/system/logs/insert",
+			updateUrl: parent.CONTEXT_PATH+"/system/logs/update",
+			removeUrl: parent.CONTEXT_PATH+"/system/logs/deleteBatch"
+		});
+	});
+	</script>
+	<body>
+		<div class="panel-body" style="padding-bottom:0px;">
+			<!-- 查询条件面板 -->
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion" href="#searchPanel">
+							查询条件 (点击折叠)
+						</a>
+					</h4>
+				</div>
+				<div id="searchPanel" class="panel-collapse collapse in">
+					<div class="panel-body">
+						<form id="searchForm" class="form-inline">
+							<input name="checkedIds" id="checkedIds" type="hidden"/>
+							<div class="form-group" style="margin:0px 5px;">
+								<label for="startDate">日期</label>
+								<input type="text" class="form_datetime form-control" name="startDate" id="startDate" style="width:140px">
+							</div>
+							<div class="form-group">
+								<label for="endDate">至</label>
+								<input type="text" class="form_datetime form-control" name="endDate" id="endDate" style="width:140px">
+							</div>
+							<div class="form-group" style="margin:0px 15px;">
+								<label for="selectedId"></label>
+								<span th:include="common/selector::formSelector0('selectedId',
+										  '/getConstantCollection/SYSLOG_CODE_TABLE','textValue','textValue','','','','===全部功能菜单===','','','','','')"></span>
+							</div>
+							<div class="form-group" style="margin:0px 15px;">
+								<label for="selectedId2"></label>
+								<span th:include="common/selector::formSelector1('selectedId2',
+										  '/getConstantCollection/SYSLOG_CODE_OPERITION','textValue','textValue','','','','===全部操作动作===','','','','','')"></span>
+							</div>
+							<div class="form-group" style="margin:0px 15px;">
+								<label class="sr-only" for="searchName">用户名</label>
+								<input type="text" class="form-control" name="searchName" id="searchName" placeholder="用户名"  style="width:80px">
+							</div>
+							<div class="form-group" style="margin:0px 15px;">
+								<label class="sr-only" for="searchName2">备注</label>
+								<input type="text" class="form-control" name="searchName2" id="searchName2" placeholder="备注" style="width:140px">
+							</div>
+							<button type="button" id="queryButton" class="btn btn-primary">查 询</button>
+							<button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 10px;">导出Excel</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<!-- 数据展示面板 -->
+			<div th:include="common/toolbarTop::singleTable('system:SysLogs:delete','','')"></div>
+			<table id="dataTable" class="table-no-bordered"></table>
+		</div>
+	</body>
+</html>

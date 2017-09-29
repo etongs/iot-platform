@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="common/headers::common(#{systemName})"></head>
+	<link rel="stylesheet" th:href="@{/bootstrap-3.3.7/validator/bootstrapValidator.min.css}"/>
+	<link rel="stylesheet" th:href="@{/bootstrap-3.3.7/datetimepicker/bootstrap-datetimepicker.min.css}">
+	<script th:src="@{/bootstrap-3.3.7/validator/bootstrapValidator.min.js}" type="text/javascript"></script>
+	<script th:src="@{/bootstrap-3.3.7/validator/zh_CN.js}" type="text/javascript"></script>
+	<script type="text/javascript" th:src="@{/bootstrap-3.3.7/datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+	<script type="text/javascript" th:src="@{/bootstrap-3.3.7/datetimepicker/bootstrap-datetimepicker.zh-CN.js}"></script>
+	<script type="text/javascript">
+	$(function(){
+		ajaxGet({
+			url: parent.CONTEXT_PATH+"/system/user/queryMyself",
+			successJSFunc: function(row){
+				if(typeof(row)=="object" && !$.isEmptyObject(row)) {
+			        for (var name in row) {
+			        	var obj = $("#inputForm").find('input[name="' + name + '"][type="text"],textarea[name="' + name + '"]');
+			        	if(obj.length > 0)
+				            obj.val(row[name]);
+			        }
+		 		}
+			}
+		});
+		$(".form_datetime").datetimepicker({
+	 		format: "yyyy-mm-dd",
+	 		autoclose: true,
+	 		todayBtn: true,
+	 		todayHighlight: true,
+	 		showMeridian: true,
+		 	pickerPosition: "bottom-right",
+		 	language: 'zh-CN',
+		 	minView: 2
+		});
+		$("#inputForm").bootstrapValidator({
+			message: "输入值无效",
+			feedbackIcons: {	valid: 'glyphicon glyphicon-ok',
+			                	invalid: 'glyphicon glyphicon-remove',
+			                	validating: 'glyphicon glyphicon-refresh'
+							},
+			excluded: [':disabled'],
+			fields: {
+				nameCn:{
+					validators: {
+						stringLength: { min: 0, max: 16, message: '用户姓名长度不能超过16'}
+					}
+				},
+				nickname:{
+					validators: {
+						stringLength: { min: 0, max: 16, message: '昵称长度不能超过16'}
+					}
+				},
+				email:{
+					validators: {
+						stringLength: { min: 0, max: 50, message: '邮箱长度不能超过50个字符'},
+						emailAddress: { message: '请输入正确的邮件地址如：123@qq.com'}
+					}
+				},
+				birthday:{
+					validators: {
+						date: {
+	                        format: 'YYYY-MM-DD',
+	                        message: '请输入正确的生日格式'
+	                    }
+					}
+				},
+				mobile:{
+					validators: {
+	                    stringLength: {
+	                        min: 11,
+	                        max: 11,
+	                        message: '请输入11位手机号码'
+	                    },
+	                    regexp: {
+	                        regexp: /^1[3|5|7|8]{1}[0-9]{9}$/,
+	                        message: '请输入正确的手机号码'
+	                    }
+                    }
+				}
+			}
+		});
+		$("#inputForm").keydown(function(e){
+			e = e || event;
+			if(e.keyCode==13){//按回车触发提交
+				$("#myselfButton").click();
+				return false;
+			}
+			return true;
+		});
+		$("#myselfButton").click(function(){
+			var validatorObj = $("#inputForm").data('bootstrapValidator').validate();
+		    if(!validatorObj.isValid())  return;
+		    $(this).button('loading');
+		    var resetButtonFunc = function() { $("#myselfButton").button('reset');  };
+		    ajaxSubmitForm({
+				url: parent.CONTEXT_PATH+"/system/user/modifyMyself",
+				formId: "inputForm",
+				successJSFunc: function(result) {
+					if (1==result.status) {
+						showAlert($("#saveDiv"), '保存成功。', 'success', 'ok', 2000);
+						setTimeout(function(){
+							resetButtonFunc();
+						}, 500);
+					} else {
+						resetButtonFunc();
+						popAlert("保存失败: "+result.message);
+					}
+				},
+				failureJSFun: function(request, errorMsg, obj){
+					if(request.responseText.indexOf("sessiontimeout") > -1){
+						return;
+					}
+					if(errorMsg.indexOf("parsererror") > -1){
+						popAlert("操作成功，返回信息解析异常！", "警告", "red", resetButtonFunc);
+						return;
+					}
+					if(undefined != request && undefined != request.responseText && "" != request.responseText && null != request.responseText){
+						popAlert(request.responseText, "系统内部程序错误", "red", resetButtonFunc);
+					}else{
+						popAlert(errorMsg , "程序执行失败", "red", resetButtonFunc);
+					}
+				}
+			});
+		});
+	});
+	</script>
+	<body>
+		<div class="panel-body" style="padding-bottom:0px; width: 260px;">
+			<form id="inputForm" role="form">
+				<!-- form内input对象的type属性不能为hidden，否则修改时无法赋值 -->
+				<input id="idKey" name="idKey" type="text" class="hidden">
+				<input id="roleIds" name="roleIds" type="text" class="hidden">
+				<div class="form-group">
+					<label for="nameCn">姓名</label>
+					<input type="text" class="form-control" name="nameCn" id="nameCn">
+				</div>
+				<div class="form-group">
+					<label for="nickname">昵称</label>
+					<input type="text" class="form-control" name="nickname" id="nickname">
+				</div>
+				<div class="form-group">
+					<label for="email">邮箱</label>
+					<input type="text" class="form-control" name="email" id="email">
+				</div>
+				<div class="form-group">
+					<label for="birthday">生日</label>
+					<input type="text" class="form_datetime form-control" style="width:140px" name="birthday" id="birthday">
+				</div>
+				<div class="form-group">
+					<label for="mobile">手机号</label>
+					<input type="text" class="form-control" name="mobile" id="mobile">
+				</div>
+			</form>
+			<div id="saveDiv">
+				<button type="button" class="btn btn-primary submit" id="myselfButton" data-loading-text="进行中...">保 存</button>
+			</div>
+		</div>
+	</body>
+</html>

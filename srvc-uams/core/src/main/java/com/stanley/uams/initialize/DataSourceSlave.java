@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @create 2017/8/7
  *
 @Configuration
-@MapperScan(basePackages = "com.stanley.uams.mapper.slave", sqlSessionTemplateRef  = "slaveSqlSessionTemplate")
+@MapperScan(basePackages = {"com.stanley.uams.mapper.slave"}, sqlSessionTemplateRef  = "slaveSqlSessionTemplate")
  **/
 public class DataSourceSlave extends com.stanley.common.configuration.DataSourceSlaveConfig {
 }

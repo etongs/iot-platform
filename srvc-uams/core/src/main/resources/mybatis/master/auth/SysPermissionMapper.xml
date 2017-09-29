@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stanley.uams.mapper.master.auth.SysPermissionMapper">
+  <!-- 根据角色Id删除记录-->
+  <delete id="deleteByRoleId"  parameterType="int">
+    delete from sys_permission where role_id=#{roleId,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量insert记录-->
+  <insert id="insert" parameterType="map" >
+    insert into sys_permission (role_id,resource_id,create_id,create_dt)
+    values
+     <foreach item="item" index="index" collection="dataListID" separator="," >  
+     (#{roleId,jdbcType=INTEGER},${dataListID[index]},#{createId,jdbcType=INTEGER},#{createDt,jdbcType=TIMESTAMP} )
+     </foreach>  
+  </insert>
+  
+   <!-- 根据角色id查权限的表达式-->
+   <select id="selectResourcesByRoleId" resultType="map" parameterType="int" useCache="false">
+    select a.expression,a.url,a.res_type
+      from sys_permission t inner join sys_resource a on t.resource_id=a.id_key
+      where t.role_id=#{roleId,jdbcType=INTEGER}
+      and  a.expression!=''
+   </select>
+   
+   <select id="selectAll"  resultType="map" parameterType="map" useCache="false">
+    SELECT a.id_key,a.parent_id,a.cd_nm,a.last_mark,b.role_id 
+	FROM sys_resource a 
+	LEFT JOIN sys_permission b ON a.id_key=b.resource_id AND b.role_id=#{roleId,jdbcType=INTEGER}
+	WHERE a.parent_id = #{parentId,jdbcType=INTEGER}
+	ORDER BY a.order_cd 
+   </select>
+   
+</mapper>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+    <head th:include="common/headers::common(#{systemName})"></head>
+        <link rel="stylesheet" th:href="@{/ace-1.2/css/font-awesome.min.css}"/>
+        <link rel="stylesheet" th:href="@{/ace-1.2/css/ace.min.css}" />
+        <link rel="stylesheet" th:href="@{/ace-1.2/css/ace-rtl.min.css}" />
+        <link rel="stylesheet" th:href="@{/ace-1.2/css/ace-skins.min.css}" />
+        <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/contextmenu/jquery.contextMenu.min.css}"/>
+        <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/validator/bootstrapValidator.min.css}"/>
+        <script th:src="@{/bootstrap-3.3.7/validator/bootstrapValidator.min.js}" type="text/javascript"></script>
+        <script th:src="@{/bootstrap-3.3.7/validator/zh_CN.js}" type="text/javascript"></script>
+        <!-- ace scripts -->
+        <script th:src="@{/ace-1.2/js/ace.min.js}"></script>
+        <script th:src="@{/ace-1.2/js/ace-elements.min.js}"></script>
+        <script th:src="@{/ace-1.2/js/ace-extra.min.js}" type="text/javascript"></script>
+        <script th:src="@{/ace-1.2/js/typeahead-bs2.min.js}" type="text/javascript"></script>
+        <!--  自定义js -->
+        <script th:src="@{/ace-1.2/js/sidebar-menu.js}" type="text/javascript"></script>
+        <script th:src="@{/ace-1.2/js/top-tab.js}" type="text/javascript"></script>
+        <!-- jq plugins -->
+        <script th:src="@{/ace-1.2/js/jquery-ui-1.10.3.custom.min.js}" type="text/javascript"></script>
+        <script th:src="@{/ace-1.2/js/jquery.ui.touch-punch.min.js}" type="text/javascript"></script>
+        <script th:src="@{/ace-1.2/js/jquery.slimscroll.min.js}" type="text/javascript"></script>
+        <script th:src="@{/ace-1.2/js/jquery.easy-pie-chart.min.js}" type="text/javascript"></script>
+        <script th:src="@{/ace-1.2/js/jquery.sparkline.min.js}" type="text/javascript"></script>
+        <script th:src="@{/ace-1.2/js/flot/jquery.flot.min.js}" type="text/javascript"></script>
+        <script th:src="@{/ace-1.2/js/flot/jquery.flot.pie.min.js}" type="text/javascript"></script>
+        <script th:src="@{/ace-1.2/js/flot/jquery.flot.resize.min.js}" type="text/javascript"></script>
+        <!--  标签页上的右键菜单   -->
+        <script th:src="@{/bootstrap-3.3.7/contextmenu/jquery.contextMenu.min.js}" type="text/javascript"></script>
+        <style type="text/css">
+            body {
+                overflow: hidden;
+            }
+            .tab-content {
+                border: none;
+                padding: 10px 0px;
+            }
+            #menu_li_0 {
+                display: none;
+            }
+        </style>
+    <body>
+        <div class="navbar navbar-default" id="navbar">
+            <div class="navbar-container" id="navbar-container">
+                <div class="navbar-header pull-left">
+                    <a href="#" class="navbar-brand">
+                        <small>
+                            <!--<img th:src="@{/images/logo.png}" style="margin-right: 20px; "/>-->
+                            [[#{systemName}]]
+                        </small>
+                    </a>
+
+                </div>
+                <div class="navbar-header pull-right" role="navigation">
+                    <ul class="nav ace-nav">
+                        <li class="light-blue">
+                            <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                                <img class="nav-user-photo" th:src="@{/ace-1.2/avatars/user.jpg}" alt="Jason's Photo" />
+                                <span class="user-info">
+                                    <span th:text="|欢迎：${userInfo.nameCn}|"></span>
+                                </span>
+                                <i class="icon-caret-down"></i>
+                            </a>
+                            <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                                <li>
+                                    <a href="javascript:void(0);" id="personalSetting">
+                                        <i class="icon-user"></i>
+                                        个人资料
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0);" id="chgpass">
+                                        <i class="icon-pencil"></i>
+                                        修改密码
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <!--<li>
+                                    <a href="javascript:void(0);" id="switch">
+                                        <i class="icon-retweet"></i>
+                                        切换用户
+                                    </a>
+                                </li>-->
+                                <li>
+                                    <a href="javascript:void(0);" id="logout">
+                                        <i class="icon-off"></i>
+                                        退出
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-container" id="main-container">
+            <div class="main-container-inner">
+                <a class="menu-toggler" id="menu-toggler" href="#">
+                    <span class="menu-text"></span>
+                </a>
+
+                <div class="sidebar" id="sidebar">
+                    <script type="text/javascript">
+                        try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
+                    </script>
+
+                    <ul class="nav nav-list" id="menu"></ul>
+                    <div class="sidebar-collapse" id="sidebar-collapse">
+                        <i class="icon-double-angle-left" data-icon1="icon-double-angle-left" data-icon2="icon-double-angle-right"></i>
+                    </div>
+                    <script type="text/javascript">
+                        try{ace.settings.check('sidebar' , 'collapsed')}catch(e){}
+                    </script>
+                </div>
+
+                <div class="main-content">
+                    <div class="page-content">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <!-- 标签页行 -->
+                                <ul class="nav nav-tabs" role="tablist"></ul>
+                                <!-- 标签页下面的内容区域   -->
+                                <div class="tab-content"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  改密码的div -->
+        <div class="modal fade" id="mainPageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:360px">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">修改密码</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="chgPasswdForm" role="form">
+                            <div class="form-group">
+                                <input type="password" class="form-control" name="userPwd" id="userPwd" placeholder="请输入原密码">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" name="surePwd" id="surePwd" placeholder="请输入新的密码">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" name="sureMore" id="sureMore" placeholder="请确认新密码">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer" id="chgPasswdFooter">
+                        <button type="button" class="btn btn-primary submit" id="chgPasswdButton" data-loading-text="进行中...">提 交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  切换用户    -->
+        <div class="modal fade" id="switchModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:260px">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">切换用户</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="switchForm" th:action="@{/switchUser}" method="post" role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="account" id="account" placeholder="请输入用户帐号">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" name="passwd" id="passwd" placeholder="请输入密码">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary submit" id="switchButton" data-loading-text="进行中...">确  定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script th:inline="javascript">
+        //设置全局变量
+        var CONTEXT_PATH = [[${#httpServletRequest.getContextPath()}]];
+        var isModified = [[${userInfo.isModify}]];
+    </script>
+    <script type="text/javascript">
+        $(window).resize(function() {
+            $("#sidebar").height($(window).height()-$("#navbar").height());
+            $("div .tab-pane iframe").height($("#sidebar").height()-60);
+        });
+        $(function() {
+            $("#sidebar").height($(window).height()-$("#navbar").height()-40);
+            $('#menu').sidebarMenu({
+                url: CONTEXT_PATH+"/listMyMenu/1?t="+Math.random(),
+                loadSuccess: function() {
+                    eval($("#menu_li_00 a").attr("href"));
+                    var lis = $(".nav.nav-list").children().eq(1);
+                    lis.children(":first").click();
+                }
+            });
+            $("#personalSetting").click(function () {
+                addTabs({
+                    id: '99991',
+                    title: '个人资料修改',
+                    icon: 'icon-user',
+                    close: true,
+                    url: 'auth/userEditMe_html',
+                    contextMenu: bindContextMenu
+                });
+            });
+            $("#chgpass").click(function () {
+                $mainModal.modal('show');
+            });
+            $("#switch").click(function () {
+                $switchModal.modal('show');
+            });
+            $("#logout").click(function () {
+                //window.location.href = "https://localhost:8443/cas/logout";
+                window.location.href = CONTEXT_PATH+"/logout";
+            });
+            try{
+                ace.settings.check('navbar' , 'fixed');
+                ace.settings.check('main-container' , 'fixed');
+            }catch(e){}
+            //模态窗初始化
+            var $mainModal = $("#mainPageModal").modal({backdrop: 'static',show: false});
+            $mainModal.on("show.bs.modal", function() {
+                $("#chgPasswdForm").find("input[type='password']").val("");
+                $("#chgPasswdForm").data('bootstrapValidator').resetForm(false);
+            });
+            var $switchModal = $("#switchModal").modal({backdrop: 'static',show: false});
+            $switchModal.on("show.bs.modal", function() {
+                $("#switchForm").find("input").val("");
+                $("#switchForm").data('bootstrapValidator').resetForm(false);
+            });
+            //校验初始化
+            $("#chgPasswdForm").bootstrapValidator({
+                message: "输入值无效",
+                feedbackIcons: {	valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                excluded: [':disabled'],
+                fields: {
+                    userPwd: {
+                        validators: {
+                            notEmpty: { message: '原密码不能为空'},
+                            stringLength: { min: 1, max: 30, message: '长度须在2到30之间'},
+                            remote: {url: CONTEXT_PATH+"/system/user/validOldPasswd",
+                                message: '原密码不正确，请重新输入',
+                                delay: 800,
+                                type: "GET"	}
+                        }
+                    },
+                    surePwd: {
+                        validators: {
+                            notEmpty: { message: '新密码不能为空'},
+                            stringLength: { min: 4, max: 32, message: '密码长度必须大于4，小于32'},
+                            identical: {
+                                field: 'sureMore',
+                                message: '新密码两次输入不一致' },
+                            different: {
+                                field: 'userPwd',
+                                message: '新密码不能和原密码一样'
+                            }
+                        }
+                    },
+                    sureMore: {
+                        validators: {
+                            notEmpty: { message: '确认密码不能为空'},
+                            identical: {
+                                field: 'surePwd',
+                                message: '新密码两次输入不一致' }
+                        }
+                    }
+                }
+            });
+            $("#switchForm").bootstrapValidator({
+                message: "输入值无效",
+                feedbackIcons: {	valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                excluded: [':disabled'],
+                fields: {
+                    account: {
+                        validators: {
+                            notEmpty: { message: '用户帐号不能为空'},
+                            stringLength: { min: 1, max: 30, message: '长度必须在1到30之间'}
+                        }
+                    },
+                    passwd: {
+                        validators: {
+                            notEmpty: { message: '密码不能为空'},
+                            stringLength: { min: 4, max: 32, message: '密码长度必须大于4'}
+                        }
+                    }
+                }
+            });
+            $("#chgPasswdForm").keydown(function(e){
+                e = e || event;
+                if(e.keyCode==13){//按回车触发提交
+                    $("#chgPasswdButton").click();
+                    return false;
+                }
+                return true;
+            });
+            $("#switchForm").keydown(function(e){
+                e = e || event;
+                if(e.keyCode==13){//按回车触发提交
+                    $("#switchButton").click();
+                    return false;
+                }
+                return true;
+            });
+            $("#chgPasswdButton").bind("click", function(){
+                commonAjaxFormSubmmit({
+                    saveUrl: CONTEXT_PATH+"/system/user/modifyPwd",
+                    formId: "chgPasswdForm",
+                    saveButtonId: "chgPasswdButton",
+                    showMessageObj: $("#chgPasswdFooter"),
+                    saveCallback: function() {
+                        $mainModal.modal('hide');
+                        $(".modal-title").text("修改密码");
+                    }
+                });
+            });
+            $("#switchButton").bind("click", function(){
+                var validatorObj = $("#switchForm").data('bootstrapValidator').validate();
+                if(!validatorObj.isValid())  return;
+                document.getElementById("switchForm").submit();
+            });
+            //首次登录判断
+            if (isModified) {
+                $(".modal-title").text("您是首次登录系统，请修改登录密码");
+                $("#chgpass").trigger('click');
+            }
+        });
+        //绑定tab标签的右键菜单
+        function bindContextMenu (id, ifDisabled) {
+            $.contextMenu({
+                selector: "#tab_"+id,
+                zIndex: 500,
+                callback: function(key, options) {
+                    if("closeThis" == key)
+                        closeTab(options.selector.substr(5));
+                    else if("closeOther" == key)
+                        closeAll(options.selector);
+                    else if("closeAll" == key)
+                        closeAll();
+                    else if("refresh" == key)
+                        refresh(options.selector);
+                },
+                items: {
+                    closeThis: {name: "关闭本页", icon: "quit", disabled: ifDisabled},
+                    closeOther: {name: "关闭其他页", icon: "cut"},
+                    closeAll: {name: "关闭所有页", icon: "cut", disabled: ifDisabled},
+                    sep1: "---------",
+                    refresh: {name: "重新加载", icon: "loading"}
+                }
+            });
+        }
+        function closeAll(id){
+            var $tabs = $(".nav-tabs li:gt(0)");
+            if(0 == $tabs.length) return;
+            var tabIds = "";
+            if(undefined == id){
+                $tabs.each(function(){
+                    tabIds = $(this).attr("id").substr(4) + "," + tabIds;
+                });
+            }else{
+                $tabs.each(function(){
+                    if("#"+$(this).attr("id") == id)	return true;
+                    tabIds = $(this).attr("id").substr(4) + "," + tabIds;
+                });
+            }
+            if("" == tabIds)  return;
+            var $arr = tabIds.substr(0, tabIds.length-1).split(",");
+            for(var i=0,l=$arr.length; i < l; i++)
+                closeTab($arr[i]);
+        }
+        function refresh(id){
+            if($(".nav-tabs .active").attr("id") != id.substr(1)) {
+                $(".nav-tabs .active").removeClass("active");
+                $(".tab-content .active").removeClass("active");
+                $(id).addClass('active');
+                $("#" + id.substr(5)).addClass('active');
+            }
+            id = id.substr(5);
+            $("#"+id).children().eq(0).attr('src', $("#"+id).children().eq(0).attr('src'));
+        }
+    </script>
+</html>

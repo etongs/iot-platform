@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stanley.uams.mapper.master.basic.SysParmsMapper">
+  <!--<cache type="com.stanley.common.dao.MybatisRedisCache" />-->
+  <!-- 所有字段-->
+  <sql id="Base_Column_List">id_key,parm_key,parm_value,remarks, create_dt
+  </sql>
+
+  <sql id="Base_Column_List_VO">t.id_key,t.parm_key,t.parm_value,t.remarks,t.create_dt
+  </sql>
+
+  <!-- 通用where条件-->
+  <sql id="selectiveWhere">
+    <where>
+      <if test='parmKey != null and parmKey !=""'>
+        and parm_key=#{parmKey,jdbcType=VARCHAR}
+      </if>
+      <if test='parmValue != null and parmValue !=""'>
+        and parm_value=#{parmValue,jdbcType=VARCHAR}
+      </if>
+      <if test='remarks != null and remarks !=""'>
+        and remarks=#{remarks,jdbcType=VARCHAR}
+      </if>
+      <if test='createDt != null'>
+        and create_dt=#{createDt,jdbcType=TIMESTAMP}
+      </if>
+    </where>
+  </sql>
+  <!-- 根据主键删除记录-->
+  <delete id="deleteByPrimaryKey"  parameterType="int">
+    delete  from sys_parms where id_key=#{idKey,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 批量删除记录-->
+  <delete id="deleteBatch" parameterType="map">
+    delete from sys_parms
+    where id_key in <foreach item="item" index="index" collection="dataListID" open="(" separator="," close=")">${item}</foreach>
+  </delete>
+
+  <!-- 增加记录-->
+  <insert id="insert" parameterType="SysParms" useGeneratedKeys="true" keyProperty="idKey">
+    insert into sys_parms(
+      parm_key,parm_value,remarks,create_dt)
+    values(
+        #{parmKey,jdbcType=VARCHAR},
+		#{parmValue,jdbcType=VARCHAR},#{remarks,jdbcType=VARCHAR},
+		#{createDt,jdbcType=TIMESTAMP})
+  </insert>
+
+  <!-- 根据主键修改记录-->
+  <update id="updateByPrimaryKeySelective" parameterType="SysParms">
+    update sys_parms
+    <set>
+      <if test='parmKey != null'>
+        parm_key=#{parmKey,jdbcType=VARCHAR},
+      </if>
+      <if test='parmValue != null'>
+        parm_value=#{parmValue,jdbcType=VARCHAR},
+      </if>
+      <if test='remarks != null'>
+        remarks=#{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test='createDt != null'>
+        create_dt=#{createDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+      where id_key= #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 分页查询-->
+  <select id="selectPage" resultType="SysParmsVO" parameterType="Page" useCache="false">
+    select 
+    <include refid="Base_Column_List_VO"/>
+    from sys_parms t 
+    <where>
+      <if test='params.parmValue != null and params.parmValue !=""'>
+        and t.parm_value like concat('%',#{params.parmValue,jdbcType=VARCHAR},'%')
+      </if>
+    </where>
+  </select>
+
+  <!-- 导出excel-->
+  <select id="toExcel" resultType="SysParmsVO" parameterType="map" useCache="false">
+    select 
+    <include refid="Base_Column_List_VO"/>
+    from sys_parms t
+    <where>
+      <if test='parmValue != null and parmValue !=""'>
+        and t.parm_value like concat('%',#{parmValue,jdbcType=VARCHAR},'%')
+      </if>
+    </where>
+  </select>
+
+  <!-- 根据主键查找记录-->
+  <select id="selectByPrimaryKey" resultType="SysParms" parameterType="int">
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_parms
+    where id_key= #{idKey,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据bean的属性查找多条记录-->
+  <select id="selectAllBySelective" resultType="SysParms" parameterType="SysParms">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_parms
+    <include refid="selectiveWhere"/>
+  </select>
+ 
+  <!-- 根据bean的唯一属性查找一条记录-->
+  <select id="selectOneBySelective" resultType="SysParms" parameterType="SysParms">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_parms
+    <include refid="selectiveWhere"/>
+    LIMIT 1
+  </select>
+ 
+  <!-- 根据参数key查找记录-->
+ <select id="selectByParmKey" resultType="SysParms">
+ 	select parm_key,parm_value from sys_parms 
+ 	where parm_key = #{0} or parm_key = #{1}
+ </select>
+ 
+ 
+ <!-- 根据参数key查找单条记录-->
+ <select id="selectOneByParmKey" resultType="SysParms">
+ 	select parm_key,parm_value from sys_parms 
+ 	where parm_key = #{0}
+ </select>
+ 
+</mapper>

@@ -13,8 +13,9 @@ import java.io.IOException;
  * @author 13346450@qq.com 童晟
  * @version 1.0
  * @create 2017/8/7
- **/
+
 @WebFilter(urlPatterns = "/*", filterName = "myFilter")
+ **/
 public class TestFilter implements Filter {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

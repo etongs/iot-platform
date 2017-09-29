@@ -1,3 +1,17 @@
 spring:
   thymeleaf:
     cache: false
+
+staticfile:
+  suffix: "*.js,*.gif,*.jpg,*.jpeg,*.png,*.css,*.ico"
+
+endpoints:
+  refresh:
+    enabled: true
+    sensitive: false
+  restart:
+    enabled: true
+    sensitive: false
+  shutdown:
+    enabled: true
+    sensitive: false

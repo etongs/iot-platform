@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+	<head th:include="common/headers::listGroup(#{systemName})"></head>
+	<link rel="stylesheet" th:href="@{/javascripts/zTree-3.5.28/css/metroStyle/metroStyle.css}">
+	<script type="text/javascript" th:src="@{/javascripts/zTree-3.5.28/js/jquery.ztree.all.min.js}"></script>
+	<style type="text/css">
+		ul.ztree {margin-top: 20px; margin-left:6px; border: 1px solid #617775;background: #f5f5f5;height:100%;overflow:auto;}
+	</style>
+	<script type="text/javascript">
+	var listGroupHeight = -1;
+	var $lastRoleObj ;
+	var setting = {
+			view: {
+				selectedMulti: false
+			},
+			check: {
+				enable: true
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			}			
+		};
+	var showData = function(obj){
+		if(null != $.fn.zTree.getZTreeObj("tree"))
+			$.fn.zTree.destroy("tree");
+		if($("div.main").hasClass("hidden"))
+			$("div.main").removeClass("hidden");
+		
+		var $o = $(obj);
+		ajaxGet({
+			url: parent.parent.CONTEXT_PATH+"/system/permission/queryAll/"+$o.prop("rel"),
+			successJSFunc: function(datas) {
+				$.fn.zTree.init($("#tree"), setting, datas);
+				$("#searchId").val($o.prop("rel"));
+				//底色高亮
+				if(null != $lastRoleObj)
+					$lastRoleObj.removeClass("list-group-item-info");
+				$o.addClass("list-group-item-info");
+				$lastRoleObj = $o;
+			}
+		});
+	};
+	$(function(){
+		ajaxGet({
+			url: parent.parent.CONTEXT_PATH+"/system/role/listAll",
+			successJSFunc: function(result) {
+				$.each(result, function (n, value) {
+					$(".list-group").append("<a href=\"javascript:void(0)\" class=\"list-group-item\" rel=\""+value.idKey+"\" onClick=\"showData(this);\">"+value.roleName+"</a>");
+				});
+				listGroupHeight = $(".list-group").height();
+				resizeTreePanel();
+			}
+		});
+		$("#saveButton").click(function () {
+			var nodes = $.fn.zTree.getZTreeObj("tree").getCheckedNodes(true);
+			var checkedArray = [];
+			$.each(nodes, function(index, item) {
+				checkedArray.push(item.id);
+			});
+			$("#checkedIds").val(checkedArray.join(","));
+			$(this).button('loading');
+			var resetButtonFunc = function() { $("#saveButton").button('reset');  };
+			ajaxSubmitForm({
+				url: parent.parent.CONTEXT_PATH+"/system/permission/save",
+				formId: "treeForm",
+				successJSFunc: function(result) {
+					if (1==result.status) {
+						showAlert($("#toolbar"), '保存成功。', 'success', 'ok', 2000);
+						resetButtonFunc();
+					} else {
+						resetButtonFunc();
+						popAlert("保存失败: "+result.message);
+					}
+				},
+				failureJSFun: function(request, errorMsg, obj){
+					if(request.responseText.indexOf("sessiontimeout") > -1){
+						return;
+					}
+					/*if(errorMsg.indexOf("parsererror") > -1){
+						popAlert("操作成功，返回信息解析异常！", "警告", "red", resetButtonFunc);
+						return;
+					}*/
+					if(undefined != request && undefined != request.responseText && "" != request.responseText && null != request.responseText){
+						popAlert(request.responseText, "系统内部程序错误", "red", resetButtonFunc);
+					}else{
+						popAlert(errorMsg , "程序执行失败", "red", resetButtonFunc);
+					}
+				}
+			});	
+		});
+		//调整树形外框的高宽
+		var resizeTreePanel = function () {
+			$(".list-group").height(Math.min($(parent.window).height() - 133, listGroupHeight));
+			$("div.main").height($(parent.window).height() - 188);
+			$("ul.ztree").width($(window).width() - 450);
+		};
+		$(window).resize(function() {  resizeTreePanel(); });
+	});
+	</script>
+	<body>
+		<div class="content_wrap">
+			<div class="list-group">
+				<a class="list-group-item active">角色列表</a>
+			</div>
+			<div class="right">
+				<div th:include="common/toolbarBottom::authTree('system:SysPermission:update')"></div>
+				<form id="treeForm" class="hidden">
+					<input type="hidden" name="searchId" id="searchId" />
+					<input type="hidden" name="checkedIds" id="checkedIds"/>
+				</form>
+				<div class="main hidden">
+					<ul id="tree" class="ztree"></ul>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

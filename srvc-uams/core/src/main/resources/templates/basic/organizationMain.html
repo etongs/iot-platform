@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+	<head th:include="common/headers::singleTable(#{systemName})"></head>
+	<script type="text/javascript">
+        $(function(){
+            var tableObj = new TableInit();
+            tableObj.init({
+                url: parent.CONTEXT_PATH+"/system/organization/listPage",
+                columns: [
+                    {checkbox: true},
+                    {field:'cdNm', title:'机构名称', halign: 'center', sortable: true},
+                    {field:'category', title:'机构类型', halign: 'center', visible: false},
+                    {field:'categoryName', title:'机构类型', halign: 'center', sortable: true},
+                    {field:'provinceName', title:'省', halign: 'center', sortable: true},
+                    {field:'cityName', title:'市', halign: 'center', sortable: true},
+                    {field:'districtName', title:'区县', halign: 'center', sortable: true},
+                    {field:'shortName', title:'机构简称', halign: 'center', sortable: true},
+                    {field:'code', title:'机构编码', halign: 'center', sortable: true},
+                    {field:'py', title:'简拼', halign: 'center', sortable: true, visible: false},
+                    {field:'pinyin', title:'拼音', halign: 'center', sortable: true, visible: false},
+                    {field:'linkFax', title:'传真', halign: 'center', sortable: true, visible: false},
+                    {field:'linkMan', title:'联系人', halign: 'center', sortable: true, visible: false},
+                    {field:'linkTel', title:'联系电话', halign: 'center', sortable: true, visible: false},
+                    {field:'linkMobile', title:'负责人手机号', halign: 'center', sortable: true, visible: false},
+                    {field:'email', title:'Email', halign: 'center', sortable: true, visible: false},
+                    {field:'url', title:'机构网址', halign: 'center', sortable: true},
+                    {field:'postCode', title:'邮政编码', halign: 'center', sortable: true, visible: false},
+                    {field:'bankName', title:'开户银行', halign: 'center', sortable: true, visible: false},
+                    {field:'bankAccount', title:'收款银行账号', halign: 'center', sortable: true, visible: false},
+                    {field:'bankAccountName', title:'收款人姓名', halign: 'center', sortable: true, visible: false},
+                    {field:'bankReservedMobile', title:'银行卡预留手机号码', halign: 'center', sortable: true, visible: false},
+                    {field:'createName', title:'创建人', halign: 'center', sortable: true},
+                    {field:'createDt', title:'创建时间', halign: 'center', align: 'center', sortable: true},
+                    {field:'imageMinUrl', title:'机构图片缩略图', halign: 'center', sortable: true, visible: false},
+                    {field:'imageUrl', title:'机构图片原图', halign: 'center', sortable: true, visible: false}
+                ]
+            });
+            var tableButtonObj = new TableButtonInit();
+            tableButtonObj.init({
+                    tableId: tableObj.tableId,
+                    searchFormId: tableObj.searchFormId,
+                    basePath: parent.CONTEXT_PATH,
+                    exportUrl: parent.CONTEXT_PATH+"/system/organization/toExcel",
+                    insertUrl: parent.CONTEXT_PATH+"/system/organization/insert",
+                    updateUrl: parent.CONTEXT_PATH+"/system/organization/update",
+                    removeUrl: parent.CONTEXT_PATH+"/system/organization/deleteBatch",
+                    initAddValue: {},
+                    preSaveFunc: function() {
+                        var pid = $("#provinceId").selectpicker("val");
+                        var cid = $("#cityId").selectpicker("val");
+                        var disid = $("#districtId").selectpicker("val");
+                        $("#provinceName").val($("#provinceId").find("option[value='"+pid+"']").text());
+                        $("#cityName").val($("#cityId").find("option[value='"+cid+"']").text());
+                        $("#districtName").val($("#districtId").find("option[value='"+disid+"']").text());
+                        return true;
+                    }
+                }, {
+                    cdNm:{
+                        validators: {
+                            notEmpty: { message: '机构名称不能为空'},
+                            stringLength: { min: 1, max: 66, message: '机构名称长度必须在1到66之间'}
+                        }
+                    },
+                    shortName:{
+                        validators: {
+                            stringLength: { min: 0, max: 8, message: '机构简称长度不能超过8'}
+                        }
+                    },
+                    code:{
+                        validators: {
+                            stringLength: { min: 0, max: 16, message: '机构编码长度不能超过16'}
+                        }
+                    },
+                    py:{
+                        validators: {
+                            stringLength: { min: 0, max: 33, message: '简拼长度不能超过33'}
+                        }
+                    },
+                    pinyin:{
+                        validators: {
+                            stringLength: { min: 0, max: 66, message: '拼音长度不能超过66'}
+                        }
+                    },
+                    linkFax:{
+                        validators: {
+                            stringLength: { min: 0, max: 8, message: '传真长度不能超过8'}
+                        }
+                    },
+                    linkMan:{
+                        validators: {
+                            stringLength: { min: 0, max: 10, message: '联系人长度不能超过10'}
+                        }
+                    },
+                    linkTel:{
+                        validators: {
+                            stringLength: { min: 0, max: 42, message: '联系电话长度不能超过42'}
+                        }
+                    },
+                    linkMobile:{
+                        validators: {
+                            regexp: {
+                                regexp: /^1[3|5|7|8]{1}[0-9]{9}$/,
+                                message: '请输入正确的手机号码'
+                            }
+                        }
+                    },
+                    email:{
+                        validators: {
+                            stringLength: { min: 0, max: 50, message: '邮箱长度不能超过50个字符'},
+                            emailAddress: { message: '请输入正确的邮件地址如：123@qq.com'}
+                        }
+                    },
+                    url:{
+                        validators: {
+                            regexp: {
+                                regexp: /^(https?):\/\/[\w\-]+(\.[\w\-]+)+([\w\-\.,@?^=%&:\/~\+#]*[\w\-\@?^=%&\/~\+#])?$/,
+                                message: '网址格式不正确'
+                            }
+                        }
+                    },
+                    address:{
+                        validators: {
+                            stringLength: { min: 0, max: 85, message: '地址长度不能超过85'}
+                        }
+                    },
+                    gpsX:{
+                        validators: {
+                            regexp: {
+                                regexp: /^\d{0,3}\.\d{0,11}$/,
+                                message: '请输入正确的gps经度浮点数'
+                            }
+                        }
+                    },
+                    gpsY:{
+                        validators: {
+                            regexp: {
+                                regexp: /^\d{0,3}\.\d{0,11}$/,
+                                message: '请输入正确的gps纬度浮点数'
+                            }
+                        }
+                    },
+                    baiduX:{
+                        validators: {
+                            regexp: {
+                                regexp: /^\d{0,3}\.\d{0,11}$/,
+                                message: '请输入正确的百度经度浮点数'
+                            }
+                        }
+                    },
+                    baiduY:{
+                        validators: {
+                            regexp: {
+                                regexp: /^\d{0,3}\.\d{0,11}$/,
+                                message: '请输入正确的百度纬度浮点数'
+                            }
+                        }
+                    },
+                    postCode:{
+                        validators: {
+                            stringLength: { min: 0, max: 6, message: '邮政编码长度不能超过6'}
+                        }
+                    },
+                    bankName:{
+                        validators: {
+                            stringLength: { min: 0, max: 42, message: '开户银行长度不能超过42'}
+                        }
+                    },
+                    bankAccount:{
+                        validators: {
+                            stringLength: { min: 0, max: 30, message: '收款银行账号长度不能超过30'}
+                        }
+                    },
+                    bankAccountName:{
+                        validators: {
+                            stringLength: { min: 0, max: 66, message: '收款人姓名长度不能超过66'}
+                        }
+                    },
+                    bankReservedMobile:{
+                        validators: {
+                            regexp: {
+                                regexp: /^1[3|5|7|8]{1}[0-9]{9}$/,
+                                message: '请输入正确的手机号码'
+                            }
+                        }
+                    },
+                    provinceId:{
+                        validators: {
+                            regexp: {
+                                regexp: /^(?!0$)/,
+                                message: '请选择机构所在省份'
+                            }
+                        }
+                    }
+                }, [
+                    {itemId: "provinceId", itemType: "singleSelector"},
+                    {itemId: "cityId", itemType: "singleSelector",
+                        itemEvent: function(cityIdValue) {
+                            $("#cityId").find("option[value!='0']").remove();
+                            $("#cityId").selectpicker("refresh");
+                            ajaxGet({
+                                url: ("0" == cityIdValue ? parent.CONTEXT_PATH+"/getDistrictChildren/"+$("#provinceId").selectpicker("val")
+                                    : parent.CONTEXT_PATH+"/getDistrictSamelevel/"+cityIdValue),
+                                async: false,
+                                successJSFunc: function(result) {
+                                    $.each(result, function (n, value) {
+                                        $("#cityId").append("<option value='"+value.idKey+"'>"+value.cdNm+"</option>");
+                                    });
+                                    $("#cityId").selectpicker("refresh");
+                                    $("#cityId").selectpicker("val", cityIdValue);
+                                }
+                            });
+                        }
+                    },
+                    {itemId: "districtId", itemType: "singleSelector",
+                        itemEvent: function(districtIdValue) {
+                            $("#districtId").find("option[value!='0']").remove();
+                            $("#districtId").selectpicker("refresh");
+                            var selectedCityId = $("#cityId").selectpicker("val");
+                            if("0" != selectedCityId){
+                                ajaxGet({
+                                    url: ("0" == districtIdValue ? parent.CONTEXT_PATH+"/getDistrictChildren/"+selectedCityId
+                                        : parent.CONTEXT_PATH+"/getDistrictSamelevel/"+districtIdValue),
+                                    successJSFunc: function(result) {
+                                        $.each(result, function (n, value) {
+                                            $("#districtId").append("<option value='"+value.idKey+"'>"+value.cdNm+"</option>");
+                                        });
+                                        $("#districtId").selectpicker("refresh");
+                                        $("#districtId").selectpicker("val", districtIdValue);
+                                    }
+                                });
+                            }
+                        }
+                    },
+                	{itemId: "category", itemType: "singleSelector"}
+                ]
+            );
+        });
+	</script>
+	<body>
+		<div class="panel-body" style="padding-bottom:0px;">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion" href="#searchPanel">
+							查询条件 (点击折叠)
+						</a>
+					</h4>
+				</div>
+				<div id="searchPanel" class="panel-collapse collapse in">
+					<div class="panel-body">
+						<form id="searchForm" class="form-inline" role="form">
+							<input name="checkedIds" id="checkedIds" type="hidden"/>
+							<div class="form-group" style="margin:0px 5px;">
+								<label for="searchName">名称</label>
+								<input type="text" class="form-control" name="searchName" id="searchName">
+							</div>
+							<div class="form-group" style="margin:0px 5px;">
+								<div th:include="common/selector::districtQuerySelector('province','city','district',
+									  '/getDistrictChildren/','idKey','cdNm','','','','','','===全部===','0','','','','')"></div>
+							</div>
+							<button type="button" id="queryButton" class="btn btn-primary" style="margin-left: 20px;">查 询</button>
+							<button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 40px;">导出Excel</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div th:include="common/toolbarTop::singleTable('system:SysOrganization:delete',
+					'system:SysOrganization:insert','system:SysOrganization:update')"></div>
+			<table id="dataTable" class="table-no-bordered"></table>
+			<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title"></h4>
+						</div>
+						<div class="modal-body">
+							<form id="inputForm" class="form-horizontal" role="form">
+								<input id="idKey" name="idKey" type="text" class="hidden">
+								<input type="text" class="hidden" name="provinceName" id="provinceName">
+								<input type="text" class="hidden" name="cityName" id="cityName">
+								<input type="text" class="hidden" name="districtName" id="districtName">
+								<div class="form-group">
+									<label for="cdNm" class="col-sm-2 control-label">机构名称</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="cdNm" id="cdNm">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="provinceId" class="col-sm-2 control-label">所属地区</label>
+									<div class="col-sm-10">
+										<div th:include="common/selector::districtInputSelector('provinceId','cityId','districtId',
+										  '/getDistrictChildren/','idKey','cdNm','','','','','','---请选择---','0','','','','')"></div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="category" class="col-sm-2 control-label">机构类型</label>
+									<div class="col-sm-10">
+										<span th:include="common/selector::formSelector0('category',
+										  '/getDictList/organization_type','idKey','dictValue','','','','','','','','','')"></span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="shortName" class="col-sm-2 control-label">机构简称</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="shortName" id="shortName">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="code" class="col-sm-2 control-label">机构编码</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="code" id="code">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="py" class="col-sm-2 control-label">简拼</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="py" id="py">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="pinyin" class="col-sm-2 control-label">拼音</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="pinyin" id="pinyin">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="linkFax" class="col-sm-2 control-label">传真</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="linkFax" id="linkFax">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="linkMan" class="col-sm-2 control-label">联系人</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="linkMan" id="linkMan">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="linkTel" class="col-sm-2 control-label">联系电话</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="linkTel" id="linkTel">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="linkMobile" class="col-sm-2 control-label">负责人手机号</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="linkMobile" id="linkMobile">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="email" class="col-sm-2 control-label">Email</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="email" id="email">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="url" class="col-sm-2 control-label">机构网址</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="url" id="url">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="address" class="col-sm-2 control-label">地址</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="address" id="address">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="gpsX" class="col-sm-2 control-label">GPS</label>
+									<div style="display: inline-block; margin-left: 15px;">
+										<input type="text" class="form-control" name="gpsX" id="gpsX" placeholder="X坐标">
+									</div>
+									<div style="display: inline-block;">
+										<input type="text" class="form-control" name="gpsY" id="gpsY" placeholder="Y坐标">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="baiduX" class="col-sm-2 control-label">百度地图</label>
+									<div style="display: inline-block; margin-left: 15px;">
+										<input type="text" class="form-control" name="baiduX" id="baiduX" placeholder="X坐标">
+									</div>
+									<div style="display: inline-block;">
+										<input type="text" class="form-control" name="baiduY" id="baiduY" placeholder="Y坐标">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="postCode" class="col-sm-2 control-label">邮政编码</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="postCode" id="postCode">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="bankName" class="col-sm-2 control-label">开户银行</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="bankName" id="bankName">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="bankAccount" class="col-sm-2 control-label">收款银行账号</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="bankAccount" id="bankAccount">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="bankAccountName" class="col-sm-2 control-label">收款人姓名</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="bankAccountName" id="bankAccountName">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="bankReservedMobile" class="col-sm-2 control-label">银行卡预留手机号</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="bankReservedMobile" id="bankReservedMobile">
+									</div>
+								</div>
+								<div class="form-group hidden">
+									<label for="imageMinUrl" class="col-sm-2 control-label">机构图片缩略图</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="imageMinUrl" id="imageMinUrl">
+									</div>
+								</div>
+								<div class="form-group hidden">
+									<label for="imageUrl" class="col-sm-2 control-label">机构图片原图</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" name="imageUrl" id="imageUrl">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="description" class="col-sm-2 control-label">机构描述</label>
+									<div class="col-sm-10">
+										<textarea class="form-control" name="description" id="description" rows="4"></textarea>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div th:include="common/toolbarBottom::singleTable('system:SysOrganization:insert','system:SysOrganization:update')"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

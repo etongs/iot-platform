@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stanley.uams.mapper.master.basic.SysDistrictMapper">
+  <!--<cache type="com.stanley.common.dao.MybatisRedisCache" />-->
+  <!-- 所有字段-->
+  <sql id="Base_Column_List">id_key,code,cd_nm,parent_id,last_mark,order_cd,isuse,tree_level,
+  	longitude_baidu,latitude_baidu,py,pinyin,create_id,create_dt,ishot, remarks
+  </sql>
+
+  <!-- 通用where条件-->
+  <sql id="selectiveWhere">
+    <where>
+      <if test='code != null and code !=""'>
+        and code=#{code,jdbcType=VARCHAR}
+      </if>
+      <if test='cdNm != null and cdNm !=""'>
+        and cd_nm=#{cdNm,jdbcType=VARCHAR}
+      </if>
+      <if test='parentId != null'>
+        and parent_id=#{parentId,jdbcType=INTEGER}
+      </if>
+      <if test='lastMark != null'>
+        and last_mark=#{lastMark,jdbcType=BIT}
+      </if>
+      <if test='orderCd != null'>
+        and order_cd=#{orderCd,jdbcType=INTEGER}
+      </if>
+      <if test='isuse != null'>
+        and isuse=#{isuse,jdbcType=BIT}
+      </if>
+      <if test='treeLevel != null'>
+        and tree_level=#{treeLevel,jdbcType=INTEGER}
+      </if>
+      <if test='longitudeBaidu != null'>
+        and longitude_baidu=#{longitudeBaidu,jdbcType=DOUBLE}
+      </if>
+      <if test='latitudeBaidu != null'>
+        and latitude_baidu=#{latitudeBaidu,jdbcType=DOUBLE}
+      </if>
+      <if test='py != null and py !=""'>
+        and py=#{py,jdbcType=VARCHAR}
+      </if>
+      <if test='pinyin != null and pinyin !=""'>
+        and pinyin=#{pinyin,jdbcType=VARCHAR}
+      </if>
+      <if test='createId != null'>
+        and create_id=#{createId,jdbcType=INTEGER}
+      </if>
+      <if test='createDt != null'>
+        and create_dt=#{createDt,jdbcType=TIMESTAMP}
+      </if>
+      <if test='ishot != null'>
+        and ishot=#{ishot,jdbcType=BIT}
+      </if>
+      <if test='remarks != null and remarks !=""'>
+        and remarks=#{remarks,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </sql>
+  <!-- 根据主键删除记录-->
+  <delete id="deleteByPrimaryKey"  parameterType="int">
+    delete  from sys_district where id_key=#{idKey,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 增加记录-->
+  <insert id="insert" parameterType="SysDistrict" useGeneratedKeys="true" keyProperty="idKey">
+    insert into sys_district(
+      code,cd_nm,parent_id,last_mark,order_cd,isuse,tree_level,longitude_baidu,latitude_baidu,py,pinyin,create_id,create_dt,ishot,remarks)
+    values(
+        #{code,jdbcType=VARCHAR},
+		#{cdNm,jdbcType=VARCHAR},#{parentId,jdbcType=INTEGER},
+		#{lastMark,jdbcType=BIT},#{orderCd,jdbcType=INTEGER},
+		#{isuse,jdbcType=BIT},#{treeLevel,jdbcType=INTEGER},
+		#{longitudeBaidu,jdbcType=DOUBLE},#{latitudeBaidu,jdbcType=DOUBLE},
+		#{py,jdbcType=VARCHAR},#{pinyin,jdbcType=VARCHAR},
+		#{createId,jdbcType=INTEGER},#{createDt,jdbcType=TIMESTAMP},
+		#{ishot,jdbcType=BIT},#{remarks,jdbcType=VARCHAR})
+  </insert>
+
+  <!-- 根据主键修改记录-->
+  <update id="updateByPrimaryKeySelective" parameterType="SysDistrict">
+    update sys_district
+    <set>
+      <if test='code != null'>
+        code=#{code,jdbcType=VARCHAR},
+      </if>
+      <if test='cdNm != null'>
+        cd_nm=#{cdNm,jdbcType=VARCHAR},
+      </if>
+      <if test='parentId != null'>
+        parent_id=#{parentId,jdbcType=INTEGER},
+      </if>
+      <if test='lastMark != null'>
+        last_mark=#{lastMark,jdbcType=BIT},
+      </if>
+      <if test='orderCd != null'>
+        order_cd=#{orderCd,jdbcType=INTEGER},
+      </if>
+      <if test='isuse != null'>
+        isuse=#{isuse,jdbcType=BIT},
+      </if>
+      <if test='treeLevel != null'>
+        tree_level=#{treeLevel,jdbcType=INTEGER},
+      </if>
+      <if test='longitudeBaidu != null'>
+        longitude_baidu=#{longitudeBaidu,jdbcType=DOUBLE},
+      </if>
+      <if test='latitudeBaidu != null'>
+        latitude_baidu=#{latitudeBaidu,jdbcType=DOUBLE},
+      </if>
+      <if test='py != null'>
+        py=#{py,jdbcType=VARCHAR},
+      </if>
+      <if test='pinyin != null'>
+        pinyin=#{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test='createId != null'>
+        create_id=#{createId,jdbcType=INTEGER},
+      </if>
+      <if test='createDt != null'>
+        create_dt=#{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test='ishot != null'>
+        ishot=#{ishot,jdbcType=BIT},
+      </if>
+      <if test='remarks != null'>
+        remarks=#{remarks,jdbcType=VARCHAR},
+      </if>
+    </set>
+      where id_key= #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 根据主键查找记录-->
+  <select id="selectByPrimaryKey" resultType="SysDistrict" parameterType="int">
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_district
+    where id_key= #{idKey,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据父节点查询下一级子节点-->
+  <select id="selectChildrenByParentId" parameterType="int" resultType="SysDistrict">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_district
+    where parent_id = #{parentId,jdbcType=INTEGER}
+    order by order_cd
+  </select>
+
+  <!-- 更新指定idKey的parentId值-->
+  <update id="updateParentIdByIdKey" parameterType="map">
+    update sys_district SET parent_id = #{parentId,jdbcType=INTEGER} ,tree_level=#{treeLevel,jdbcType=INTEGER}
+    WHERE id_key = #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 更新本节点的last_mark、tree_level-->
+  <update id="updateLastMarkAndLevel" parameterType="map">
+    update sys_district
+    <set>
+      <if test='lastMark != null'>
+        last_mark=#{lastMark,jdbcType=BIT},
+      </if>
+      <if test='treeLevel != null'>
+        tree_level=#{treeLevel,jdbcType=INTEGER},
+      </if>
+    </set>
+    WHERE id_key = #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 查询所有节点-->
+  <select id="selectAll"  resultType="SysDistrict">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_district order by order_cd
+  </select>
+
+</mapper>

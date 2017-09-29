@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stanley.uams.mapper.master.auth.SysRoleMapper">
+  <!--<cache type="com.stanley.common.dao.MybatisRedisCache" />-->
+  <!-- 所有字段 -->
+  <sql id="Base_Column_List">id_key,role_name,role_marker,role_remark,create_id, create_dt
+  </sql>
+  <sql id="Base_Column_List_VO">t.id_key,t.role_name,t.role_marker,t.role_remark,t.create_id,t.create_dt,
+  	a.name_cn as create_name
+  </sql>
+  
+  <!-- 通用where条件 -->
+  <sql id="selectiveWhere">
+    <where>
+      <if test='roleName != null and roleName !=""'>
+        and role_name=#{roleName,jdbcType=VARCHAR}
+      </if>
+      <if test='roleMarker != null and roleMarker !=""'>
+        and role_marker=#{roleMarker,jdbcType=VARCHAR}
+      </if>
+      <if test='roleRemark != null and roleRemark !=""'>
+        and role_remark=#{roleRemark,jdbcType=VARCHAR}
+      </if>
+      <if test='createId != null'>
+        and create_id=#{createId,jdbcType=INTEGER}
+      </if>
+      <if test='createDt != null'>
+        and create_dt=#{createDt,jdbcType=TIMESTAMP}
+      </if>
+    </where>
+  </sql>
+  
+  <!-- 根据主键删除记录-->
+  <delete id="deleteByPrimaryKey"  parameterType="int">
+    delete  from sys_role where id_key=#{idKey,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除记录-->
+  <delete id="deleteBatch" parameterType="map">
+    delete from sys_role
+    where id_key in <foreach item="item" index="index" collection="dataListID" open="(" separator="," close=")">${item}</foreach>
+  </delete>
+  
+  <!-- 增加记录-->
+  <insert id="insert" parameterType="SysRole" useGeneratedKeys="true" keyProperty="idKey">
+    insert into sys_role(
+      role_name,role_marker,role_remark,create_id,create_dt)
+    values(
+      #{roleName,jdbcType=VARCHAR},#{roleMarker,jdbcType=VARCHAR},
+      #{roleRemark,jdbcType=VARCHAR},#{createId,jdbcType=INTEGER},
+      #{createDt,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 根据主键修改记录-->
+  <update id="updateByPrimaryKeySelective" parameterType="SysRole">
+    update sys_role
+    <set>
+      <if test='roleName != null'>
+        role_name=#{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test='roleMarker != null'>
+        role_marker=#{roleMarker,jdbcType=VARCHAR},
+      </if>
+      <if test='roleRemark != null'>
+        role_remark=#{roleRemark,jdbcType=VARCHAR},
+      </if>
+      <if test='createId != null'>
+        create_id=#{createId,jdbcType=INTEGER},
+      </if>
+      <if test='createDt != null'>
+        create_dt=#{createDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+      where id_key= #{idKey,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 分页查询-->
+  <select id="selectPage" resultType="SysRoleVO" parameterType="Page" useCache="false">
+    select 
+    <include refid="Base_Column_List_VO"/>
+    from sys_role t 
+		left join sys_user a on t.create_id = a.id_key 
+    <where>
+    	<if test='params.roleName != null and params.roleName !=""'>
+			and t.role_name like concat('%',#{params.roleName,jdbcType=VARCHAR},'%')
+		</if>
+		<if test='params.roleMarker != null and params.roleMarker !=""'>
+			and t.role_marker like concat('%',#{params.roleMarker,jdbcType=VARCHAR},'%')
+		</if>
+    </where>
+  </select>
+  
+  <!-- 导出excel -->
+  <select id="toExcel" resultType="SysRoleVO" parameterType="map" useCache="false">
+    select 
+    <include refid="Base_Column_List_VO"/>
+    from sys_role t 
+	    left join sys_user a on t.create_id = a.id_key
+    <where>
+    	<if test='roleName != null and roleName !=""'>
+			and t.role_name like concat('%',#{roleName,jdbcType=VARCHAR},'%')
+		</if>
+		<if test='roleMarker != null and roleMarker !=""'>
+			and t.role_marker like concat('%',#{roleMarker,jdbcType=VARCHAR},'%')
+		</if>
+    </where>
+  </select>
+  
+  <!-- 根据主键查找记录-->
+  <select id="selectByPrimaryKey" resultType="SysRole" parameterType="int">
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_role
+    where id_key= #{idKey,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据bean的属性查找多条记录-->
+  <select id="selectAllBySelective" resultType="SysRole" parameterType="SysRole">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_role
+    <include refid="selectiveWhere"/>
+  </select>
+ 
+  <!-- 根据bean的唯一属性查找一条记录-->
+  <select id="selectOneBySelective" resultType="SysRole" parameterType="SysRole">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_role
+    <include refid="selectiveWhere"/>
+    LIMIT 1
+  </select>
+
+  <!-- 校验名称是否存在 -->
+  <select id="checkExistRolename" resultType="SysRole" parameterType="SysRole">
+    select id_key from sys_role where id_key != #{idKey,jdbcType=INTEGER} and role_name = #{roleName,jdbcType=VARCHAR}
+    LIMIT 1
+  </select>
+
+</mapper>

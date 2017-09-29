@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stanley.uams.mapper.master.auth.SysUserMapper">
+  <!--<cache type="com.stanley.common.dao.MybatisRedisCache" />-->
+  <!-- 所有字段-->
+  <sql id="Base_Column_List">id_key,org_id,role_ids,account,name_cn,passwd,nickname,is_locked,is_modify,gender,
+  	email,birthday,mobile,create_id, create_dt,last_login_time
+  </sql>
+
+  <sql id="Base_Column_List_VO">t.id_key,t.org_id,t.role_ids,t.account,t.name_cn,t.passwd,t.nickname,t.is_locked,t.is_modify,
+  	t.gender,t.email,t.birthday,t.mobile,t.create_id,t.create_dt,t.last_login_time,a.cd_nm as org_name ,b.name_cn as create_name
+  </sql>
+
+  <!-- 通用where条件-->
+  <sql id="selectiveWhere">
+    <where>
+      <if test='orgId != null'>
+        and org_id=#{orgId,jdbcType=INTEGER}
+      </if>
+      <if test='roleIds != null and roleIds !=""'>
+        and role_ids=#{roleIds,jdbcType=VARCHAR}
+      </if>
+      <if test='account != null and account !=""'>
+        and account=#{account,jdbcType=VARCHAR}
+      </if>
+      <if test='nameCn != null and nameCn !=""'>
+        and name_cn=#{nameCn,jdbcType=VARCHAR}
+      </if>
+      <if test='passwd != null and passwd !=""'>
+        and passwd=#{passwd,jdbcType=VARCHAR}
+      </if>
+      <if test='nickname != null and nickname !=""'>
+        and nickname=#{nickname,jdbcType=VARCHAR}
+      </if>
+      <if test='isLocked != null'>
+        and is_locked=#{isLocked,jdbcType=BIT}
+      </if>
+      <if test='isModify != null'>
+        and is_modify=#{isModify,jdbcType=BIT}
+      </if>
+      <if test='gender != null and gender !=""'>
+        and gender=#{gender,jdbcType=VARCHAR}
+      </if>
+      <if test='email != null and email !=""'>
+        and email=#{email,jdbcType=VARCHAR}
+      </if>
+      <if test='birthday != null'>
+        and birthday=#{birthday,jdbcType=DATE}
+      </if>
+      <if test='mobile != null and mobile !=""'>
+        and mobile=#{mobile,jdbcType=VARCHAR}
+      </if>
+      <if test='createId != null'>
+        and create_id=#{createId,jdbcType=INTEGER}
+      </if>
+      <if test='createDt != null'>
+        and create_dt=#{createDt,jdbcType=TIMESTAMP}
+      </if>
+    </where>
+  </sql>
+  <!-- 根据主键删除记录-->
+  <delete id="deleteByPrimaryKey"  parameterType="int">
+    delete  from sys_user where id_key=#{idKey,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 批量删除记录-->
+  <delete id="deleteBatch" parameterType="map">
+    delete from sys_user
+    where id_key in <foreach item="item" index="index" collection="dataListID" open="(" separator="," close=")">${item}</foreach>
+  </delete>
+
+  <!-- 增加记录-->
+  <insert id="insert" parameterType="SysUser" useGeneratedKeys="true" keyProperty="idKey">
+    insert into sys_user(
+      org_id,role_ids,account,name_cn,passwd,nickname,is_locked,is_modify,gender,email,birthday,mobile,
+      create_id,create_dt,last_login_time)
+    values(
+        #{orgId,jdbcType=INTEGER},
+		#{roleIds,jdbcType=VARCHAR},#{account,jdbcType=VARCHAR},
+		#{nameCn,jdbcType=VARCHAR},#{passwd,jdbcType=VARCHAR},
+		#{nickname,jdbcType=VARCHAR},#{isLocked,jdbcType=BIT},
+		#{isModify,jdbcType=BIT},#{gender,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},#{birthday,jdbcType=DATE},
+		#{mobile,jdbcType=VARCHAR},#{createId,jdbcType=INTEGER},
+		#{createDt,jdbcType=TIMESTAMP},#{lastLoginTime,jdbcType=TIMESTAMP} )
+  </insert>
+
+  <!-- 根据主键修改记录-->
+  <update id="updateByPrimaryKeySelective" parameterType="SysUser">
+    update sys_user
+    <set>
+      <if test='orgId != null'>
+        org_id=#{orgId,jdbcType=INTEGER},
+      </if>
+      <if test='roleIds != null'>
+        role_ids=#{roleIds,jdbcType=VARCHAR},
+      </if>
+      <if test='account != null'>
+        account=#{account,jdbcType=VARCHAR},
+      </if>
+      <if test='nameCn != null'>
+        name_cn=#{nameCn,jdbcType=VARCHAR},
+      </if>
+      <if test='passwd != null'>
+        passwd=#{passwd,jdbcType=VARCHAR},
+      </if>
+      <if test='nickname != null'>
+        nickname=#{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test='isLocked != null'>
+        is_locked=#{isLocked,jdbcType=BIT},
+      </if>
+      <if test='isModify != null'>
+        is_modify=#{isModify,jdbcType=BIT},
+      </if>
+      <if test='gender != null'>
+        gender=#{gender,jdbcType=VARCHAR},
+      </if>
+      <if test='email != null'>
+        email=#{email,jdbcType=VARCHAR},
+      </if>
+      <if test='birthday != null'>
+        birthday=#{birthday,jdbcType=DATE},
+      </if>
+      <if test='mobile != null'>
+        mobile=#{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test='createId != null'>
+        create_id=#{createId,jdbcType=INTEGER},
+      </if>
+      <if test='createDt != null'>
+        create_dt=#{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test='lastLoginTime != null'>
+        last_login_time=#{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+      where id_key= #{idKey,jdbcType=INTEGER}
+  </update>
+
+  <!-- 分页查询-->
+  <select id="selectPage" resultType="SysUserVO" parameterType="Page" useCache="false">
+    select 
+    <include refid="Base_Column_List_VO"/>
+    from  sys_user t left join sys_organization a  on t.org_id = a.id_key 
+    	left join sys_user b on t.create_id=b.id_key
+    <where>
+ 		<if test='params.nameCn != null and params.nameCn !=""'>
+			and t.name_cn like concat('%',#{params.nameCn,jdbcType=VARCHAR},'%')
+		</if>
+    </where>
+  </select>
+
+  <!-- 导出excel-->
+  <select id="toExcel" resultType="SysUserVO" parameterType="map" useCache="false">
+    select 
+    <include refid="Base_Column_List_VO"/>
+    from  sys_user t left join sys_organization a  on t.org_id = a.id_key 
+   		 left join sys_user b on t.create_id=b.id_key
+    <where>
+ 		<if test='nameCn != null and nameCn !=""'>
+			and t.name_cn like concat('%',#{nameCn,jdbcType=VARCHAR},'%')
+		</if>
+    </where>
+  </select>
+
+  <!-- 根据主键查找记录-->
+  <select id="selectByPrimaryKey" resultType="SysUser" parameterType="int">
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_user
+    where id_key= #{idKey,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据bean的属性查找多条记录-->
+  <select id="selectAllBySelective" resultType="SysUser" parameterType="SysUser">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_user
+    <include refid="selectiveWhere"/>
+  </select>
+ 
+  <!-- 根据bean的唯一属性查找一条记录-->
+  <select id="selectOneBySelective" resultType="SysUser" parameterType="SysUser">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_user
+    <include refid="selectiveWhere"/>
+    LIMIT 1
+  </select>
+
+  <!-- 校验帐号是否存在 -->
+  <select id="checkExistAccount" resultType="SysUser" parameterType="SysUser">
+    select id_key from sys_user where id_key != #{idKey,jdbcType=INTEGER} and account = #{account,jdbcType=VARCHAR}
+    LIMIT 1
+  </select>
+ 
+</mapper>

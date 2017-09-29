@@ -31,7 +31,7 @@ import java.util.Properties;
  * 这是通过获取到了原始的Sql语句后，把它改为对应的统计语句再利用Mybatis封装好的参数和设
  * 置参数的功能把Sql语句中的参数进行替换，之后再执行查询记录数的Sql语句进行总记录数的统计。
  *
- * 3.4版本的args需添加Integer.class参数，否则会报错 added by ts 2017-8-2
+ * 3.4版本的args需添加Integer.class参数，否则会报错(坑爹！) added by ts 2017-8-2
  */
 @Intercepts( {
        @Signature(method = "prepare", type = StatementHandler.class, args = {Connection.class, Integer.class}) })
