@@ -1,4 +1,4 @@
-package com.stanley.uams.service;
+package com.stanley.uams.shiro;
 
 import com.stanley.common.spring.BaseService;
 import com.stanley.uams.domain.auth.SysUser;
@@ -7,6 +7,7 @@ import com.stanley.uams.service.auth.SysUserRoleService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.RealmSecurityManager;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.crazycake.shiro.RedisSessionDAO;
@@ -71,7 +72,8 @@ public class ShiroService extends BaseService {
         });
         RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
         MyShiroRealm realm = (MyShiroRealm) securityManager.getRealms().iterator().next();
-        list.forEach(simplePrincipalCollection -> realm.clearCachedAuthorizationInfo(simplePrincipalCollection));
+        list.forEach(simplePrincipalCollection -> realm.doGetAuthorizationInfo(simplePrincipalCollection));
+        //realm.clearCachedAuthorizationInfo();
         log.debug("角色对应的当前登录用户的权限缓存已清空");
     }
 

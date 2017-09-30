@@ -1,7 +1,9 @@
 package com.stanley.uams.initialize;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
-import com.stanley.uams.service.MyShiroRealm;
+import com.stanley.uams.shiro.MyRolesFilter;
+import com.stanley.uams.shiro.MyShiroRealm;
+import com.stanley.uams.shiro.MyUserFilter;
 import com.stanley.utils.Constants;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.codec.Base64;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.Filter;
 import java.util.*;
 
 /**
@@ -55,9 +58,17 @@ public class ShiroConfig {
      */
     @Bean
     public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager,
-                                             @Value("${shiro.filterChainDefinition.anon}") String shiroFilterAnon){
+                                             @Value("${shiro.filterChainDefinition.anon}") String shiroFilterAnon,
+                                             MyRolesFilter myRolesFilter,
+                                             MyUserFilter myUserFilter){
         ShiroFilterFactoryBean shiroFilterFactoryBean  = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
+        //设置自定义过滤器，解决ajax访问的返回问题
+        Map<String, Filter> filtersMap = new HashMap<>();
+        //filtersMap.put("shiroLoginFilter", myLoginFilter);
+        //filtersMap.put("roles", myRolesFilter);
+        //filtersMap.put("user", myUserFilter);
+        //shiroFilterFactoryBean.setFilters(filtersMap);
         // 配置登录的url和登录成功的url
         shiroFilterFactoryBean.setLoginUrl("/login");
         shiroFilterFactoryBean.setSuccessUrl("/home");
@@ -87,8 +98,8 @@ public class ShiroConfig {
          * 需要权限控制的自行增加@RequiresPermissions("xxxxxxxxx")
          */
         filterChainDefinitionMap.put("/druid/**","roles[系统管理员]");
-        //authc:所有url都需要认证(登录)才能使用
-        filterChainDefinitionMap.put("/**", "authc");
+        //authc:所有url都需要认证(登录)才能使用,user:访问一个已知用户，比如记住我
+        filterChainDefinitionMap.put("/**", "user");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
@@ -197,13 +208,14 @@ public class ShiroConfig {
     }
 
     /**
-     * 记住我cookie生效时间30天
+     * 记住我cookie生效时间7天
      * cookie对象;
      * @return
      */
     public SimpleCookie rememberMeCookie(){
         SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
-        simpleCookie.setMaxAge(30*24*3600);
+        simpleCookie.setHttpOnly(true);
+        simpleCookie.setMaxAge(7*24*3600);
         return simpleCookie;
     }
     /**
@@ -217,6 +229,26 @@ public class ShiroConfig {
         //rememberMe cookie加密的密钥 建议每个项目都不一样 默认AES算法 密钥长度(128 256 512 位)
         cookieRememberMeManager.setCipherKey(Base64.decode("3AvVhmFLUs0KTA3Kprsdag=="));
         return cookieRememberMeManager;
+    }
+
+    /**
+     * 自定义角色过滤器
+     * @return
+     */
+    @Bean
+    public MyRolesFilter myRolesFilter(){
+        MyRolesFilter myRolesFilter = new MyRolesFilter();
+        return myRolesFilter;
+    }
+
+    /**
+     * 自定义用户过滤器
+     * @return
+     */
+    @Bean
+    public MyUserFilter myUserFilter(){
+        MyUserFilter myUserFilter = new MyUserFilter();
+        return myUserFilter;
     }
 
 }

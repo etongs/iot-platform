@@ -3,9 +3,12 @@ package com.stanley.uams.service.auth;
 
 import com.stanley.common.spring.BaseService;
 import com.stanley.uams.mapper.master.auth.SysPermissionMapper;
-import com.stanley.uams.service.ShiroService;
+import com.stanley.uams.shiro.MyShiroRealm;
+import com.stanley.uams.shiro.ShiroService;
 import com.stanley.utils.ResultBuilderUtil;
 import com.stanley.utils.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.mgt.RealmSecurityManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

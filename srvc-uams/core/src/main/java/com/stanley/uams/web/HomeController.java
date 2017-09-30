@@ -2,8 +2,6 @@ package com.stanley.uams.web;
 
 import com.stanley.common.spring.BaseController;
 import com.stanley.uams.service.HomeService;
-import com.stanley.utils.vcode.Captcha;
-import com.stanley.utils.vcode.GifCaptcha;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;

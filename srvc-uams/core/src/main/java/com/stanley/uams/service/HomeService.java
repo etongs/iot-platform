@@ -117,6 +117,7 @@ public class HomeService extends BaseService {
 
     /**
      * 设置当前登录信息
+     * session失效时间设为：1小时
      * 已登录成功后，设置session等
      * @param model
      * @return
@@ -124,12 +125,10 @@ public class HomeService extends BaseService {
     public String home(Model model){
         SysUser sysUser = (SysUser)SecurityUtils.getSubject().getPrincipal();
         sysUserService.updateLastLoginTime(sysUser.getIdKey());
-        ValueOperations<String, String> opsForValue = redisTemplate.opsForValue();
         redisTemplate.expire(SHIRO_LOGIN_COUNT + sysUser.getAccount(), 1, TimeUnit.SECONDS);
         UserInfoBean userInfoBean = this.generateUserInfo(sysUser);
         Session session = SecurityUtils.getSubject().getSession();
         session.setAttribute("userInfo", userInfoBean);
-        //session超时时间1小时
         session.setTimeout(3600000);
         model.addAttribute("userInfo",userInfoBean);
         return "mainframe/mainPage";

@@ -1,4 +1,4 @@
-package com.stanley.uams.service;
+package com.stanley.uams.shiro;
 
 import com.stanley.uams.domain.auth.SysUser;
 import com.stanley.uams.service.auth.SysPermissionService;
@@ -128,20 +128,23 @@ public class MyShiroRealm extends AuthorizingRealm {
     }
 
     /**
-     * 指定principalCollection 清除
+     * 清空当前用户权限信息
      */
-    /*@Override
-    protected void clearCachedAuthorizationInfo(PrincipalCollection principalCollection) {
+    public  void clearCachedAuthorizationInfo() {
+        PrincipalCollection principalCollection = SecurityUtils.getSubject().getPrincipals();
         SimplePrincipalCollection principals = new SimplePrincipalCollection(
                 principalCollection, getName());
         super.clearCachedAuthorizationInfo(principals);
-    }*/
-
+    }
+    /**
+     * 指定principalCollection 清除
+     */
     public void clearCachedAuthorizationInfo(PrincipalCollection principalCollection) {
         SimplePrincipalCollection principals = new SimplePrincipalCollection(
                 principalCollection, getName());
         super.clearCachedAuthorizationInfo(principals);
     }
+
 
 
 }
