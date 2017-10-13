@@ -60,17 +60,27 @@
         }
 
         .container {
-            max-width: 500px;
-            _width: 500px;
+            max-width: 505px;
+            _width: 505px;
             margin: 0 auto;
         }
-
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>未授权的页面</h1>
-    <p>抱歉，您没有权限访问此页面</p>
+    <h1>登录失效的页面</h1>
+    <p>抱歉，您的登录已过期或者未登录，<a href="javascript:reLogin();">点此重新登录</a></p>
 </div>
 </body>
+<script type="text/javascript">
+    function reLogin() {
+        var loginUrl = window.location.href;
+        loginUrl = loginUrl.substring(0, loginUrl.indexOf("/401"));
+        var p = window;
+        while(p != p.parent){
+            p = p.parent;
+        }
+        p.location.href = loginUrl;
+    }
+</script>
 </html>

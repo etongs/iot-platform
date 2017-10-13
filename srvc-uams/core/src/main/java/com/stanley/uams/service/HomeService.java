@@ -20,6 +20,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,9 @@ public class HomeService extends BaseService {
     private SysOrganizationService sysOrganizationService;
     @Resource
     private SysRoleService sysRoleService;
+
+    @Value("${shiro.sessionTimeout}")
+    private long sessionTimeout;
 
     /**
      * @Description 调用shiro验证，如果MyShiroRealm认证通过，则不会进入此方法
@@ -117,8 +121,8 @@ public class HomeService extends BaseService {
 
     /**
      * 设置当前登录信息
-     * session失效时间设为：1小时
      * 已登录成功后，设置session等
+     * session失效时间在此处设置，实测有效
      * @param model
      * @return
      */
@@ -129,7 +133,7 @@ public class HomeService extends BaseService {
         UserInfoBean userInfoBean = this.generateUserInfo(sysUser);
         Session session = SecurityUtils.getSubject().getSession();
         session.setAttribute("userInfo", userInfoBean);
-        session.setTimeout(3600000);
+        session.setTimeout(sessionTimeout);
         model.addAttribute("userInfo",userInfoBean);
         return "mainframe/mainPage";
     }
@@ -146,6 +150,19 @@ public class HomeService extends BaseService {
         SecurityUtils.getSubject().logout();
         return "redirect:/";
     }
+
+    /**
+     * @Description 踢出登录
+     * @date 2017/10/10
+     * @author 13346450@qq.com 童晟
+     * @param
+     * @return
+     */
+    public String kickout(Model model){
+        model.addAttribute("msg", "您的帐号已在另一地方登录，此登录被强制退出。");
+        return "mainframe/kickout";
+    }
+
 
     /**
      * @Description 获取验证码

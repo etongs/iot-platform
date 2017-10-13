@@ -1,5 +1,7 @@
 package com.stanley.uams.mapper.master.auth;
 
+import com.stanley.uams.domain.auth.SysResource;
+
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +41,7 @@ public interface SysPermissionMapper {
 	 * @author 13346450@qq.com 童晟 
 	 * @date 2016年7月20日
 	 */
-	List<Map<String,Object>> selectResourcesByRoleId(Integer roleId);
+	List<SysResource> selectResourcesByRole(Integer roleId);
 	
 	/**
 	 * 查询所有资源节点和权限

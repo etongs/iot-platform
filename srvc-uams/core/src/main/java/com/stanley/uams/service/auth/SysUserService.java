@@ -2,22 +2,29 @@ package com.stanley.uams.service.auth;
 
 
 import com.stanley.common.domain.SearchParam;
+import com.stanley.common.domain.UserInfoBean;
 import com.stanley.common.domain.mybatis.Page;
 import com.stanley.common.spring.BaseService;
 import com.stanley.uams.domain.auth.SysUser;
+import com.stanley.uams.domain.auth.SysUserOnline;
 import com.stanley.uams.domain.auth.SysUserVO;
 import com.stanley.uams.mapper.master.auth.SysUserMapper;
+import com.stanley.uams.service.CommonService;
+import com.stanley.uams.shiro.SessionRedisDAO;
 import com.stanley.utils.*;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.support.DefaultSubjectContext;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.support.SessionStatus;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 用户管理
@@ -35,6 +42,10 @@ public class SysUserService extends BaseService {
 	private SysUserMapper sysUserMapper;
 	@Resource
 	private SysUserRoleService sysUserRoleService;
+	@Resource
+	private CommonService commonService;
+	@Resource
+	private SessionRedisDAO sessionRedisDAO;
 
 	@Transactional
 	public String insert(SysUser sysUser) {
@@ -75,6 +86,10 @@ public class SysUserService extends BaseService {
 		sysUser.setCreateDt(new Timestamp(System.currentTimeMillis()));
 		sysUserMapper.updateByPrimaryKeySelective(sysUser);
 		sysUserRoleService.updateByUserId(sysUser.getIdKey(), sysUser.getRoleIds());
+		//更新权限缓存
+		List<Integer> users = new ArrayList<>();
+		users.add(sysUser.getIdKey());
+		commonService.clearShiroCachedAuthorizationInfo(users);
 		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_UPDATE, "idKey:" +sysUser.getIdKey());
 		return ResultBuilderUtil.RESULT_SUCCESS;
 	}
@@ -208,5 +223,56 @@ public class SysUserService extends BaseService {
 		user.setLastLoginTime(new Timestamp(System.currentTimeMillis()));
 		sysUserMapper.updateByPrimaryKeySelective(user);
 	}
-	
+
+	public Page<SysUserOnline> selectOnline(SearchParam searchParam) {
+		Page<SysUserOnline> page = new Page<>();
+		page.setOffset(searchParam.getOffset());
+		page.setLimit(searchParam.getLimit());
+		String nameCn = searchParam.getSearchName();
+		List<SysUserOnline> list = new ArrayList<>();
+		String mySessionId = SecurityUtils.getSubject().getSession().getId().toString();
+		sessionRedisDAO.getActiveSessions().forEach( session -> {
+			Object obj = session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
+			if (null != obj && obj instanceof SimplePrincipalCollection) {
+				SimplePrincipalCollection spc = (SimplePrincipalCollection) obj;
+				obj = spc.getPrimaryPrincipal();
+				if (null != obj && obj instanceof SysUser) {
+					SysUserOnline online = new SysUserOnline();
+					SysUser sysUser = (SysUser) obj;
+					if(!StringUtils.isNull(nameCn) && sysUser.getNameCn().indexOf(nameCn) == -1)
+						return;
+					online.setAccount(sysUser.getAccount());
+					online.setNameCn(sysUser.getNameCn());
+					online.setOrgName(((UserInfoBean)session.getAttribute("userInfo")).getOrgName());
+					online.setLastAccess(session.getLastAccessTime());
+					online.setHost(session.getHost());
+					online.setSessionId(session.getId().toString() +
+							(mySessionId.equals(session.getId().toString())?"(自己)":""));
+					online.setTimeout(session.getTimeout()/1000);  //会话到期 ttl(ms)
+					online.setStartTime(session.getStartTimestamp());
+					list.add(online);
+				}
+			}
+		});
+		page.setTotal(list.size());
+		page.setRows(list);
+		return page;
+	}
+
+	/**
+	 * @Description 强制下线，设置session马上过期
+	 * @date 2017/10/13
+	 * @author 13346450@qq.com 童晟
+	 * @param
+	 * @return
+	 */
+	public String offline(String sessionId){
+		String mySessionId = SecurityUtils.getSubject().getSession().getId().toString();
+		if(mySessionId.equals(sessionId))
+			return ResultBuilderUtil.resultException("2","不能下线自己的会话！");
+
+		sessionRedisDAO.expire(sessionId);
+		return ResultBuilderUtil.RESULT_SUCCESS;
+	}
+
 }

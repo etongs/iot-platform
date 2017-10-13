@@ -4,10 +4,12 @@ import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
 import com.stanley.common.spring.BaseController;
 import com.stanley.uams.domain.auth.SysUser;
+import com.stanley.uams.domain.auth.SysUserOnline;
 import com.stanley.uams.domain.auth.SysUserVO;
 import com.stanley.uams.service.auth.SysUserService;
 import com.stanley.utils.ExcelUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -191,5 +193,33 @@ public class SysUserController extends BaseController {
 	public String modifyMyself(SysUser sysUser){
 		return sysUserService.update(sysUser);
 	}
-	
+
+
+	/**
+	 * 列出在线用户
+	 * @param searchParam
+	 * @return
+	 * @author 13346450@qq.com 童晟
+	 * @date 2016-04-11
+	 */
+	@RequestMapping(value = "listOnline")
+	@RequiresPermissions("system:OnlineUser:select")
+	public Page<SysUserOnline> listOnline(SearchParam searchParam){
+		return sysUserService.selectOnline(searchParam);
+	}
+
+	/**
+	 * @Description 强制下线，必须是系统管理员角色才行
+	 * @date 2017/10/13
+	 * @author 13346450@qq.com 童晟
+	 * @param sessionId
+	 * @return java.lang.String
+	 */
+	@RequestMapping(value = "offline/{sessionId}", method = RequestMethod.GET)
+	@RequiresPermissions("system:OnlineUser:offline")
+	@RequiresRoles("系统管理员")
+	public String offline(@PathVariable String sessionId){
+		return sysUserService.offline(sessionId);
+	}
+
 }

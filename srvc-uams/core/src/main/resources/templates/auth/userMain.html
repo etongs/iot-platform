@@ -45,7 +45,10 @@
 					validators: {
 						notEmpty: { message: '登录帐号不能为空'},
 						stringLength: { min: 1, max: 30, message: '登录帐号长度必须在1到30之间'},
-						remote: {url: parent.CONTEXT_PATH+"/system/user/validate", message: '帐号已存在', delay: 600, type: "GET",
+						remote: {url: parent.CONTEXT_PATH+"/system/user/validate",
+								 message: '帐号已存在',
+							     delay: 600,
+							     type: "GET",
 	                        	data: function(validator) {
 	                                return { idKey: $("#idKey").val()};
 	                            }
@@ -131,8 +134,7 @@
 								<label for="searchName">用户姓名</label>
 								<input type="text" class="form-control" name="searchName" id="searchName">
 							</div>
-							<button type="button" id="queryButton" class="btn btn-primary" style="margin-left: 20px;">查 询</button>
-							<button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 40px;">导出Excel</button>
+							<span th:include="common/toolbarTop::singleTableQuery('system:SysUser:select')"></span>
 						</form>
 					</div>
 				</div>

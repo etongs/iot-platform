@@ -1,4 +1,19 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<!------------------  单表的查询按钮组 ---------------->
+<div th:fragment="singleTableQuery(query)">
+    <shiro:hasPermission name="${query}">
+    <button type="button" id="queryButton" class="btn btn-primary" style="margin-left: 20px;">查 询</button>
+    </shiro:hasPermission>
+    <shiro:lacksPermission name="${query}">
+        <button type="button" id="queryButton" class="btn btn-primary" style="margin-left: 20px;" disabled="disabled">查 询</button>
+    </shiro:lacksPermission>
+    <shiro:hasPermission name="${query}">
+    <button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 15px;">导出Excel</button>
+    </shiro:hasPermission>
+    <shiro:lacksPermission name="${query}">
+    <button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 15px;" disabled="disabled">导出Excel</button>
+    </shiro:lacksPermission>
+</div>
 <!------------------  单表的头部按钮组(标准)  ---------------->
 <div th:fragment="singleTable(remove,add,edit)">
 <div class="btn-toolbar" role="toolbar" id="toolbar">

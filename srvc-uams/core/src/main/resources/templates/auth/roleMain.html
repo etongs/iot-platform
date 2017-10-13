@@ -72,8 +72,7 @@
 								<label for="searchName2">角色标识</label>
 								<input type="text" class="form-control" name="searchName2" id="searchName2">
 							</div>
-							<button type="button" id="queryButton" class="btn btn-primary" style="margin-left: 20px;">查 询</button>
-							<button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 40px;">导出Excel</button>
+							<span th:include="common/toolbarTop::singleTableQuery('system:SysRole:select')"></span>
 						</form>
 					</div>
 				</div>

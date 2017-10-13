@@ -3,12 +3,22 @@ package com.stanley.uams.service;
 import com.stanley.common.domain.NavigateMenu;
 import com.stanley.common.spring.BaseService;
 import com.stanley.uams.domain.auth.SysMenu;
+import com.stanley.uams.domain.auth.SysUser;
 import com.stanley.uams.mapper.master.auth.SysMenuMapper;
+import com.stanley.uams.service.auth.SysUserRoleService;
+import com.stanley.uams.shiro.MyShiroRealm;
+import com.stanley.uams.shiro.SessionRedisDAO;
 import com.stanley.utils.Constants;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.mgt.RealmSecurityManager;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -23,6 +33,8 @@ public class CommonService extends BaseService {
 
     @Resource
     private SysMenuMapper sysMenuMapper;
+    @Resource
+    private SessionRedisDAO sessionRedisDAO;
 
     /**
      * @Description 获取当前用户有权限的菜单
@@ -82,4 +94,42 @@ public class CommonService extends BaseService {
         }
         return destList;
     }
+
+    /**
+     * @Description 清除shiro的权限信息缓存redis
+     * @date 2017/10/11
+     * @author 13346450@qq.com 童晟
+     * @param
+     * @return
+     */
+    public void clearShiroCachedAuthorizationInfo(List<Integer> userIds){
+        //获取所有活跃的session
+        Collection<Session> sessions = sessionRedisDAO.getActiveSessions();
+        //定义返回
+        List<SimplePrincipalCollection> list = new ArrayList<SimplePrincipalCollection>();
+        sessions.forEach( session -> {
+            //获取session登录信息。
+            Object obj = session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
+            if (null != obj && obj instanceof SimplePrincipalCollection) {
+                SimplePrincipalCollection spc = (SimplePrincipalCollection) obj;
+                //判断用户，匹配用户ID。
+                obj = spc.getPrimaryPrincipal();
+                if (null != obj && obj instanceof SysUser) {
+                    SysUser user = (SysUser) obj;
+                    //比较用户ID，符合即加入集合
+                    if (userIds.contains(user.getIdKey())) {
+                        list.add(spc);
+                        log.debug("需要移除权限缓存的用户帐号：{},{}",user.getAccount(),user.getNameCn());
+                    }
+                }
+            }
+        });
+        if(list.isEmpty())
+            return;
+        RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
+        MyShiroRealm realm = (MyShiroRealm) securityManager.getRealms().iterator().next();
+        realm.clearCachedAuthorizationInfo(list);
+    }
+
+
 }

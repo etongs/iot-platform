@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+	<head th:include="common/headers::singleTable(#{systemName})"></head>
+	<script type="text/javascript">
+	$(function(){
+        //去掉导出excel功能
+        if($("#exportExcelButton").length >= 1)
+            $("#exportExcelButton").hide();
+		var tableObj = new TableInit();
+		tableObj.init({
+			url: parent.CONTEXT_PATH+"/system/user/listOnline",
+			columns: [
+				{field:'orgName', title:'组织机构', halign: 'center'},
+				{field:'account', title:'登录帐号', halign: 'center'},
+				{field:'nameCn', title:'姓名', halign: 'center'},
+				{field:'sessionId', title:'会话ID', halign: 'center'},
+				{field:'startTime', title:'会话创建时间', halign: 'center', align: 'center'},
+				{field:'lastAccess', title:'会话最后访问时间', halign: 'center'},
+				{field:'host', title:'主机', halign: 'center'},
+				{field:'timeout', title:'超时时间(秒)', halign: 'center'},
+				{title:'操作', halign: 'center', align: 'center',
+				 formatter: function(value, row, index){
+                     return row.sessionId.indexOf("自己") == -1 ?
+						 		"<a href=\"javascript:offline('"+row.sessionId+"','"+row.nameCn+"')\">强制下线</a>" : "";
+                 }}
+			]
+		});
+		var tableButtonObj = new TableButtonInit();
+		tableButtonObj.init({
+				tableId: tableObj.tableId,
+				searchFormId: tableObj.searchFormId,
+				basePath: parent.CONTEXT_PATH,
+				exportUrl: parent.CONTEXT_PATH,
+				insertUrl: parent.CONTEXT_PATH,
+				updateUrl: parent.CONTEXT_PATH,
+				removeUrl: parent.CONTEXT_PATH,
+				initAddValue: {}
+			}, {}, []
+		);
+	});
+    function offline(sessionId, nameCn) {
+        popConfirm("确定要强制下线 【"+nameCn+"】 吗？", function () {
+            ajaxGet({
+                url: parent.parent.CONTEXT_PATH+"/system/user/offline/"+sessionId,
+                successJSFunc: function(result) {
+                    if (1==result.status) {
+                        popAlert("强制下线成功","");
+                        setTimeout("$('#dataTable').bootstrapTable('refresh', {'silent': true});",2400);
+                    } else {
+                        popAlert("操作失败: "+result.message);
+                    }
+                }
+            });
+        });
+    }
+	</script>
+	<body>
+		<div class="panel-body" style="padding-bottom:0px;">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion" href="#searchPanel">
+							查询条件 (点击折叠)
+						</a>
+					</h4>
+				</div>
+				<div id="searchPanel" class="panel-collapse collapse in">
+					<div class="panel-body">
+						<form id="searchForm" class="form-inline" role="form">
+							<input name="checkedIds" id="checkedIds" type="hidden"/>
+							<div class="form-group" style="margin:0px 5px;">
+								<label for="searchName">用户姓名</label>
+								<input type="text" class="form-control" name="searchName" id="searchName">
+							</div>
+							<span th:include="common/toolbarTop::singleTableQuery('system:OnlineUser:select')"></span>
+						</form>
+					</div>
+				</div>
+			</div>
+			<table id="dataTable" class="table-no-bordered"></table>
+		</div>
+	</body>
+</html>

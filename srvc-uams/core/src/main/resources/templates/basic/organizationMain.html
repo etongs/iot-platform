@@ -258,8 +258,7 @@
 								<div th:include="common/selector::districtQuerySelector('province','city','district',
 									  '/getDistrictChildren/','idKey','cdNm','','','','','','===全部===','0','','','','')"></div>
 							</div>
-							<button type="button" id="queryButton" class="btn btn-primary" style="margin-left: 20px;">查 询</button>
-							<button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 40px;">导出Excel</button>
+							<span th:include="common/toolbarTop::singleTableQuery('system:SysOrganization:select')"></span>
 						</form>
 					</div>
 				</div>

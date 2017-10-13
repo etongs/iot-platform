@@ -68,6 +68,26 @@ public class HomeController extends BaseController {
     }
 
     /**
+     * 被踢出后跳转的页面
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "kickout")
+    public String kickout(Model model) {
+        return homeService.kickout(model);
+    }
+
+    /**
+     * 未登录的跳转页面
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "401", method = RequestMethod.GET)
+    public String notLogin(Model model){
+        return "401";
+    }
+
+    /**
      * 无权限的跳转页面
      * @param model
      * @return

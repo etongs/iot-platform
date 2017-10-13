@@ -16,8 +16,8 @@
   </insert>
   
    <!-- 根据角色id查权限的表达式-->
-   <select id="selectResourcesByRoleId" resultType="map" parameterType="int" useCache="false">
-    select a.expression,a.url,a.res_type
+   <select id="selectResourcesByRole" resultType="SysResource" parameterType="int" useCache="false">
+    select a.expression
       from sys_permission t inner join sys_resource a on t.resource_id=a.id_key
       where t.role_id=#{roleId,jdbcType=INTEGER}
       and  a.expression!=''

@@ -83,10 +83,6 @@
 			<artifactId>thymeleaf-extras-shiro</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.crazycake</groupId>
-			<artifactId>shiro-redis</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 		</dependency>

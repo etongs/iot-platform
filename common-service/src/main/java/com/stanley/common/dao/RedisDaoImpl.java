@@ -40,6 +40,7 @@ public class RedisDaoImpl implements RedisDao {
 	 */
 	public RedisDaoImpl(){
 		MybatisRedisCache.setJedisPool();
+		RedisManager.setJedisPool();
 	}
 
 	/**

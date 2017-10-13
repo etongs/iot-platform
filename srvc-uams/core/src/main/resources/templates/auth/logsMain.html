@@ -70,8 +70,7 @@
 								<label class="sr-only" for="searchName2">备注</label>
 								<input type="text" class="form-control" name="searchName2" id="searchName2" placeholder="备注" style="width:140px">
 							</div>
-							<button type="button" id="queryButton" class="btn btn-primary">查 询</button>
-							<button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 10px;">导出Excel</button>
+							<span th:include="common/toolbarTop::singleTableQuery('system:SysLogs:select')"></span>
 						</form>
 					</div>
 				</div>

@@ -1,9 +1,8 @@
-package com.stanley.uams.initialize;
+package com.stanley.uams.shiro;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
-import com.stanley.uams.shiro.MyRolesFilter;
-import com.stanley.uams.shiro.MyShiroRealm;
-import com.stanley.uams.shiro.MyUserFilter;
+import com.stanley.uams.shiro.filter.KickoutSessionControlFilter;
+import com.stanley.uams.shiro.filter.MyUserFilter;
 import com.stanley.utils.Constants;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.codec.Base64;
@@ -15,9 +14,7 @@ import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
-import org.crazycake.shiro.RedisCacheManager;
-import org.crazycake.shiro.RedisManager;
-import org.crazycake.shiro.RedisSessionDAO;
+import com.stanley.common.dao.RedisManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -57,18 +54,17 @@ public class ShiroConfig {
      3、部分过滤器可指定参数，如perms，roles
      */
     @Bean
-    public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager,
+    public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager,
                                              @Value("${shiro.filterChainDefinition.anon}") String shiroFilterAnon,
-                                             MyRolesFilter myRolesFilter,
-                                             MyUserFilter myUserFilter){
+                                              KickoutSessionControlFilter kickoutSessionControlFilter
+                                             ){
         ShiroFilterFactoryBean shiroFilterFactoryBean  = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         //设置自定义过滤器，解决ajax访问的返回问题
         Map<String, Filter> filtersMap = new HashMap<>();
-        //filtersMap.put("shiroLoginFilter", myLoginFilter);
-        //filtersMap.put("roles", myRolesFilter);
-        //filtersMap.put("user", myUserFilter);
-        //shiroFilterFactoryBean.setFilters(filtersMap);
+        //filtersMap.put("kickout", kickoutSessionControlFilter);
+        filtersMap.put("user", new MyUserFilter());
+        shiroFilterFactoryBean.setFilters(filtersMap);
         // 配置登录的url和登录成功的url
         shiroFilterFactoryBean.setLoginUrl("/login");
         shiroFilterFactoryBean.setSuccessUrl("/home");
@@ -81,6 +77,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/getGifCode", "anon");
         //验证码校验
         filterChainDefinitionMap.put("/checkValidateCode/*", "anon");
+        filterChainDefinitionMap.put("/401", "anon");
         filterChainDefinitionMap.put("/logout", "logout");
         /* written by ts 2017-9-7
          * perms:授权过滤器, perms括号里面可以用url或者权限表达式
@@ -158,19 +155,13 @@ public class ShiroConfig {
     /**
      * 配置shiro redisManager
      * 使用的是shiro-redis开源插件
+     * @param timeout 权限信息缓存的失效时间
      * @return
      */
     @Bean
-    public RedisManager redisManager(@Value("${spring.redis.host}") String host,
-                                     @Value("${spring.redis.port}") int port,
-                                     @Value("${spring.redis.password}") String password,
-                                     @Value("${spring.redis.timeout}") int timeout) {
+    public RedisManager redisManager(@Value("${spring.redis.expire}") int timeout) {
         RedisManager redisManager = new RedisManager();
-        redisManager.setHost(host);
-        redisManager.setPort(port);
-        redisManager.setExpire(1800);// 配置缓存过期时间
-        redisManager.setTimeout(timeout);
-        redisManager.setPassword(password);
+        redisManager.setExpire(timeout);// shiro存放权限信息的缓存失效时间（单位秒）
         return redisManager;
     }
 
@@ -187,23 +178,27 @@ public class ShiroConfig {
     }
 
     /**
-     * RedisSessionDAO shiro sessionDao层的实现 通过redis
+     * SessionRedisDAO shiro sessionDao层的实现 通过redis
      * 使用的是shiro-redis开源插件
      */
     @Bean
-    public RedisSessionDAO redisSessionDAO(RedisManager redisManager) {
-        RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
-        redisSessionDAO.setRedisManager(redisManager);
-        return redisSessionDAO;
+    public SessionRedisDAO redisSession(RedisManager redisManager) {
+        SessionRedisDAO sessionRedisDAO = new SessionRedisDAO();
+        sessionRedisDAO.setRedisManager(redisManager);
+        return sessionRedisDAO;
     }
 
     /**
      * shiro session的管理
      */
     @Bean(name = "sessionManager")
-    public DefaultWebSessionManager sessionManager(RedisSessionDAO redisSessionDAO) {
+    public DefaultWebSessionManager sessionManager(SessionRedisDAO sessionRedisDAO) {
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
-        sessionManager.setSessionDAO(redisSessionDAO);
+        sessionManager.setSessionDAO(sessionRedisDAO);
+        //相隔多久检查一次session的有效性，默认值：1小时3600000L
+        //sessionManager.setSessionValidationInterval(7200000L);
+        //session全局有效时间，因为在redis expire中已设置，此处设置无效
+        //sessionManager.setGlobalSessionTimeout(1800000L);
         return sessionManager;
     }
 
@@ -232,23 +227,26 @@ public class ShiroConfig {
     }
 
     /**
-     * 自定义角色过滤器
+     * 限制同一账号登录同时登录人数控制
      * @return
      */
     @Bean
-    public MyRolesFilter myRolesFilter(){
-        MyRolesFilter myRolesFilter = new MyRolesFilter();
-        return myRolesFilter;
-    }
-
-    /**
-     * 自定义用户过滤器
-     * @return
-     */
-    @Bean
-    public MyUserFilter myUserFilter(){
-        MyUserFilter myUserFilter = new MyUserFilter();
-        return myUserFilter;
+    public KickoutSessionControlFilter kickoutSessionControlFilter(RedisCacheManager redisCacheManager,
+                                       @Qualifier("sessionManager") DefaultWebSessionManager sessionManager){
+        KickoutSessionControlFilter kickoutSessionControlFilter = new KickoutSessionControlFilter();
+        //使用cacheManager获取相应的cache来缓存用户登录的会话；用于保存用户—会话之间的关系的；
+        //这里我们还是用之前shiro使用的redisManager()实现的cacheManager()缓存管理
+        //也可以重新另写一个，重新配置缓存时间之类的自定义缓存属性
+        kickoutSessionControlFilter.setCacheManager(redisCacheManager);
+        //用于根据会话ID，获取会话进行踢出操作的；
+        kickoutSessionControlFilter.setSessionManager(sessionManager);
+        //是否踢出后来登录的，默认是false；即后者登录的用户踢出前者登录的用户；踢出顺序。
+        kickoutSessionControlFilter.setKickoutAfter(false);
+        //同一个用户最大的会话数，默认1；比如2的意思是同一个用户允许最多同时两个人登录；
+        kickoutSessionControlFilter.setMaxSession(1);
+        //被踢出后重定向到的地址；
+        kickoutSessionControlFilter.setKickoutUrl("/kickout");
+        return kickoutSessionControlFilter;
     }
 
 }

@@ -24,4 +24,4 @@ eureka:
     health-check-url-path: /health
   client:
     serviceUrl:
-      defaultZone: http://admin:admin123@192.168.20.108:7100/eureka/
+      defaultZone: http://admin:admin123@192.168.20.106:7100/eureka/

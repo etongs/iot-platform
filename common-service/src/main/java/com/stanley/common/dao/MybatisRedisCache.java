@@ -2,7 +2,7 @@ package com.stanley.common.dao;
 
 import com.stanley.common.configuration.SpringContextUtil;
 import com.stanley.utils.Constants;
-import com.stanley.utils.StringUtils;
+import com.stanley.utils.SerializeUtil;
 import org.apache.ibatis.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public class MybatisRedisCache implements Cache {
      */
     public static void setJedisPool(){
         if(null == jedisPool){
-            jedisPool = (JedisPool) SpringContextUtil.getBean("mybatisJedisPool");
+            jedisPool = (JedisPool) SpringContextUtil.getBean("commonJedisPool");
         }
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  "
                 +"jedisPool 已注入到mybatisRedisCache  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
@@ -86,6 +86,7 @@ public class MybatisRedisCache implements Cache {
                 jedis.del(key);
             }
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             jedis.close();
         }
@@ -103,11 +104,12 @@ public class MybatisRedisCache implements Cache {
         try {
             jedis = jedisPool.getResource();
             jedis.select(DB_INDEX);
-            value = StringUtils.unserialize(jedis.get(getKey(key).getBytes(Constants.CHARSET)));
+            value = SerializeUtil.deserialize(jedis.get(getKey(key).getBytes(Constants.CHARSET)));
             if(null != value)
             	log.debug("从缓存中取数  >>>>>>>>>>>>> {}" , this.id);
             // getSize();
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             jedis.close();
         }
@@ -133,6 +135,7 @@ public class MybatisRedisCache implements Cache {
             }
             log.debug(this.id + "---->>>>总缓存数:" + result);
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             jedis.close();
         }
@@ -145,10 +148,11 @@ public class MybatisRedisCache implements Cache {
         try {
             jedis = jedisPool.getResource();
             jedis.select(DB_INDEX);
-            jedis.set(getKey(key).getBytes(Constants.CHARSET), StringUtils.serialize(value));
+            jedis.set(getKey(key).getBytes(Constants.CHARSET), SerializeUtil.serialize(value));
             log.debug("添加到缓存 >>>>>>>> {}",  this.id);
             // getSize();
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             jedis.close();
         }
@@ -165,6 +169,7 @@ public class MybatisRedisCache implements Cache {
             log.debug("LRU算法从缓存中移除 <<<<<<" + this.id);
             // getSize();
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             jedis.close();
         }

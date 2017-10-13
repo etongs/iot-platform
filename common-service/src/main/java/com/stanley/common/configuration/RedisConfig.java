@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import redis.clients.jedis.JedisPool;
@@ -34,6 +35,9 @@ public class RedisConfig {
     @Value("${spring.redis.password}")
     private String password;
 
+    @Value("${spring.redis.timeout}")
+    private int timeout;
+
     @Bean
     public JedisPoolConfig jedisPoolConfig(@Value("${spring.redis.maxActive}") int maxActive,
                                            @Value("${spring.redis.maxIdle}") int maxIdle,
@@ -55,6 +59,7 @@ public class RedisConfig {
         jedisConnectionFactory.setHostName(host);
         jedisConnectionFactory.setPort(port);
         jedisConnectionFactory.setPassword(password);
+        jedisConnectionFactory.setTimeout(timeout);
         return jedisConnectionFactory;
     }
 
@@ -64,9 +69,9 @@ public class RedisConfig {
         return new StringRedisTemplate(jedisConnectionFactory);
     }
 
-    @Bean(name = "mybatisJedisPool")
+    @Bean(name = "commonJedisPool")
     public JedisPool jedisPool(JedisPoolConfig jedisPoolConfig){
-        return new JedisPool(jedisPoolConfig, host, port, Protocol.DEFAULT_TIMEOUT,password,database);
+        return new JedisPool(jedisPoolConfig, host, port, timeout,password,database);
     }
 
 }

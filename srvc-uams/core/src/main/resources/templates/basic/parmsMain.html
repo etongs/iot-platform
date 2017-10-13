@@ -64,8 +64,7 @@
 								<label for="searchName">参数值</label>
 								<input type="text" class="form-control" name="searchName" id="searchName">
 							</div>
-							<button type="button" id="queryButton" class="btn btn-primary" style="margin-left: 20px;">查 询</button>
-							<button type="button" id="exportExcelButton" class="btn btn-default" style="margin-left: 40px;">导出Excel</button>
+							<span th:include="common/toolbarTop::singleTableQuery('system:SysParms:select')"></span>
 						</form>
 					</div>
 				</div>
