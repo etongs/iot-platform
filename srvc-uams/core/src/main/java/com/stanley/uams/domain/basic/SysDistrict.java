@@ -9,7 +9,6 @@ import com.stanley.common.domain.TreeStructure;
  * @version 1.0 
  * @author 13346450@qq.com 童晟
  */
-@SuppressWarnings("serial")
 public class SysDistrict extends TreeStructure {
 
 	/**地区编码*/

@@ -1,19 +1,15 @@
-package com.stanley.common.spring;
+package com.stanley.uams.shiro;
 
 import com.stanley.common.domain.UserInfoBean;
 import org.apache.shiro.SecurityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * 公共的服务层基类
- *
+ * shiro获取session的工具类
  * @author 13346450@qq.com 童晟
  * @version 1.0
- * @create 2017/8/25
+ * @create 2017/10/17
  **/
-public abstract class BaseService {
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+public class ShiroUtil {
 
     /**
      * 获取当前用户idkey
@@ -21,7 +17,7 @@ public abstract class BaseService {
      * @author 13346450@qq.com 童晟
      * @date 2016年3月31日
      */
-    protected Integer getUserId(){
+    public static Integer getUserId(){
         UserInfoBean userInfoBean = getCurrentUserInfo();
         return (null != userInfoBean)? userInfoBean.getUserId() : null;
     }
@@ -31,7 +27,7 @@ public abstract class BaseService {
      * @author 13346450@qq.com 童晟
      * @date 2016年3月31日
      */
-    protected String getUserName(){
+    public static String getUserName(){
         UserInfoBean userInfoBean = getCurrentUserInfo();
         return (null != userInfoBean)? userInfoBean.getNameCn() : null;
     }
@@ -41,7 +37,7 @@ public abstract class BaseService {
      * @author 13346450@qq.com 童晟
      * @date 2016年3月31日
      */
-    protected String getUserAccount(){
+    public static String getUserAccount(){
         UserInfoBean userInfoBean = getCurrentUserInfo();
         return (null != userInfoBean)? userInfoBean.getAccount() : null;
     }
@@ -53,7 +49,7 @@ public abstract class BaseService {
      * @param
      * @return
      */
-    protected String getUserRoleIds(){
+    public static String getUserRoleIds(){
         UserInfoBean userInfoBean = getCurrentUserInfo();
         return (null != userInfoBean)? userInfoBean.getRoleIds() : null;
     }
@@ -65,8 +61,7 @@ public abstract class BaseService {
      * @param
      * @return
      */
-    protected UserInfoBean getCurrentUserInfo(){
+    public static UserInfoBean getCurrentUserInfo(){
         return (UserInfoBean) SecurityUtils.getSubject().getSession().getAttribute("userInfo");
     }
-
 }

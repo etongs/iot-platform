@@ -4,9 +4,8 @@ import com.stanley.uams.domain.auth.SysResource;
 
 import java.util.List;
 import java.util.Map;
-
 /**
- * 用户角色对应表
+ * 用户角色对应表 ，此功能比较特殊，没有domain，所以未继承BaseMapper
  * @Description
  * @date 2016-05-17
  * @since 1.0 

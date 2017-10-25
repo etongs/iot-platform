@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
-import com.stanley.common.spring.BaseService;
+import com.stanley.uams.service.BaseService;
 import com.stanley.uams.domain.basic.SysInterface;
 import com.stanley.uams.domain.basic.SysInterfaceVO;
 import com.stanley.uams.mapper.master.basic.SysInterfaceMapper;
+import com.stanley.uams.shiro.ShiroUtil;
 import com.stanley.utils.*;
 import org.apache.poi.hssf.usermodel.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -29,79 +31,41 @@ import java.util.Map;
  * @date 2016-10-19
  * @since 1.0 
  * @version 1.0  
- * @author lcw
+ * @author ts
  */
 @Service
 public class SysInterfaceService extends BaseService {
-	//private final static String FUNC_MENU ="外部接口配置表";
-	/*private ExternalInfService externalInfService;*/
-
 	@Resource
-	private SysInterfaceMapper sysInterfaceMapper;
-	/*@Resource
-	private GeneralService generalService;*/
-
+	public void setSysInterfaceMapper(SysInterfaceMapper sysInterfaceMapper) {
+		super.setBaseMapper(sysInterfaceMapper);
+	}
 	@Resource
 	private RestTemplate restTemplate;
 
-	@Transactional
-	public String insert(SysInterface sysInterface) {
-		sysInterface.setCreateId(getUserId());
-		sysInterface.setCreateDt(new Timestamp(System.currentTimeMillis()));
-		sysInterfaceMapper.insert(sysInterface);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_CREATE, "idKey:" +sysInterface.getIdKey());
-		return ResultBuilderUtil.RESULT_SUCCESS;
-	}
-
-	@Transactional
-	public String delete(Integer idKey) {
-		if (null == idKey) {
-			return ResultBuilderUtil.resultException("2","id不能为空");
-		}
-		sysInterfaceMapper.deleteByPrimaryKey(idKey);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_DELETE, "idKey:" + idKey);
-		return ResultBuilderUtil.RESULT_SUCCESS;
-	}
-
-	@Transactional
-	public String deleteBatch(String dataIds) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("dataListID", Arrays.asList(dataIds.split(",")));
-		sysInterfaceMapper.deleteBatch(map);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_DELETE, "ids:" + dataIds);
-		return ResultBuilderUtil.RESULT_SUCCESS;
-	}
-
-	@Transactional
-	public String update(SysInterface sysInterface) {
-		sysInterface.setCreateId(getUserId());
-		sysInterface.setCreateDt(new Timestamp(System.currentTimeMillis()));
-		sysInterfaceMapper.updateByPrimaryKeySelective(sysInterface);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_UPDATE, "idKey:" +sysInterface.getIdKey());
-		return ResultBuilderUtil.RESULT_SUCCESS;
-	}
-
-	public SysInterface selectByIdkey(Integer idKey) {
-		return sysInterfaceMapper.selectByPrimaryKey(idKey);
-	}
-
+	/**
+	 * @Description 分页查询
+	 * @date 2017/10/24
+	 * @author 13346450@qq.com 童晟
+	 * @param
+	 * @return
+	 */
 	public Page<SysInterfaceVO> selectPage(SearchParam searchParam) {
-		Page<SysInterfaceVO> page = new Page<SysInterfaceVO>();
-		page.setOffset(searchParam.getOffset());
-		page.setLimit(searchParam.getLimit());
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("infName", searchParam.getSearchName());
-		map.put("sort", searchParam.getSort());
-		map.put("order", searchParam.getOrder());
-		page.setParams(map);
-		page.setRows(sysInterfaceMapper.selectPage(page));
-		return page;
+		return super.selectPage(searchParam, map);
 	}
 
+	/**
+	 * @Description 导出excel
+	 * @date 2017/10/24
+	 * @author 13346450@qq.com 童晟
+	 * @param
+	 * @return
+	 */
 	public HSSFWorkbook toExcel(SearchParam searchParam) {
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 		map.put("infName", searchParam.getSearchName());
-		List<SysInterfaceVO> list = sysInterfaceMapper.toExcel(map);
+		List<SysInterfaceVO> list = getBaseMapper().toExcel(map);
 		String[] excelHeader = { "接口名称", "接口地址", "接口参数(json格式)", "加密公式", "加密算法字符集", "密码的key值", "http请求方式(get,post)", "接收到的数据格式(json,xml)", "收到数据后的实现类bean名称", "计划任务状态(1-启动，0-停止)", "上次执行时间", "创建用户id", "创建日期"};
 		HSSFWorkbook wb = new HSSFWorkbook();
 		//单元格列宽
@@ -143,22 +107,19 @@ public class SysInterfaceService extends BaseService {
 		return wb;
 	}
 
-	public SysInterface selectOneBySelective(SearchParam searchParam) {
-		SysInterface sysInterface = new SysInterface();
-		return sysInterfaceMapper.selectOneBySelective(sysInterface);
-	}
-
-	public List<SysInterface> selectAllBySelective(SearchParam searchParam) {
-		SysInterface sysInterface = new SysInterface();
-		return sysInterfaceMapper.selectAllBySelective(sysInterface);
-	}
-
+	/**
+	 * @Description 运行接口
+	 * @date 2017/10/24
+	 * @author 13346450@qq.com 童晟
+	 * @param
+	 * @return
+	 */
 	public String runInterface(String dataIds) {
 		List<String> list =  Arrays.asList(dataIds.split(","));
 		for(int i=0 ;i<list.size();i++)
 		{
-			SysInterface sysInterface=sysInterfaceMapper.selectByPrimaryKey(Integer.parseInt(list.get(i)));
-			Map<String, String> map = new HashMap<String, String>();
+			SysInterface sysInterface=(SysInterface)getBaseMapper().selectByPrimaryKey(Integer.parseInt(list.get(i)));
+			Map<String, String> map = new HashMap<>();
 			StringBuilder sb = new StringBuilder(sysInterface.getInfUrl());
 			String encryptExpression=sysInterface.getEncryptExpression();
 			String stringParms=sysInterface.getInfParms();
@@ -248,7 +209,7 @@ public class SysInterfaceService extends BaseService {
         		}*/
 	        }
 			sysInterface.setLastExeTime(new Timestamp(System.currentTimeMillis()));
-			sysInterfaceMapper.updateByPrimaryKeySelective(sysInterface);
+			getBaseMapper().updateByPrimaryKeySelective(sysInterface);
 		}
 		return ResultBuilderUtil.RESULT_SUCCESS;
 	}
@@ -257,7 +218,7 @@ public class SysInterfaceService extends BaseService {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("dataListID", Arrays.asList(dataIds.split(",")));
 		map.put("scheduledStatus", isStart);
-		sysInterfaceMapper.updateStatusBatch(map);
+		((SysInterfaceMapper)getBaseMapper()).updateStatusBatch(map);
 		return ResultBuilderUtil.RESULT_SUCCESS;
 	}
 

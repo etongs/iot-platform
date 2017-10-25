@@ -104,19 +104,6 @@ public class SysOpenApiController extends BaseController {
 	}
 
 	/**
-	 * 查询所有角色
-	 * return
-	 * @author 13346450@qq.com 童晟
-	 * @date 2017-01-06
-	 */
-	@RequestMapping(value = "listAll")
-	@RequiresPermissions("system:SysOpenApi:select")
-	public List<SysOpenApi> listAll(){
-		return sysOpenApiService.selectAllBySelective(null);
-	}
-
-
-	/**
 	 * 检查用户标识是否已存在
 	 * @author 13346450@qq.com 童晟
 	 * @date 2016-04-08

@@ -17,5 +17,13 @@
 9. 登录失败次数限制(redis)
 10. 在线用户列表显示，强制下线功能  
 11. 提供用户-角色-资源-权限的维护功能  
+
+###二、通用CURD的service层、mapper层封装
+1. 封装了BaseMapper接口，业务功能只需继承该接口就包含了通用的CURD功能
+2. 封装了BaseService，业务功能只需继承该类，就实现了通用的CURD功能
+3. 针对树形结构的功能，单独封装了BaseTreeMapper、BaseTreeService
+4. mapper.xml里面的sql语句未封装，需自己写
+
+
  
 

@@ -88,7 +88,7 @@ public class CommonController extends BaseController {
      */
     @RequestMapping(value = "/getDistrictSamelevel/{idKey}")
     public List<SysDistrict> getDistrictSamelevel(@PathVariable Integer idKey) {
-        return sysDistrictService.selectDistrictSamelevel(idKey);
+        return sysDistrictService.selectSameLevelNodes(idKey);
     }
 
     /**

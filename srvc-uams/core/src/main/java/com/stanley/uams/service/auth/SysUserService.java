@@ -1,31 +1,28 @@
 package com.stanley.uams.service.auth;
 
-
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.UserInfoBean;
 import com.stanley.common.domain.mybatis.Page;
-import com.stanley.common.spring.BaseService;
+import com.stanley.uams.service.BaseService;
 import com.stanley.uams.domain.auth.SysUser;
 import com.stanley.uams.domain.auth.SysUserOnline;
 import com.stanley.uams.domain.auth.SysUserVO;
 import com.stanley.uams.mapper.master.auth.SysUserMapper;
 import com.stanley.uams.service.CommonService;
 import com.stanley.uams.shiro.SessionRedisDAO;
+import com.stanley.uams.shiro.ShiroUtil;
 import com.stanley.utils.*;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
-import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.support.SessionStatus;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.*;
-
 /**
  * 用户管理
  * @Description
@@ -35,11 +32,11 @@ import java.util.*;
  * @author 13346450@qq.com 童晟
  */
 @Service
-public class SysUserService extends BaseService {
-	private final static String FUNC_MENU ="用户表";
-
+public class SysUserService extends BaseService<SysUser, SysUserVO> {
 	@Resource
-	private SysUserMapper sysUserMapper;
+	public void setSysUserMapper(SysUserMapper sysUserMapper) {
+		super.setBaseMapper(sysUserMapper);
+	}
 	@Resource
 	private SysUserRoleService sysUserRoleService;
 	@Resource
@@ -48,73 +45,47 @@ public class SysUserService extends BaseService {
 	private SessionRedisDAO sessionRedisDAO;
 
 	@Transactional
-	public String insert(SysUser sysUser) {
-		sysUser.setCreateId(getUserId());
-		sysUser.setCreateDt(new Timestamp(System.currentTimeMillis())); 
-		sysUser.setIsModify(true);
-		sysUser.setPasswd(EncryptUtil.shiroEncrypt(sysUser.getAccount()+"#123", sysUser.getAccount()));
-		sysUserMapper.insert(sysUser);
-		sysUserRoleService.insertByUserId(sysUser.getIdKey(), sysUser.getRoleIds());
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_CREATE, "idKey:" +sysUser.getIdKey());
+	public String insert(SysUser entity) {
+		entity.setIsModify(true);
+		entity.setPasswd(EncryptUtil.shiroEncrypt(entity.getAccount()+"#123", entity.getAccount()));
+		super.insert(entity);
+		sysUserRoleService.insertByUserId(entity.getIdKey(), entity.getRoleIds());
 		return ResultBuilderUtil.RESULT_SUCCESS;
 	}
 
 	@Transactional
 	public String delete(Integer idKey) {
-		if (null == idKey) {
-			return ResultBuilderUtil.resultException("2","id不能为空");
-		}
-		sysUserMapper.deleteByPrimaryKey(idKey);
 		sysUserRoleService.deleteByUserid(idKey);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_DELETE, "idKey:" + idKey);
-		return ResultBuilderUtil.RESULT_SUCCESS;
+		return super.delete(idKey);
 	}
 
 	@Transactional
 	public String deleteBatch(String dataIds) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("dataListID", Arrays.asList(dataIds.split(",")));
-		sysUserMapper.deleteBatch(map);
 		sysUserRoleService.deleteBatch(dataIds);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_DELETE, "ids:" + dataIds);
-		return ResultBuilderUtil.RESULT_SUCCESS;
+		return super.deleteBatch(dataIds);
 	}
 
 	@Transactional
-	public String update(SysUser sysUser) {
-		sysUser.setCreateId(getUserId());
-		sysUser.setCreateDt(new Timestamp(System.currentTimeMillis()));
-		sysUserMapper.updateByPrimaryKeySelective(sysUser);
-		sysUserRoleService.updateByUserId(sysUser.getIdKey(), sysUser.getRoleIds());
+	public String update(SysUser entity) {
+		super.update(entity);
+		sysUserRoleService.updateByUserId(entity.getIdKey(), entity.getRoleIds());
 		//更新权限缓存
 		List<Integer> users = new ArrayList<>();
-		users.add(sysUser.getIdKey());
+		users.add(entity.getIdKey());
 		commonService.clearShiroCachedAuthorizationInfo(users);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_UPDATE, "idKey:" +sysUser.getIdKey());
 		return ResultBuilderUtil.RESULT_SUCCESS;
 	}
 
-	public SysUser selectByIdkey(Integer idKey) {
-		return sysUserMapper.selectByPrimaryKey(idKey);
-	}
-
 	public Page<SysUserVO> selectPage(SearchParam searchParam) {
-		Page<SysUserVO> page = new Page<SysUserVO>();
-		page.setOffset(searchParam.getOffset());
-		page.setLimit(searchParam.getLimit());
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("nameCn", searchParam.getSearchName());
-		map.put("sort", searchParam.getSort());
-		map.put("order", searchParam.getOrder());
-		page.setParams(map);
-		page.setRows(sysUserMapper.selectPage(page));
-		return page;
+		return super.selectPage(searchParam, map);
 	}
 
 	public HSSFWorkbook toExcel(SearchParam searchParam) {
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 		map.put("nameCn", searchParam.getSearchName());
-		List<SysUserVO> list = sysUserMapper.toExcel(map);
+		List<SysUserVO> list = getBaseMapper().toExcel(map);
 		String[] excelHeader = { "所属组织机构", "用户帐号", "用户姓名",  "昵称", "性别", "邮箱", "生日", "手机号", "创建人", "创建时间"};
 		HSSFWorkbook wb = new HSSFWorkbook();
 		//单元格列宽
@@ -143,26 +114,25 @@ public class SysUserService extends BaseService {
 			row.createCell(3).setCellValue(StringUtils.null2Blank(user.getNickname()));
 			row.createCell(4).setCellValue(StringUtils.null2Blank(user.getGender()));
 			row.createCell(5).setCellValue(StringUtils.null2Blank(user.getEmail()));
-			row.createCell(6).setCellValue(null==user.getBirthday()? 
-						"": DateTimeUtil.formatDateToStr(user.getBirthday(), "yyyy-mm-dd"));
+			row.createCell(6).setCellValue(null==user.getBirthday()?
+					"": DateTimeUtil.formatDateToStr(user.getBirthday(), "yyyy-mm-dd"));
 			row.createCell(7).setCellValue(StringUtils.null2Blank(user.getMobile()));
 			row.createCell(8).setCellValue(StringUtils.null2Blank(user.getCreateName()));
 			row.createCell(9).setCellValue(null==user.getCreateDt()?
-						"": DateTimeUtil.getDateToStrFullFormat(user.getCreateDt()));
+					"": DateTimeUtil.getDateToStrFullFormat(user.getCreateDt()));
 		}
 		return wb;
 	}
 
-	public SysUser selectOneBySelective(SysUser sysUser) {
-		return sysUserMapper.selectOneBySelective(sysUser);
-	}
-
-	public List<SysUser> selectAllBySelective(SysUser sysUser) {
-		return sysUserMapper.selectAllBySelective(sysUser);
-	}
-
+	/**
+	 * @Description 个人修改密码
+	 * @date 2017/10/19
+	 * @author 13346450@qq.com 童晟
+	 * @param
+	 * @return
+	 */
 	public String modifyPwd(String oldPwd, String newPwd) {
-		SysUser sysUser = selectByIdkey(getUserId());
+		SysUser sysUser = selectByIdkey(ShiroUtil.getUserId());
 		if(null != oldPwd){
 			if (!EncryptUtil.shiroEncrypt(oldPwd, sysUser.getAccount()).equals(sysUser.getPasswd())) {
 				return ResultBuilderUtil.resultException("2", "原密码错误，请重新输入。");
@@ -170,47 +140,71 @@ public class SysUserService extends BaseService {
 		}
 		sysUser.setPasswd(EncryptUtil.shiroEncrypt(newPwd, sysUser.getAccount()));
 		sysUser.setIsModify(false);
-		sysUser.setCreateId(getUserId());
+		sysUser.setCreateId(ShiroUtil.getUserId());
 		sysUser.setCreateDt(new Timestamp(System.currentTimeMillis()));
-		sysUserMapper.updateByPrimaryKeySelective(sysUser);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_UPDATE, "idKey:" + sysUser.getIdKey());
+		getBaseMapper().updateByPrimaryKeySelective(sysUser);
 		return ResultBuilderUtil.RESULT_SUCCESS;
 	}
 
+	/**
+	 * 重置密码
+	 * @param dataIds
+	 * @return
+	 */
 	@Transactional
 	public String initializePwd(String dataIds) {
 		List<String> list=Arrays.asList(dataIds.split(","));
 		for(int i=0;i<list.size();i++)
 		{
-			SysUser sysUser=new SysUser();
-			sysUser=sysUserMapper.selectByPrimaryKey((Integer.parseInt(list.get(i))));
+			SysUser sysUser = getBaseMapper().selectByPrimaryKey((Integer.parseInt(list.get(i))));
 			sysUser.setPasswd(EncryptUtil.shiroEncrypt(sysUser.getAccount()+"#123", sysUser.getAccount()));
 			sysUser.setIsModify(true);
-			sysUserMapper.updateByPrimaryKeySelective(sysUser);
+			getBaseMapper().updateByPrimaryKeySelective(sysUser);
 		}
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_UPDATE, "ids:" + dataIds);
 		return ResultBuilderUtil.RESULT_SUCCESS;
 	}
 
+	/**
+	 * @Description 校验帐号是否已存在
+	 * @date 2017/10/19
+	 * @author 13346450@qq.com 童晟
+	 * @param
+	 * @return
+	 */
 	public String validate(SysUser sysUser) {
 		String result = "";
 		if(null == sysUser.getIdKey()){//新增时
-			result = (null == sysUserMapper.selectOneBySelective(sysUser)) ?
+			result = (null == getBaseMapper().selectOneBySelective(sysUser)) ?
 					ResultBuilderUtil.VALIDATE_SUCCESS:ResultBuilderUtil.VALIDATE_ERROR;
 		}else{//修改时
-			result = (null == sysUserMapper.checkExistAccount(sysUser)) ?
+			result = (null == ((SysUserMapper)getBaseMapper()).checkExistAccount(sysUser)) ?
 					ResultBuilderUtil.VALIDATE_SUCCESS:ResultBuilderUtil.VALIDATE_ERROR;
 		}
 		return result;
 	}
 
+	/**
+	 * @Description 检验旧密码
+	 * @date 2017/10/19
+	 * @author 13346450@qq.com 童晟
+	 * @param
+	 * @return
+	 */
 	public String validOldPasswd(String oldPwd) {
-		return EncryptUtil.shiroEncrypt(oldPwd, getUserAccount()).equals(selectByIdkey(getUserId()).getPasswd())?
+		return EncryptUtil.shiroEncrypt(oldPwd, ShiroUtil.getUserAccount()).equals(
+				selectByIdkey(ShiroUtil.getUserId()).getPasswd())?
 					ResultBuilderUtil.VALIDATE_SUCCESS: ResultBuilderUtil.VALIDATE_ERROR;
 	}
 
+	/**
+	 * @Description 个人资料查询
+	 * @date 2017/10/19
+	 * @author 13346450@qq.com 童晟
+	 * @param
+	 * @return
+	 */
 	public SysUser queryMyself() {
-		return this.selectByIdkey(getUserId());
+		return selectByIdkey(ShiroUtil.getUserId());
 	}
 
 	/**
@@ -221,9 +215,16 @@ public class SysUserService extends BaseService {
 		SysUser user = new SysUser();
 		user.setIdKey(idKey);
 		user.setLastLoginTime(new Timestamp(System.currentTimeMillis()));
-		sysUserMapper.updateByPrimaryKeySelective(user);
+		getBaseMapper().updateByPrimaryKeySelective(user);
 	}
 
+	/**
+	 * @Description 查询在线用户
+	 * @date 2017/10/19
+	 * @author 13346450@qq.com 童晟
+	 * @param
+	 * @return
+	 */
 	public Page<SysUserOnline> selectOnline(SearchParam searchParam) {
 		Page<SysUserOnline> page = new Page<>();
 		page.setOffset(searchParam.getOffset());

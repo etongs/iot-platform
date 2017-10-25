@@ -2,18 +2,17 @@ package com.stanley.uams.service.basic;
 
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
-import com.stanley.common.spring.BaseService;
+import com.stanley.uams.domain.basic.SysDictVO;
+import com.stanley.uams.service.BaseService;
 import com.stanley.uams.domain.basic.SysDict;
 import com.stanley.uams.mapper.master.basic.SysDictMapper;
 import com.stanley.utils.DateTimeUtil;
-import com.stanley.utils.ResultBuilderUtil;
 import com.stanley.utils.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -25,70 +24,36 @@ import java.util.*;
  * @author 13346450@qq.com 童晟
  */
 @Service
-public class SysDictService extends BaseService {
-	//private final static String FUNC_MENU ="数据字典表";
-
+public class SysDictService extends BaseService<SysDict, SysDictVO> {
 	@Resource
-	private SysDictMapper sysDictMapper;
-
-	@Transactional
-	public String insert(SysDict sysDict) {
-		sysDict.setCreateId(getUserId());
-		sysDict.setCreateDt(new Timestamp(System.currentTimeMillis()));
-		sysDictMapper.insert(sysDict);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_CREATE, "idKey:" +sysDict.getIdKey());
-		return ResultBuilderUtil.RESULT_SUCCESS;
+	public void setSysDictMapper(SysDictMapper sysDictMapper) {
+		super.setBaseMapper(sysDictMapper);
 	}
 
-	@Transactional
-	public String delete(Integer idKey) {
-		if (null == idKey) {
-			return ResultBuilderUtil.resultException("2","id不能为空");
-		}
-		sysDictMapper.deleteByPrimaryKey(idKey);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_DELETE, "idKey:" + idKey);
-		return ResultBuilderUtil.RESULT_SUCCESS;
-	}
-
-	@Transactional
-	public String deleteBatch(String dataIds) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("dataListID", Arrays.asList(dataIds.split(",")));
-		sysDictMapper.deleteBatch(map);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_DELETE, "ids:" + dataIds);
-		return ResultBuilderUtil.RESULT_SUCCESS;
-	}
-
-	@Transactional
-	public String update(SysDict sysDict) {
-		sysDict.setCreateId(getUserId());
-		sysDict.setCreateDt(new Timestamp(System.currentTimeMillis()));
-		sysDictMapper.updateByPrimaryKeySelective(sysDict);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_UPDATE, "idKey:" +sysDict.getIdKey());
-		return ResultBuilderUtil.RESULT_SUCCESS;
-	}
-
-	public SysDict selectByIdkey(Integer idKey) {
-		return sysDictMapper.selectByPrimaryKey(idKey);
-	}
-
-	public Page<SysDict> selectPage(String dictTypeId , SearchParam searchParam) {
-		Page<SysDict> page = new Page<SysDict>();
-		page.setOffset(searchParam.getOffset());
-		page.setLimit(searchParam.getLimit());
-		HashMap<String, Object> map = new HashMap<String, Object>();
+	/**
+	 * @Description 分页查询
+	 * @date 2017/10/24
+	 * @author 13346450@qq.com 童晟
+	 * @param
+	 * @return
+	 */
+	public Page<SysDictVO> selectPage(String dictTypeId , SearchParam searchParam) {
+		HashMap<String, Object> map = new HashMap<>();
 		map.put("dictTypeId", dictTypeId);
-		map.put("sort", searchParam.getSort());
-		map.put("order", searchParam.getOrder());
-		page.setParams(map);
-		page.setRows(sysDictMapper.selectPage(page));
-		return page;
+		return super.selectPage(searchParam, map);
 	}
 
+	/**
+	 * @Description 导出excel
+	 * @date 2017/10/24
+	 * @author 13346450@qq.com 童晟
+	 * @param
+	 * @return
+	 */
 	public HSSFWorkbook toExcel(SearchParam searchParam) {
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 		map.put("dictTypeId", searchParam.getSearchName());
-		List<SysDict> list = sysDictMapper.toExcel(map);
+		List<SysDictVO> list = getBaseMapper().toExcel(map);
 		String[] excelHeader = { "字典id", "字典名称", "字典值", "备注", "创建人", "创建时间"};
 		HSSFWorkbook wb = new HSSFWorkbook();
 		//单元格列宽
@@ -122,19 +87,14 @@ public class SysDictService extends BaseService {
 		return wb;
 	}
 
-	public SysDict selectOneBySelective(SearchParam searchParam) {
-		SysDict sysDict = new SysDict();
-		return sysDictMapper.selectOneBySelective(sysDict);
-	}
-
 	public List<SysDict> selectAllBySelective(String dictTypeId) {
 		SysDict sysDict = new SysDict();
 		sysDict.setDictTypeId(dictTypeId);
-		return sysDictMapper.selectAllBySelective(sysDict);
+		return super.selectAllBySelective(sysDict);
 	}
 	
 	public List<Map<String, Object>> listDictType() {
-		return sysDictMapper.selectAllByDistinct();
+		return ((SysDictMapper)getBaseMapper()).selectAllByDistinct();
 	}
 
 }

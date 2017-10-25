@@ -4,6 +4,7 @@ import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
 import com.stanley.common.spring.BaseController;
 import com.stanley.uams.domain.basic.SysDict;
+import com.stanley.uams.domain.basic.SysDictVO;
 import com.stanley.uams.service.basic.SysDictService;
 import com.stanley.utils.ExcelUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -85,7 +86,7 @@ public class SysDictController extends BaseController {
 	 */
 	@RequestMapping(value = "listPage/{dictTypeId}")
 	@RequiresPermissions("system:SysDict:select")
-	public Page<SysDict> listPage(@PathVariable String dictTypeId, SearchParam searchParam){
+	public Page<SysDictVO> listPage(@PathVariable String dictTypeId, SearchParam searchParam){
 		return sysDictService.selectPage(dictTypeId,searchParam);
 	}
 
@@ -103,18 +104,6 @@ public class SysDictController extends BaseController {
 		ExcelUtil.outputExcel(response, "数据字典数据", sysDictService.toExcel(searchParam));
 	}
 
-	/**
-	 * 查询所有角色
-	 * return
-	 * @author 13346450@qq.com 童晟
-	 * @date 2016-04-18
-	 */
-	@RequestMapping(value = "listAll")
-	@RequiresPermissions("system:SysDict:select")
-	public List<SysDict> listAll(){
-		return sysDictService.selectAllBySelective(null);
-	}
-	
 	/**
 	 * 列出字典类别
 	 * @Description

@@ -2,20 +2,17 @@ package com.stanley.uams.service.basic;
 
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
-import com.stanley.common.spring.BaseService;
+import com.stanley.uams.service.BaseService;
 import com.stanley.uams.domain.basic.SysOrganization;
 import com.stanley.uams.domain.basic.SysOrganizationVO;
 import com.stanley.uams.mapper.master.basic.SysOrganizationMapper;
 import com.stanley.utils.DateTimeUtil;
-import com.stanley.utils.ResultBuilderUtil;
 import com.stanley.utils.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,80 +26,42 @@ import java.util.Map;
  * @author 13346450@qq.com 童晟
  */
 @Service
-public class SysOrganizationService extends BaseService {
-	//private final static String FUNC_MENU ="组织机构表";
-
+public class SysOrganizationService extends BaseService<SysOrganization, SysOrganizationVO> {
 	@Resource
-	private SysOrganizationMapper sysOrganizationMapper;
-/*	@Resource
-	private GeneralService generalService;*/
-	
-	@Transactional
-	public String insert(SysOrganization sysOrganization) {
-		sysOrganization.setCreateId(getUserId());
-		sysOrganization.setCreateDt(new Timestamp(System.currentTimeMillis()));
-		sysOrganizationMapper.insert(sysOrganization);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_CREATE, "idKey:" +sysOrganization.getIdKey());
-		return ResultBuilderUtil.RESULT_SUCCESS;
+	public void setSysOrganizationMapper(SysOrganizationMapper sysOrganizationMapper) {
+		super.setBaseMapper(sysOrganizationMapper);
 	}
 
-	@Transactional
-	public String delete(Integer idKey) {
-		if (null == idKey) {
-			return ResultBuilderUtil.resultException("2","id不能为空");
-		}
-		/*generalService.deleteRecordImages(sysOrganizationMapper.selectImageAddrsByids(idKey));*/
-		sysOrganizationMapper.deleteByPrimaryKey(idKey);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_DELETE, "idKey:" + idKey);
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		returnMap.put("idKey", idKey);
-		return ResultBuilderUtil.resultSuccessWithValue(returnMap);
-	}
-
-	@Transactional
-	public String deleteBatch(String dataIds) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("dataListID", Arrays.asList(dataIds.split(",")));
-		sysOrganizationMapper.deleteBatch(map);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_DELETE, "ids:" + dataIds);
-		return ResultBuilderUtil.RESULT_SUCCESS;
-	}
-
-	@Transactional
-	public String update(SysOrganization sysOrganization) {
-		sysOrganization.setCreateId(getUserId());
-		sysOrganization.setCreateDt(new Timestamp(System.currentTimeMillis()));
-		sysOrganizationMapper.updateByPrimaryKeySelective(sysOrganization);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_UPDATE, "idKey:" +sysOrganization.getIdKey());
-		return ResultBuilderUtil.RESULT_SUCCESS;
-	}
-
-	public SysOrganization selectByIdkey(Integer idKey) {
-		SysOrganization s =sysOrganizationMapper.selectByPrimaryKey(idKey);
-		return s;
-	}
-
+	/**
+	 * @Description 分页查询
+	 * @date 2017/10/23
+	 * @author 13346450@qq.com 童晟
+	 * @param
+	 * @return
+	 */
 	public Page<SysOrganizationVO> selectPage(SearchParam searchParam) {
-		Page<SysOrganizationVO> page = new Page<SysOrganizationVO>();
-		page.setOffset(searchParam.getOffset());
-		page.setLimit(searchParam.getLimit());
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("provinceId", searchParam.getProvince());
 		map.put("cityId", searchParam.getCity());
 		map.put("districtId", searchParam.getDistrict());
 		map.put("cdNm", searchParam.getSearchName());
-		page.setParams(map);
-		page.setRows(sysOrganizationMapper.selectPage(page));
-		return page;
+		return super.selectPage(searchParam, map);
 	}
 
+	/**
+	 * @Description 导出excel
+	 * @date 2017/10/23
+	 * @author 13346450@qq.com 童晟
+	 * @param
+	 * @return
+	 */
 	public HSSFWorkbook toExcel(SearchParam searchParam) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("provinceId", searchParam.getProvince());
 		map.put("cityId", searchParam.getCity());
 		map.put("districtId", searchParam.getDistrict());
 		map.put("cdNm", searchParam.getSearchName());
-		List<SysOrganizationVO> list = sysOrganizationMapper.toExcel(map);
+		List<SysOrganizationVO> list = getBaseMapper().toExcel(map);
 		String[] excelHeader = { "机构名称", "机构类型", "上级机构", "机构简称",
 				"机构编码", "简拼", "拼音", "传真", "联系人", "联系电话", "负责人手机号", "Email", "机构网址", "地址", "X坐标-GPS", "Y坐标-GPS", 
 				"X坐标-百度地图", "Y坐标-百度地图", "邮政编码", "开户银行", "收款银行账号", "收款人姓名", "银行卡预留手机号码", "创建人", "创建时间", 
@@ -168,10 +127,4 @@ public class SysOrganizationService extends BaseService {
 		return wb;
 	}
 
-	public List<SysOrganization> selectAllBySelective(SearchParam searchParam) {
-		SysOrganization sysOrganization = new SysOrganization();
-		return sysOrganizationMapper.selectAllBySelective(sysOrganization);
-	}
-
-	
 }

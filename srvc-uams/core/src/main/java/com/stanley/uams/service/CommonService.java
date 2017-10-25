@@ -1,13 +1,12 @@
 package com.stanley.uams.service;
 
 import com.stanley.common.domain.NavigateMenu;
-import com.stanley.common.spring.BaseService;
 import com.stanley.uams.domain.auth.SysMenu;
 import com.stanley.uams.domain.auth.SysUser;
 import com.stanley.uams.mapper.master.auth.SysMenuMapper;
-import com.stanley.uams.service.auth.SysUserRoleService;
 import com.stanley.uams.shiro.MyShiroRealm;
 import com.stanley.uams.shiro.SessionRedisDAO;
+import com.stanley.uams.shiro.ShiroUtil;
 import com.stanley.utils.Constants;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.RealmSecurityManager;
@@ -44,8 +43,8 @@ public class CommonService extends BaseService {
      * @return
      */
     public List<NavigateMenu> listMenuAll(Integer rootId) {
-        List<SysMenu> list = listTreeMenu(getUserRoleIds(),rootId);
-        List<NavigateMenu> menuList = new ArrayList<NavigateMenu>();
+        List<SysMenu> list = listTreeMenu(ShiroUtil.getUserRoleIds(),rootId);
+        List<NavigateMenu> menuList = new ArrayList<>();
         if(list.isEmpty())
             return menuList;
 

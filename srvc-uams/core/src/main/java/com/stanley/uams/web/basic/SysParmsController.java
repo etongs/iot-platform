@@ -107,7 +107,7 @@ public class SysParmsController extends BaseController {
 	@RequestMapping(value = "chooseAll")
 	@RequiresPermissions("system:SysParms:select")
 	public List<SysParms> listAll(SearchParam searchParam) {
-		return sysParmsService.selectAllBySelective(searchParam);
+		return sysParmsService.selectAllBySelective(null);
 	}
 
 	/**

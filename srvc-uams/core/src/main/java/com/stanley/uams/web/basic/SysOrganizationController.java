@@ -29,8 +29,6 @@ public class SysOrganizationController extends BaseController {
 
 	@Resource
 	private SysOrganizationService sysOrganizationService;
-	@Resource
-	private SysDictService sysDictService;
 
 	/**
 	 * 新增保存
@@ -92,7 +90,7 @@ public class SysOrganizationController extends BaseController {
 	}
 
 	/**
-	 * 
+	 * 导出excel
 	 * @param response
 	 * @param searchParam
 	 * @author 13346450@qq.com 童晟 

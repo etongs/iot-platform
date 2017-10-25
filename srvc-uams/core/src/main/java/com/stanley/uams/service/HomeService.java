@@ -1,13 +1,11 @@
 package com.stanley.uams.service;
 
 import com.stanley.common.domain.UserInfoBean;
-import com.stanley.common.spring.BaseService;
 import com.stanley.uams.domain.auth.SysUser;
 import com.stanley.uams.domain.basic.SysOrganization;
 import com.stanley.uams.service.auth.SysRoleService;
 import com.stanley.uams.service.auth.SysUserService;
 import com.stanley.uams.service.basic.SysOrganizationService;
-import com.stanley.utils.EncryptUtil;
 import com.stanley.utils.ResultBuilderUtil;
 import com.stanley.utils.StringUtils;
 import com.stanley.utils.vcode.Captcha;
@@ -19,19 +17,15 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.util.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.sql.Timestamp;
 import java.util.concurrent.TimeUnit;
 
 import static com.stanley.utils.Constants.SHIRO_LOGIN_COUNT;
@@ -54,7 +48,6 @@ public class HomeService extends BaseService {
     private SysOrganizationService sysOrganizationService;
     @Resource
     private SysRoleService sysRoleService;
-
     @Value("${shiro.sessionTimeout}")
     private long sessionTimeout;
 

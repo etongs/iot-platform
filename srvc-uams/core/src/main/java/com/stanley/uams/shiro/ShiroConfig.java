@@ -55,8 +55,7 @@ public class ShiroConfig {
      */
     @Bean
     public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager,
-                                             @Value("${shiro.filterChainDefinition.anon}") String shiroFilterAnon,
-                                              KickoutSessionControlFilter kickoutSessionControlFilter
+                                             @Value("${shiro.filterChainDefinition.anon}") String shiroFilterAnon
                                              ){
         ShiroFilterFactoryBean shiroFilterFactoryBean  = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
@@ -71,7 +70,7 @@ public class ShiroConfig {
         //未授权界面;
         shiroFilterFactoryBean.setUnauthorizedUrl("/403");
         //过滤链定义，从上向下顺序执行，一般将 /**放在最为下边
-        Map<String,String> filterChainDefinitionMap = new LinkedHashMap<String,String>();
+        Map<String,String> filterChainDefinitionMap = new LinkedHashMap<>();
         Arrays.asList(shiroFilterAnon.split(",")).forEach(s -> filterChainDefinitionMap.put(s, "anon"));
         //验证码生成
         filterChainDefinitionMap.put("/getGifCode", "anon");
@@ -104,10 +103,11 @@ public class ShiroConfig {
     @Bean
     public SecurityManager securityManager(@Qualifier("sessionManager") DefaultWebSessionManager sessionManager,
                                            RedisCacheManager redisCacheManager,
-                                           @Qualifier("rememberMeManager") CookieRememberMeManager rememberMeManager){
+                                           @Qualifier("rememberMeManager") CookieRememberMeManager rememberMeManager,
+                                           MyShiroRealm myShiroRealm){
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         //设置realm.
-        securityManager.setRealm(myShiroRealm());
+        securityManager.setRealm(myShiroRealm);
         // 自定义缓存实现 使用redis
         securityManager.setCacheManager(redisCacheManager);
         // 自定义session管理 使用redis

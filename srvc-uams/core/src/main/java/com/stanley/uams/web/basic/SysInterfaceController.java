@@ -104,18 +104,6 @@ public class SysInterfaceController extends BaseController {
 	}
 
 	/**
-	 * 查询所有角色
-	 * return
-	 * @author ts
-	 * @date 2016-10-19
-	 */
-	@RequestMapping(value = "listAll")
-	@RequiresPermissions("system:SysInterface:select")
-	public List<SysInterface> listAll(){
-		return sysInterfaceService.selectAllBySelective(null);
-	}
-	
-	/**
 	 * 运行接口
 	 * @param searchParam
 	 * @author ts

@@ -116,17 +116,4 @@
     LIMIT 1
   </select>
  
-  <!-- 根据参数key查找记录-->
- <select id="selectByParmKey" resultType="SysParms">
- 	select parm_key,parm_value from sys_parms 
- 	where parm_key = #{0} or parm_key = #{1}
- </select>
- 
- 
- <!-- 根据参数key查找单条记录-->
- <select id="selectOneByParmKey" resultType="SysParms">
- 	select parm_key,parm_value from sys_parms 
- 	where parm_key = #{0}
- </select>
- 
 </mapper>

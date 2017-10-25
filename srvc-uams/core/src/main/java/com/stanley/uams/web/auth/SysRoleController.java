@@ -11,7 +11,6 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -86,7 +85,7 @@ public class SysRoleController extends BaseController {
 	@RequestMapping(value = "listPage")
 	@RequiresPermissions("system:SysRole:select")
 	public Page<SysRoleVO> listPage(SearchParam searchParam){
-		return sysRoleService.selectPage(searchParam);
+		return sysRoleService.selectPage(searchParam,null);
 	}
 	
 	/**

@@ -2,22 +2,21 @@ package com.stanley.uams.service.basic;
 
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
-import com.stanley.common.spring.BaseService;
-import com.stanley.uams.domain.auth.SysUser;
+import com.stanley.uams.service.BaseService;
 import com.stanley.uams.domain.basic.SysOpenApi;
 import com.stanley.uams.domain.basic.SysOpenApiVO;
 import com.stanley.uams.mapper.master.basic.SysOpenApiMapper;
+import com.stanley.uams.shiro.ShiroUtil;
 import com.stanley.utils.*;
 import org.apache.poi.hssf.usermodel.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 开放接口接入管理
@@ -28,74 +27,40 @@ import java.util.Map;
  * @author 13346450@qq.com 童晟
  */
 @Service
-public class SysOpenApiService extends BaseService {
-	private final static String FUNC_MENU ="开放接口接入表";
-
+public class SysOpenApiService extends BaseService<SysOpenApi, SysOpenApiVO> {
 	@Resource
-	private SysOpenApiMapper sysOpenApiMapper;
+	public void setSysOpenApiMapper(SysOpenApiMapper sysOpenApiMapper) {
+		super.setBaseMapper(sysOpenApiMapper);
+	}
 
 	@Transactional
 	public String insert(SysOpenApi sysOpenApi) {
-		sysOpenApi.setOperId(getUserId());
-		sysOpenApi.setOperNm(getUserName());
+		sysOpenApi.setOperId(ShiroUtil.getUserId());
+		sysOpenApi.setOperNm(ShiroUtil.getUserName());
 		sysOpenApi.setOperDt(new Timestamp(System.currentTimeMillis()));
 		sysOpenApi.setPrivateKey(EncryptUtil.SHA256(UuidUtil.generateUuid()+sysOpenApi.getUserCode()));
 		sysOpenApi.setTimestampVal(1000000L);
-		sysOpenApiMapper.insert(sysOpenApi);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_CREATE, "idKey:" +sysOpenApi.getIdKey());
-		return ResultBuilderUtil.RESULT_SUCCESS;
-	}
-
-	@Transactional
-	public String delete(Integer idKey) {
-		if (null == idKey) {
-			return ResultBuilderUtil.resultException("2","id不能为空");
-		}
-		sysOpenApiMapper.deleteByPrimaryKey(idKey);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_DELETE, "idKey:" + idKey);
-		return ResultBuilderUtil.RESULT_SUCCESS;
-	}
-
-	@Transactional
-	public String deleteBatch(String dataIds) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("dataListID", Arrays.asList(dataIds.split(",")));
-		sysOpenApiMapper.deleteBatch(map);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_DELETE, "ids:" + dataIds);
-		return ResultBuilderUtil.RESULT_SUCCESS;
+		return super.insert(sysOpenApi);
 	}
 
 	@Transactional
 	public String update(SysOpenApi sysOpenApi) {
-		sysOpenApi.setOperId(getUserId());
-		sysOpenApi.setOperNm(getUserName());
+		sysOpenApi.setOperId(ShiroUtil.getUserId());
+		sysOpenApi.setOperNm(ShiroUtil.getUserName());
 		sysOpenApi.setOperDt(new Timestamp(System.currentTimeMillis()));
-		sysOpenApiMapper.updateByPrimaryKeySelective(sysOpenApi);
-		//writeLog(FUNC_MENU, Constants.FUNC_OPER_NM_UPDATE, "idKey:" +sysOpenApi.getIdKey());
-		return ResultBuilderUtil.RESULT_SUCCESS;
-	}
-
-	public SysOpenApi selectByIdkey(Integer idKey) {
-		return sysOpenApiMapper.selectByPrimaryKey(idKey);
+		return super.update(sysOpenApi);
 	}
 
 	public Page<SysOpenApiVO> selectPage(SearchParam searchParam) {
-		Page<SysOpenApiVO> page = new Page<SysOpenApiVO>();
-		page.setOffset(searchParam.getOffset());
-		page.setLimit(searchParam.getLimit());
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 		map.put("userName", searchParam.getSearchName());
-		map.put("sort", searchParam.getSort());
-		map.put("order", searchParam.getOrder());
-		page.setParams(map);
-		page.setRows(sysOpenApiMapper.selectPage(page));
-		return page;
+		return super.selectPage(searchParam, map);
 	}
 
 	public HSSFWorkbook toExcel(SearchParam searchParam) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("userName", searchParam.getSearchName());
-		List<SysOpenApiVO> list = sysOpenApiMapper.toExcel(map);
+		List<SysOpenApiVO> list = getBaseMapper().toExcel(map);
 		String[] excelHeader = { "接入的用户名称", "接入的用户唯一标识", "接入的用户私钥", "操作的用户id", "操作的用户名", "操作的备注", "操作的日期"};
 		HSSFWorkbook wb = new HSSFWorkbook();
 		//单元格列宽
@@ -130,29 +95,16 @@ public class SysOpenApiService extends BaseService {
 		return wb;
 	}
 
-	public SysOpenApi selectOneBySelective(String userCode) {
-		SysOpenApi sysOpenApi = new SysOpenApi();
-		sysOpenApi.setUserCode(userCode);
-		return sysOpenApiMapper.selectOneBySelective(sysOpenApi);
-	}
-
-	public List<SysOpenApi> selectAllBySelective(SearchParam searchParam) {
-		SysOpenApi sysOpenApi = new SysOpenApi();
-		return sysOpenApiMapper.selectAllBySelective(sysOpenApi);
-	}
-
 	public String validate(SysOpenApi sysOpenApi) {
 		String result = "";
 		if(null == sysOpenApi.getIdKey()){//新增时
-			result = (null == sysOpenApiMapper.selectOneBySelective(sysOpenApi)) ?
+			result = (null == super.selectOneBySelective(sysOpenApi)) ?
 					ResultBuilderUtil.VALIDATE_SUCCESS:ResultBuilderUtil.VALIDATE_ERROR;
 		}else{//修改时
-			result = (null == sysOpenApiMapper.checkExistCode(sysOpenApi)) ?
+			result = (null == ((SysOpenApiMapper)getBaseMapper()).checkExistCode(sysOpenApi)) ?
 					ResultBuilderUtil.VALIDATE_SUCCESS:ResultBuilderUtil.VALIDATE_ERROR;
 		}
 		return result;
 	}
-
-
 
 }

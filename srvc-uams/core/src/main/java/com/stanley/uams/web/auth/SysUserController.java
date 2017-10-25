@@ -111,18 +111,6 @@ public class SysUserController extends BaseController {
 	}
 
 	/**
-	 * 查询所有角色
-	 * return
-	 * @author 13346450@qq.com 童晟
-	 * @date 2016-04-11
-	 */
-	@RequestMapping(value = "listAll")
-	@RequiresPermissions("system:SysUser:select")
-	public List<SysUser> listAll(){
-		return sysUserService.selectAllBySelective(null);
-	}
-	
-	/**
 	 * 修改自己的密码，不需要指定权限，能登录就可以改自己的密码
 	 * @param userPwd
 	 * @param surePwd

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** 
- * 树形结构,所有要实现树形结构的类都要继承此类
+ * 树形结构,所有要实现树形结构的类都要继承此类,根节点是-1
  * @ClassName: TreeStructure 
  * @Description: 
  * @author 童晟
@@ -21,19 +21,7 @@ import java.util.List;
  *  
  */
 public class TreeStructure implements Serializable {
-	
 	private static final long serialVersionUID = 1L;
-	
-	// XML树形结构,tree节点的id = -1; <p><tree id="-1"><p>
-	public static final String TREE_ID = "-1";
-	// 是最末级节点 
-	public static final boolean LAST_MARK_YES = true;
-	// 不是最末级节点
-	public static final boolean LAST_MARK_NO = false;
-	// 启用 1
-	public static final long IS_USE_YES = 1;
-	// 不启用 0
-	public static final long IS_USE_NO = 0;
 	
 	/** 主键 */
 	private Integer idKey;
@@ -52,11 +40,11 @@ public class TreeStructure implements Serializable {
 	/** 创建人 */
 	private Integer createId;
 	/** 创建时间 */
-	private Timestamp    createDt;
+	private Timestamp createDt;
 	/** 备注 */
 	private String remarks;
 	/** 子节点 */
-	private List<TreeStructure> childList = new ArrayList<TreeStructure>();
+	private List<TreeStructure> childList = new ArrayList<>();
 	
 	/** 获取主键 */
 	public Integer getIdKey() {
@@ -172,6 +160,5 @@ public class TreeStructure implements Serializable {
 			return false;
 		return true;
 	}
-	
 	
 }
