@@ -1,4 +1,4 @@
-package com.stanley.uams.shiro;
+package com.stanley.utils;
 
 import com.stanley.common.domain.UserInfoBean;
 import org.apache.shiro.SecurityUtils;
@@ -9,7 +9,7 @@ import org.apache.shiro.SecurityUtils;
  * @version 1.0
  * @create 2017/10/17
  **/
-public class ShiroUtil {
+public class ShiroSessionUtil {
 
     /**
      * 获取当前用户idkey

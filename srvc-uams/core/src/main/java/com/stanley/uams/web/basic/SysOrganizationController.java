@@ -1,5 +1,6 @@
 package com.stanley.uams.web.basic;
 
+import com.stanley.common.annotation.WriteLogs;
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
 import com.stanley.common.spring.BaseController;
@@ -7,6 +8,7 @@ import com.stanley.uams.domain.basic.SysOrganization;
 import com.stanley.uams.domain.basic.SysOrganizationVO;
 import com.stanley.uams.service.basic.SysDictService;
 import com.stanley.uams.service.basic.SysOrganizationService;
+import com.stanley.utils.Constants;
 import com.stanley.utils.ExcelUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +40,7 @@ public class SysOrganizationController extends BaseController {
 	 */
 	@RequestMapping(value = "insert", method = RequestMethod.POST)
 	@RequiresPermissions("system:SysOrganization:insert")
+	@WriteLogs(Constants.OPERITION_INSERT)
 	public String insert(SysOrganization sysOrganization){
 		return sysOrganizationService.insert(sysOrganization);
 	}
@@ -50,6 +53,7 @@ public class SysOrganizationController extends BaseController {
 	 */
 	@RequestMapping(value="delete/{idKey}")
 	@RequiresPermissions("system:SysOrganization:delete")
+	@WriteLogs(Constants.OPERITION_DELETE)
 	public String delete(@PathVariable Integer idKey){
 		return sysOrganizationService.delete(idKey);
 	}
@@ -61,6 +65,7 @@ public class SysOrganizationController extends BaseController {
 	 */
 	@RequestMapping(value="deleteBatch")
 	@RequiresPermissions("system:SysOrganization:delete")
+	@WriteLogs(Constants.OPERITION_DELETE_BATCH)
 	public String deleteBatch(SearchParam searchParam){
 		return sysOrganizationService.deleteBatch(searchParam.getCheckedIds());
 	}
@@ -72,6 +77,7 @@ public class SysOrganizationController extends BaseController {
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	@RequiresPermissions("system:SysOrganization:update")
+	@WriteLogs(Constants.OPERITION_UPDATE)
 	public String update(SysOrganization sysOrganization){
 		return sysOrganizationService.update(sysOrganization);
 	}

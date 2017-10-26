@@ -3,7 +3,7 @@ package com.stanley.uams.service.basic;
 import com.alibaba.fastjson.JSON;
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
-import com.stanley.uams.service.BaseService;
+import com.stanley.common.spring.BaseService;
 import com.stanley.uams.domain.basic.SysParms;
 import com.stanley.uams.domain.basic.SysParmsVO;
 import com.stanley.uams.mapper.master.basic.SysParmsMapper;
@@ -11,7 +11,6 @@ import com.stanley.utils.DateTimeUtil;
 import com.stanley.utils.ResultBuilderUtil;
 import com.stanley.utils.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

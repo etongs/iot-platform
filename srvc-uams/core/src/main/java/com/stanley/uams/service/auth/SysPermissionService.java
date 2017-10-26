@@ -1,13 +1,12 @@
 package com.stanley.uams.service.auth;
 
 
-import com.stanley.uams.service.BaseService;
 import com.stanley.uams.domain.auth.SysResource;
 import com.stanley.uams.domain.auth.SysUserRole;
 import com.stanley.uams.mapper.master.auth.SysPermissionMapper;
 import com.stanley.uams.service.CommonService;
-import com.stanley.uams.shiro.ShiroUtil;
 import com.stanley.utils.ResultBuilderUtil;
+import com.stanley.utils.ShiroSessionUtil;
 import com.stanley.utils.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +41,7 @@ public class SysPermissionService {
 		{
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("roleId", roleId);
-			map.put("createId", ShiroUtil.getUserId());
+			map.put("createId", ShiroSessionUtil.getUserId());
 			map.put("createDt", new Timestamp(System.currentTimeMillis()));
 			map.put("dataListID", Arrays.asList(dataIds.split(",")));
 			sysPermissionMapper.insert(map);

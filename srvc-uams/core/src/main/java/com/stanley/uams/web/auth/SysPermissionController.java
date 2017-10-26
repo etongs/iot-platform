@@ -1,8 +1,10 @@
 package com.stanley.uams.web.auth;
 
+import com.stanley.common.annotation.WriteLogs;
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.spring.BaseController;
 import com.stanley.uams.service.auth.SysPermissionService;
+import com.stanley.utils.Constants;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +38,7 @@ public class SysPermissionController extends BaseController {
 	 */
 	@RequestMapping(value = "save", method = RequestMethod.POST)
 	@RequiresPermissions("system:SysPermission:update")
+	@WriteLogs(Constants.OPERITION_UPDATE)
 	public String save(SearchParam searchParam){
 		return sysPermissionService.update(searchParam.getSearchId(),searchParam.getCheckedIds());
 	}

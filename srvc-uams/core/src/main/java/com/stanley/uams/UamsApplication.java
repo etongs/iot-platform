@@ -20,7 +20,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableHystrix
-@ComponentScan(basePackages = {"com.stanley.common.configuration","com.stanley.common.dao","com.stanley.uams"})
+@ComponentScan(basePackages = {"com.stanley.common.annotation","com.stanley.common.configuration","com.stanley.common.dao","com.stanley.uams"})
 public class UamsApplication {
 
     public static void main(String[] args) {

@@ -1,11 +1,13 @@
 package com.stanley.uams.web.basic;
 
+import com.stanley.common.annotation.WriteLogs;
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
 import com.stanley.common.spring.BaseController;
 import com.stanley.uams.domain.basic.SysParms;
 import com.stanley.uams.domain.basic.SysParmsVO;
 import com.stanley.uams.service.basic.SysParmsService;
+import com.stanley.utils.Constants;
 import com.stanley.utils.ExcelUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +39,7 @@ public class SysParmsController extends BaseController {
 	 */
 	@RequestMapping(value = "insert", method = RequestMethod.POST)
 	@RequiresPermissions("system:SysParms:insert")
+	@WriteLogs(Constants.OPERITION_INSERT)
 	public String insert(SysParms sysParms){
 		return sysParmsService.insert(sysParms);
 	}
@@ -48,6 +51,7 @@ public class SysParmsController extends BaseController {
 	 */
 	@RequestMapping(value = "synchronized", method = RequestMethod.POST)
 	@RequiresPermissions("system:SysParms:insert")
+	@WriteLogs(Constants.OPERITION_INSERT)
 	public String save(String insertDatagrid, String updateDatagrid, String deleteDatagrid){
 		return sysParmsService.saveAll(insertDatagrid,updateDatagrid,deleteDatagrid);
 	}
@@ -60,6 +64,7 @@ public class SysParmsController extends BaseController {
 	 */
 	@RequestMapping(value="delete/{idKey}")
 	@RequiresPermissions("system:SysParms:delete")
+	@WriteLogs(Constants.OPERITION_DELETE)
 	public String delete(@PathVariable Integer idKey){
 		return sysParmsService.delete(idKey);
 	}
@@ -71,6 +76,7 @@ public class SysParmsController extends BaseController {
 	 */
 	@RequestMapping(value="deleteBatch")
 	@RequiresPermissions("system:SysParms:delete")
+	@WriteLogs(Constants.OPERITION_DELETE_BATCH)
 	public String deleteBatch(SearchParam searchParam){
 		return sysParmsService.deleteBatch(searchParam.getCheckedIds());
 	}
@@ -82,6 +88,7 @@ public class SysParmsController extends BaseController {
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	@RequiresPermissions("system:SysParms:update")
+	@WriteLogs(Constants.OPERITION_UPDATE)
 	public String update(SysParms sysParms){
 		return sysParmsService.update(sysParms);
 	}

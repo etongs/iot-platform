@@ -45,7 +45,7 @@
                 successJSFunc: function(result) {
                     if (1==result.status) {
                         popAlert("强制下线成功","");
-                        setTimeout("$('#dataTable').bootstrapTable('refresh', {'silent': true});",2400);
+                        setTimeout("$('#dataTable').bootstrapTable('refresh', {'silent': true});",2000);
                     } else {
                         popAlert("操作失败: "+result.message);
                     }

@@ -1,11 +1,13 @@
 package com.stanley.uams.web.auth;
 
+import com.stanley.common.annotation.WriteLogs;
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
 import com.stanley.common.spring.BaseController;
 import com.stanley.uams.domain.auth.SysRole;
 import com.stanley.uams.domain.auth.SysRoleVO;
 import com.stanley.uams.service.auth.SysRoleService;
+import com.stanley.utils.Constants;
 import com.stanley.utils.ExcelUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +39,7 @@ public class SysRoleController extends BaseController {
 	 */
 	@RequestMapping(value = "insert", method = RequestMethod.POST)
 	@RequiresPermissions("system:SysRole:insert")
+	@WriteLogs(Constants.OPERITION_INSERT)
 	public String insert(SysRole sysRole){
 		return sysRoleService.insert(sysRole);
 	}
@@ -49,6 +52,7 @@ public class SysRoleController extends BaseController {
 	 */
 	@RequestMapping(value="delete/{idKey}")
 	@RequiresPermissions("system:SysRole:delete")
+	@WriteLogs(Constants.OPERITION_DELETE)
 	public String delete(@PathVariable Integer idKey){
 		return sysRoleService.delete(idKey);
 	}
@@ -60,6 +64,7 @@ public class SysRoleController extends BaseController {
 	 */
 	@RequestMapping(value="deleteBatch")
 	@RequiresPermissions("system:SysRole:delete")
+	@WriteLogs(Constants.OPERITION_DELETE_BATCH)
 	public String deleteBatch(SearchParam searchParam){
 		return sysRoleService.deleteBatch(searchParam.getCheckedIds());
 	}
@@ -71,6 +76,7 @@ public class SysRoleController extends BaseController {
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	@RequiresPermissions("system:SysRole:update")
+	@WriteLogs(Constants.OPERITION_UPDATE)
 	public String update(SysRole sysRole){
 		return sysRoleService.update(sysRole);
 	}

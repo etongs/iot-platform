@@ -2,14 +2,12 @@ package com.stanley.uams.service.basic;
 
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
-import com.stanley.uams.service.BaseService;
+import com.stanley.common.spring.BaseService;
 import com.stanley.uams.domain.basic.SysOpenApi;
 import com.stanley.uams.domain.basic.SysOpenApiVO;
 import com.stanley.uams.mapper.master.basic.SysOpenApiMapper;
-import com.stanley.uams.shiro.ShiroUtil;
 import com.stanley.utils.*;
 import org.apache.poi.hssf.usermodel.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,8 +33,8 @@ public class SysOpenApiService extends BaseService<SysOpenApi, SysOpenApiVO> {
 
 	@Transactional
 	public String insert(SysOpenApi sysOpenApi) {
-		sysOpenApi.setOperId(ShiroUtil.getUserId());
-		sysOpenApi.setOperNm(ShiroUtil.getUserName());
+		sysOpenApi.setOperId(ShiroSessionUtil.getUserId());
+		sysOpenApi.setOperNm(ShiroSessionUtil.getUserName());
 		sysOpenApi.setOperDt(new Timestamp(System.currentTimeMillis()));
 		sysOpenApi.setPrivateKey(EncryptUtil.SHA256(UuidUtil.generateUuid()+sysOpenApi.getUserCode()));
 		sysOpenApi.setTimestampVal(1000000L);
@@ -45,8 +43,8 @@ public class SysOpenApiService extends BaseService<SysOpenApi, SysOpenApiVO> {
 
 	@Transactional
 	public String update(SysOpenApi sysOpenApi) {
-		sysOpenApi.setOperId(ShiroUtil.getUserId());
-		sysOpenApi.setOperNm(ShiroUtil.getUserName());
+		sysOpenApi.setOperId(ShiroSessionUtil.getUserId());
+		sysOpenApi.setOperNm(ShiroSessionUtil.getUserName());
 		sysOpenApi.setOperDt(new Timestamp(System.currentTimeMillis()));
 		return super.update(sysOpenApi);
 	}

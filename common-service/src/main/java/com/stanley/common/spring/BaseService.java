@@ -1,11 +1,10 @@
-package com.stanley.uams.service;
+package com.stanley.common.spring;
 
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
-import com.stanley.common.spring.BaseMapper;
-import com.stanley.uams.shiro.ShiroUtil;
 import com.stanley.utils.ReflectUtil;
 import com.stanley.utils.ResultBuilderUtil;
+import com.stanley.utils.ShiroSessionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +49,7 @@ public class BaseService<T, V>  {
      */
     @Transactional
     public String insert(T entity) {
-        ReflectUtil.setAttributeValue(entity, "createId", ShiroUtil.getUserId());
+        ReflectUtil.setAttributeValue(entity, "createId", ShiroSessionUtil.getUserId());
         ReflectUtil.setAttributeValue(entity, "createDt", new Timestamp(System.currentTimeMillis()));
         baseMapper.insert(entity);
         return ResultBuilderUtil.RESULT_SUCCESS;
@@ -81,7 +80,7 @@ public class BaseService<T, V>  {
      */
     @Transactional
     public String deleteBatch(String dataIds) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("dataListID", Arrays.asList(dataIds.split(",")));
         baseMapper.deleteBatch(map);
         return ResultBuilderUtil.RESULT_SUCCESS;
@@ -96,7 +95,7 @@ public class BaseService<T, V>  {
      */
     @Transactional
     public String update(T entity) {
-        ReflectUtil.setAttributeValue(entity, "createId", ShiroUtil.getUserId());
+        ReflectUtil.setAttributeValue(entity, "createId", ShiroSessionUtil.getUserId());
         ReflectUtil.setAttributeValue(entity, "createDt", new Timestamp(System.currentTimeMillis()));
         baseMapper.updateByPrimaryKeySelective(entity);
         return ResultBuilderUtil.RESULT_SUCCESS;

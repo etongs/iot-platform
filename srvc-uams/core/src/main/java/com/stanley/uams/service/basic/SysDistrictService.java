@@ -1,8 +1,8 @@
 package com.stanley.uams.service.basic;
 
+import com.stanley.common.spring.BaseTreeService;
 import com.stanley.uams.domain.basic.SysDistrict;
 import com.stanley.uams.mapper.master.basic.SysDistrictMapper;
-import com.stanley.uams.service.BaseTreeService;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 /**

@@ -1,8 +1,10 @@
 package com.stanley.uams.web.auth;
 
+import com.stanley.common.annotation.WriteLogs;
 import com.stanley.common.spring.BaseController;
 import com.stanley.uams.domain.auth.SysUserRole;
 import com.stanley.uams.service.auth.SysUserRoleService;
+import com.stanley.utils.Constants;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +36,7 @@ public class SysUserRoleController extends BaseController {
 	 */
 	@RequestMapping(value = "insert", method = RequestMethod.POST)
 	@RequiresPermissions("system:SysUserRole:insert")
+	@WriteLogs(Constants.OPERITION_INSERT)
 	public String insert(SysUserRole sysUserRole){
 		return sysUserRoleService.insert(sysUserRole);
 	}
@@ -46,6 +49,7 @@ public class SysUserRoleController extends BaseController {
 	 */
 	@RequestMapping(value="delete/{idKey}")
 	@RequiresPermissions("system:SysUserRole:delete")
+	@WriteLogs(Constants.OPERITION_DELETE)
 	public String delete(@PathVariable Integer userId){
 		return sysUserRoleService.deleteByUserid(userId);
 	}

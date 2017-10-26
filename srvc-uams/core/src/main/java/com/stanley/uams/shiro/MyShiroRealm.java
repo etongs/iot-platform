@@ -60,9 +60,9 @@ public class MyShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         SysUser user = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        List<String> permissionList = new ArrayList<String>();
+        List<String> permissionList = new ArrayList<>();
         String[] roleArray = sysUserService.selectByIdkey(user.getIdKey()).getRoleIds().split(",");
-        List<String> roleList = new ArrayList<String>();
+        List<String> roleList = new ArrayList<>();
         for(String roleId : roleArray){
             roleList.add(sysRoleService.selectByIdkey(Integer.parseInt(roleId)).getRoleName());
             List<SysResource> list = sysPermissionService.selectResourcesByRoleId(Integer.parseInt(roleId));
@@ -99,7 +99,6 @@ public class MyShiroRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         //获取基于用户名和密码的令牌，实际上authenticationToken是从LoginController里面currentUser.login(token)传过来的,两个token的引用都是一样的
         UsernamePasswordToken token = (UsernamePasswordToken)authenticationToken;
-        log.debug("当前Subject时获取到UsernamePasswordToken：{}",ReflectionToStringBuilder.toString(token, ToStringStyle.MULTI_LINE_STYLE));
         String name = (String) token.getPrincipal();
         ValueOperations<String, String> opsForValue = redisTemplate.opsForValue();
         //先判断有无锁定

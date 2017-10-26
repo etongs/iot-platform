@@ -23,7 +23,6 @@
 2. 封装了BaseService，业务功能只需继承该类，就实现了通用的CURD功能
 3. 针对树形结构的功能，单独封装了BaseTreeMapper、BaseTreeService
 4. mapper.xml里面的sql语句未封装，需自己写
-
-
- 
+5. 写日志到数据库功能封装，用@WriteLogs自定义注解实现，只需在要写日志的方法上加上注解即可
+6. 跨域功能的注解@AllowCORS，在需要跨域访问的controller方法上添加即可
 

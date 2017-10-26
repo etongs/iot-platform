@@ -2,14 +2,13 @@ package com.stanley.uams.service.auth;
 
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
-import com.stanley.uams.service.BaseService;
+import com.stanley.common.spring.BaseService;
 import com.stanley.uams.domain.auth.SysLogs;
 import com.stanley.uams.domain.auth.SysLogsVO;
 import com.stanley.uams.mapper.master.auth.SysLogsMapper;
 import com.stanley.utils.DateTimeUtil;
 import com.stanley.utils.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

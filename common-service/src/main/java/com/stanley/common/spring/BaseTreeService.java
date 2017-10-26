@@ -1,18 +1,20 @@
-package com.stanley.uams.service;
+package com.stanley.common.spring;
 
 import com.stanley.common.domain.TreeStructure;
 import com.stanley.common.domain.ZtreeModel;
-import com.stanley.common.spring.BaseTreeMapper;
-import com.stanley.uams.shiro.ShiroUtil;
 import com.stanley.utils.Constants;
 import com.stanley.utils.ResultBuilderUtil;
+import com.stanley.utils.ShiroSessionUtil;
 import com.stanley.utils.TreeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 公共的树形结构服务层基类
@@ -48,7 +50,7 @@ public class BaseTreeService<T extends TreeStructure>  {
      */
     @Transactional
     public String insert(T entity) {
-        entity.setCreateId(ShiroUtil.getUserId());
+        entity.setCreateId(ShiroSessionUtil.getUserId());
         entity.setCreateDt(new Timestamp(System.currentTimeMillis()));
         entity.setLastMark(Boolean.TRUE);
         entity.setTreeLevel(baseTreeMapper.selectByPrimaryKey(
@@ -96,7 +98,7 @@ public class BaseTreeService<T extends TreeStructure>  {
      */
     @Transactional
     public String update(T entity) {
-        entity.setCreateId(ShiroUtil.getUserId());
+        entity.setCreateId(ShiroSessionUtil.getUserId());
         entity.setCreateDt(new Timestamp(System.currentTimeMillis()));
         baseTreeMapper.updateByPrimaryKeySelective(entity);
         Map<String, Object> returnMap = new HashMap<String, Object>();

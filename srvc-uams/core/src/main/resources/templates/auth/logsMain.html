@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 	<head th:include="common/headers::singleTable(#{systemName})"></head>
 	<script type="text/javascript">
+    var tableButtonObj = null;
 	$(function(){
 		var tableObj = new TableInit();
 		tableObj.init({  //sortName: "createDt", sortOrder: "desc",
@@ -12,12 +13,19 @@
 				{field:'funcMenuNm', title:'功能菜单', halign:'center'},
 				{field:'operId', title:'用户id', halign:'center'},
 				{field:'operNm', title:'用户名', halign:'center'},
-				{field:'operRemark', title:'备注', halign:'center'},
-				{field:'operDt', title:'日期', halign:'center', sortable:true} ],
+                {field:'operDt', title:'日期', halign:'center', sortable:true},
+				{field:'operRemark', title:'备注', halign:'center',
+                    formatter: function(value, row, index){
+                        return value.length <= 80 ? value :
+							value.substr(0,80)+" ......"+
+							"&nbsp;&nbsp;&nbsp;<a href=\"javascript:detail("+row.idKey+")\">查看详情</a>";
+                    }
+				}
+			],
 	 		startDateId: "startDate",
 			endDateId: "endDate"
 		});
-		var tableButtonObj = new TableButtonInit();
+        tableButtonObj = new TableButtonInit();
 		tableButtonObj.init({
 			tableId: tableObj.tableId,
 			searchFormId: tableObj.searchFormId,
@@ -28,6 +36,10 @@
 			removeUrl: parent.CONTEXT_PATH+"/system/logs/deleteBatch"
 		});
 	});
+    function detail(idkey) {
+		$("#remark-area").text($('#dataTable').bootstrapTable('getRowByUniqueId', idkey).operRemark);
+        tableButtonObj.popEditModal("完整备注");
+    }
 	</script>
 	<body>
 		<div class="panel-body" style="padding-bottom:0px;">
@@ -78,6 +90,19 @@
 			<!-- 数据展示面板 -->
 			<div th:include="common/toolbarTop::singleTable('system:SysLogs:delete','','')"></div>
 			<table id="dataTable" class="table-no-bordered"></table>
+			<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title"></h4>
+						</div>
+						<div class="modal-body">
+							<textarea class="form-control" rows="10" id="remark-area"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>

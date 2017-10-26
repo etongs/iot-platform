@@ -3,20 +3,18 @@ package com.stanley.uams.service.auth;
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.UserInfoBean;
 import com.stanley.common.domain.mybatis.Page;
-import com.stanley.uams.service.BaseService;
+import com.stanley.common.spring.BaseService;
 import com.stanley.uams.domain.auth.SysUser;
 import com.stanley.uams.domain.auth.SysUserOnline;
 import com.stanley.uams.domain.auth.SysUserVO;
 import com.stanley.uams.mapper.master.auth.SysUserMapper;
 import com.stanley.uams.service.CommonService;
 import com.stanley.uams.shiro.SessionRedisDAO;
-import com.stanley.uams.shiro.ShiroUtil;
 import com.stanley.utils.*;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -132,7 +130,7 @@ public class SysUserService extends BaseService<SysUser, SysUserVO> {
 	 * @return
 	 */
 	public String modifyPwd(String oldPwd, String newPwd) {
-		SysUser sysUser = selectByIdkey(ShiroUtil.getUserId());
+		SysUser sysUser = selectByIdkey(ShiroSessionUtil.getUserId());
 		if(null != oldPwd){
 			if (!EncryptUtil.shiroEncrypt(oldPwd, sysUser.getAccount()).equals(sysUser.getPasswd())) {
 				return ResultBuilderUtil.resultException("2", "原密码错误，请重新输入。");
@@ -140,7 +138,7 @@ public class SysUserService extends BaseService<SysUser, SysUserVO> {
 		}
 		sysUser.setPasswd(EncryptUtil.shiroEncrypt(newPwd, sysUser.getAccount()));
 		sysUser.setIsModify(false);
-		sysUser.setCreateId(ShiroUtil.getUserId());
+		sysUser.setCreateId(ShiroSessionUtil.getUserId());
 		sysUser.setCreateDt(new Timestamp(System.currentTimeMillis()));
 		getBaseMapper().updateByPrimaryKeySelective(sysUser);
 		return ResultBuilderUtil.RESULT_SUCCESS;
@@ -191,8 +189,8 @@ public class SysUserService extends BaseService<SysUser, SysUserVO> {
 	 * @return
 	 */
 	public String validOldPasswd(String oldPwd) {
-		return EncryptUtil.shiroEncrypt(oldPwd, ShiroUtil.getUserAccount()).equals(
-				selectByIdkey(ShiroUtil.getUserId()).getPasswd())?
+		return EncryptUtil.shiroEncrypt(oldPwd, ShiroSessionUtil.getUserAccount()).equals(
+				selectByIdkey(ShiroSessionUtil.getUserId()).getPasswd())?
 					ResultBuilderUtil.VALIDATE_SUCCESS: ResultBuilderUtil.VALIDATE_ERROR;
 	}
 
@@ -204,7 +202,7 @@ public class SysUserService extends BaseService<SysUser, SysUserVO> {
 	 * @return
 	 */
 	public SysUser queryMyself() {
-		return selectByIdkey(ShiroUtil.getUserId());
+		return selectByIdkey(ShiroSessionUtil.getUserId());
 	}
 
 	/**

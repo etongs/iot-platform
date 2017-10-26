@@ -119,7 +119,7 @@ public class CommonController extends BaseController {
                                                        @PathVariable("constantId") String constantId) {
         List<GeneralConstant> list = null;
         switch (constantId) {
-            case "HTTP_METHOR" :
+            case "HTTP_METHOD" :
                 list = Constants.HTTP_METHOR;
                 break;
             case "RECEIVED_DATA_FORMAT" :

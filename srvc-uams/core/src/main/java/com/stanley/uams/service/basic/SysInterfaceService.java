@@ -4,16 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
-import com.stanley.uams.service.BaseService;
+import com.stanley.common.spring.BaseService;
 import com.stanley.uams.domain.basic.SysInterface;
 import com.stanley.uams.domain.basic.SysInterfaceVO;
 import com.stanley.uams.mapper.master.basic.SysInterfaceMapper;
-import com.stanley.uams.shiro.ShiroUtil;
 import com.stanley.utils.*;
 import org.apache.poi.hssf.usermodel.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;

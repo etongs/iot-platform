@@ -1,10 +1,9 @@
 package com.stanley.uams.service.auth;
 
-import com.stanley.uams.service.BaseService;
+import com.stanley.common.spring.BaseService;
 import com.stanley.uams.domain.auth.SysUserRole;
 import com.stanley.uams.mapper.master.auth.SysUserRoleMapper;
 import com.stanley.utils.ResultBuilderUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 /**

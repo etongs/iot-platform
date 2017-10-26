@@ -41,6 +41,10 @@ shiro:
     anon: "/,/test/**,/javascripts/**,/bootstrap-3.3.7/**,/css/**,/images/**,/ace-1.2/**,/ace-1.4.0/**"
   sessionTimeout: 7200000
 
+cors:
+  allow:
+    url: "*"
+
 logging:
   level:
     com.stanley: debug

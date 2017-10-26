@@ -1,5 +1,6 @@
 package com.stanley.uams.web.auth;
 
+import com.stanley.common.annotation.WriteLogs;
 import com.stanley.common.domain.SearchParam;
 import com.stanley.common.domain.mybatis.Page;
 import com.stanley.common.spring.BaseController;
@@ -7,6 +8,7 @@ import com.stanley.uams.domain.auth.SysUser;
 import com.stanley.uams.domain.auth.SysUserOnline;
 import com.stanley.uams.domain.auth.SysUserVO;
 import com.stanley.uams.service.auth.SysUserService;
+import com.stanley.utils.Constants;
 import com.stanley.utils.ExcelUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -43,6 +45,7 @@ public class SysUserController extends BaseController {
 	 */
 	@RequestMapping(value = "insert", method = RequestMethod.POST)
 	@RequiresPermissions("system:SysUser:insert")
+	@WriteLogs(Constants.OPERITION_INSERT)
 	public String insert(SysUser sysUser){
 		return sysUserService.insert(sysUser);
 	}
@@ -55,6 +58,7 @@ public class SysUserController extends BaseController {
 	 */
 	@RequestMapping(value="delete/{idKey}")
 	@RequiresPermissions("system:SysUser:delete")
+	@WriteLogs(Constants.OPERITION_DELETE)
 	public String delete(@PathVariable Integer idKey){
 		return sysUserService.delete(idKey);
 	}
@@ -67,6 +71,7 @@ public class SysUserController extends BaseController {
 	 */
 	@RequestMapping(value="deleteBatch", method = RequestMethod.POST)
 	@RequiresPermissions("system:SysUser:delete")
+	@WriteLogs(Constants.OPERITION_DELETE_BATCH)
 	public String deleteBatch(SearchParam searchParam){
 		return sysUserService.deleteBatch(searchParam.getCheckedIds());
 	}
@@ -79,6 +84,7 @@ public class SysUserController extends BaseController {
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	@RequiresPermissions("system:SysUser:update")
+	@WriteLogs(Constants.OPERITION_UPDATE)
 	public String update(SysUser sysUser){
 		return sysUserService.update(sysUser);
 	}
@@ -118,6 +124,7 @@ public class SysUserController extends BaseController {
 	 * @date 2016年4月11日
 	 */
 	@RequestMapping(value = "modifyPwd", method = RequestMethod.POST)
+	@WriteLogs("修改自己密码")
 	public String modifyPwd(String userPwd, String surePwd) {
 		return sysUserService.modifyPwd(userPwd,surePwd);
 	}
@@ -129,6 +136,7 @@ public class SysUserController extends BaseController {
 	 */
 	@RequestMapping(value = "initializePwd")
 	@RequiresPermissions("system:SysUser:initializePwd")
+	@WriteLogs("初始化密码")
 	public String initializePwd(SearchParam searchParam){
 		return sysUserService.initializePwd(searchParam.getCheckedIds());
 	}
@@ -178,6 +186,7 @@ public class SysUserController extends BaseController {
 	 * @return void
 	 */
 	@RequestMapping(value = "modifyMyself", method = RequestMethod.POST)
+	@WriteLogs(Constants.OPERITION_UPDATE)
 	public String modifyMyself(SysUser sysUser){
 		return sysUserService.update(sysUser);
 	}
@@ -206,6 +215,7 @@ public class SysUserController extends BaseController {
 	@RequestMapping(value = "offline/{sessionId}", method = RequestMethod.GET)
 	@RequiresPermissions("system:OnlineUser:offline")
 	@RequiresRoles("系统管理员")
+	@WriteLogs("强制下线")
 	public String offline(@PathVariable String sessionId){
 		return sysUserService.offline(sessionId);
 	}

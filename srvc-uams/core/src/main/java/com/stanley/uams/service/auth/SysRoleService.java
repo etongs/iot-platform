@@ -1,21 +1,18 @@
 package com.stanley.uams.service.auth;
 
 import com.stanley.common.domain.SearchParam;
+import com.stanley.common.spring.BaseService;
 import com.stanley.uams.domain.auth.SysRole;
 import com.stanley.uams.domain.auth.SysRoleVO;
 import com.stanley.uams.mapper.master.auth.SysRoleMapper;
-import com.stanley.uams.service.BaseService;
 import com.stanley.utils.DateTimeUtil;
 import com.stanley.utils.ResultBuilderUtil;
 import com.stanley.utils.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 角色服务

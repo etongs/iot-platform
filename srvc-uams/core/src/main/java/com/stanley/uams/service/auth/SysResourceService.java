@@ -1,8 +1,8 @@
 package com.stanley.uams.service.auth;
 
+import com.stanley.common.spring.BaseTreeService;
 import com.stanley.uams.domain.auth.SysResource;
 import com.stanley.uams.mapper.master.auth.SysResourceMapper;
-import com.stanley.uams.service.BaseTreeService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

@@ -1,6 +1,7 @@
 package com.stanley.uams.service;
 
 import com.stanley.common.domain.UserInfoBean;
+import com.stanley.common.spring.BaseService;
 import com.stanley.uams.domain.auth.SysUser;
 import com.stanley.uams.domain.basic.SysOrganization;
 import com.stanley.uams.service.auth.SysRoleService;
@@ -76,7 +77,6 @@ public class HomeService extends BaseService {
         //每个Realm都能在必要时对提交的AuthenticationTokens作出反应
         //所以这一步在调用login(token)方法时,它会走到MyRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法
         UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
-        log.debug("为验证登录用户而封装的Token：{}",ReflectionToStringBuilder.toString(token, ToStringStyle.MULTI_LINE_STYLE));
         Subject currentUser = SecurityUtils.getSubject();
         try {
             currentUser.login(token);
